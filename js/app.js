@@ -15,6 +15,7 @@ class App {
     window.lessonEngine = new LessonEngine();
     window.phonkArena = new PhonkDriftArena();
     window.logicClub = new LogicClubEngine();
+    window.logicBankAdminModal = new LogicBankAdminModal();
     window.bossEngine = new BossBattleEngine();
     window.lockerModal = new LockerModal();
     window.arcadeHub = new ArcadeHub();
