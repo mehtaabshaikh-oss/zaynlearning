@@ -555,8 +555,158 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* iPad Touch Responsive Tweaks */
-@media (max-width: 900px) {
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION BAR (iOS / Android)
+   ========================================================================== */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 2px solid rgba(255, 255, 255, 0.12);
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 8px;
+    padding-bottom: env(safe-area-inset-bottom, 4px);
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #94a3b8;
+    font-family: var(--font-game);
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition: all 0.15s ease;
+    flex: 1;
+    max-width: 76px;
+  }
+
+  .mobile-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .mob-nav-icon {
+    font-size: 22px;
+    line-height: 1;
+    filter: grayscale(0.4);
+    transition: all 0.15s ease;
+  }
+
+  .mob-nav-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+
+  .mobile-nav-item.active {
+    color: #fde047;
+  }
+
+  .mobile-nav-item.active .mob-nav-icon {
+    filter: none;
+    transform: scale(1.15);
+    text-shadow: 0 0 12px rgba(253, 224, 71, 0.6);
+  }
+
+  .mobile-nav-item.active .mob-nav-label {
+    color: #fde047;
+    font-weight: 800;
+  }
+
+  /* Adjust Main Viewport and Views for Bottom Bar */
+  .main-viewport {
+    padding-bottom: 68px !important;
+  }
+
+  .view-panel {
+    padding-bottom: 74px !important;
+  }
+
+  /* Compact Top Navbar on Mobile */
+  .top-nav {
+    height: 60px;
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .nav-left {
+    gap: 6px;
+  }
+
+  .avatar-pill {
+    padding: 2px 8px 2px 4px;
+    gap: 6px;
+  }
+
+  .avatar-icon-wrap {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-name {
+    font-size: 13px;
+  }
+
+  .user-rank-tag {
+    font-size: 10px;
+  }
+
+  .nav-stats {
+    gap: 5px;
+  }
+
+  .stat-badge {
+    padding: 3px 6px;
+    font-size: 12px;
+    gap: 4px;
+    border-radius: 8px;
+  }
+
+  .stat-badge .stat-lbl {
+    display: none;
+  }
+
+  .level-badge {
+    display: none; /* Conserve space, level shown on map/avatar */
+  }
+
+  /* Hide quick buttons from top bar on mobile (now in bottom nav) */
+  .action-pill-btn {
+    display: none !important;
+  }
+
+  .audio-control-group {
+    margin-left: auto;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
+
+/* Tablet & iPad Responsive Tweaks */
+@media (min-width: 769px) and (max-width: 1024px) {
   .nav-stats {
     gap: 8px;
   }

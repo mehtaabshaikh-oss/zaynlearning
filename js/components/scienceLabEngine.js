@@ -207,6 +207,8 @@ class ScienceLabEngine {
   launchLab(labType) {
     this.currentView = labType;
     this.stopSimulations();
+    const panel = document.getElementById('view-science-lab');
+    if (panel) panel.scrollTop = 0;
 
     if (labType === 'matter') {
       this.renderStatesOfMatterLab();

@@ -31,10 +31,17 @@ class App {
       if (v.id === viewId) {
         v.classList.remove('hidden');
         v.classList.add('active');
+        v.scrollTop = 0;
       } else {
         v.classList.add('hidden');
         v.classList.remove('active');
       }
+    });
+
+    // Update active state in Mobile Bottom Navigation
+    const mobItems = document.querySelectorAll('.mobile-nav-item');
+    mobItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.view === viewId);
     });
 
     if (viewId === 'view-map' && window.mapRenderer) {
@@ -103,6 +110,18 @@ class App {
 
   initHUD() {
     window.updateTopBarHUD = () => this.updateTopBarHUD();
+
+    // Mobile Bottom Navigation Clicks
+    const mobItems = document.querySelectorAll('.mobile-nav-item');
+    mobItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const viewId = item.dataset.view;
+        if (viewId) {
+          this.showView(viewId);
+          if (window.soundEngine) window.soundEngine.playTap();
+        }
+      });
+    });
   }
 
   updateTopBarHUD() {
