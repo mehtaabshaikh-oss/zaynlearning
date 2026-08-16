@@ -1,0 +1,446 @@
+/* ==========================================================================
+   INTERACTIVE LESSON VIEW & WIDGETS
+   ========================================================================== */
+
+#view-lesson {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+  position: relative;
+}
+
+.lesson-header {
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px solid var(--border-subtle);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.lesson-progress-bar-wrap {
+  flex: 1;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  position: relative;
+}
+
+.lesson-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-primary), #a3e635);
+  border-radius: var(--radius-pill);
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lesson-score-badge {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent-aura);
+  background: var(--bg-surface-elevated);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Lesson Stage Content */
+.lesson-stage {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.lesson-card {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.lesson-step-badge {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.5px;
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+.lesson-step-badge.discover { background: #3b82f6; }
+.lesson-step-badge.watch { background: #8b5cf6; }
+.lesson-step-badge.practice { background: #10b981; }
+.lesson-step-badge.challenge { background: #f59e0b; }
+
+.lesson-prompt-title {
+  font-size: 24px;
+  font-family: var(--font-game);
+  color: #fff;
+  line-height: 1.3;
+}
+
+.lesson-explanation-text {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Interactive Interactive Widgets */
+.interactive-widget-container {
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+/* 1. LEGO STUD ARRAY WIDGET */
+.lego-array-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.lego-brick-plate {
+  display: inline-grid;
+  gap: 4px;
+  padding: 10px;
+  background: var(--lego-red);
+  border-radius: 8px;
+  box-shadow: 0 6px 0 #990007, 0 10px 20px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.lego-stud {
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle at 35% 35%, #fff 10%, var(--lego-red) 60%, #990007 100%);
+  border-radius: 50%;
+  box-shadow: 0 3px 0 #770005, inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 0.15s ease;
+}
+
+.lego-stud.active {
+  background: radial-gradient(circle at 35% 35%, #fff 10%, var(--lego-yellow) 60%, #b45309 100%);
+  box-shadow: 0 3px 0 #92400e;
+  transform: scale(1.1);
+}
+
+/* 2. MINECRAFT CRAFTING GRID */
+.minecraft-crafting-box {
+  background: #c6c6c6;
+  padding: 16px;
+  border-radius: 4px;
+  border: 4px solid #373737;
+  border-top-color: #ffffff;
+  border-left-color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.minecraft-grid-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 4px;
+  background: #8b8b8b;
+  padding: 4px;
+  border: 2px solid #373737;
+}
+
+.mc-slot {
+  background: #8b8b8b;
+  border: 2px solid #373737;
+  border-top-color: #373737;
+  border-left-color: #373737;
+  border-bottom-color: #ffffff;
+  border-right-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.mc-arrow {
+  font-size: 28px;
+  color: #373737;
+}
+
+.mc-result-slot {
+  width: 56px;
+  height: 56px;
+  background: #8b8b8b;
+  border: 3px solid #373737;
+  border-bottom-color: #fff;
+  border-right-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+/* 3. ALGEBRA BALANCE SCALE */
+.balance-scale-widget {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.scale-beam-container {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: relative;
+  height: 120px;
+}
+
+.scale-beam {
+  position: absolute;
+  top: 30px;
+  left: 10%;
+  width: 80%;
+  height: 8px;
+  background: #94a3b8;
+  border-radius: 4px;
+  transform-origin: center center;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.scale-fulcrum {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 40px solid #cbd5e1;
+}
+
+.scale-pan {
+  width: 120px;
+  min-height: 60px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 2px solid var(--accent-gem);
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  z-index: 2;
+}
+
+.mystery-block {
+  width: 36px;
+  height: 36px;
+  background: var(--lego-yellow);
+  color: #000;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 3px 0 #b45309;
+}
+
+.weight-token {
+  width: 32px;
+  height: 32px;
+  background: #38bdf8;
+  color: #0f172a;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Question Option Cards */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.option-btn {
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  color: var(--text-main);
+  font-family: var(--font-game);
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: var(--shadow-pressable);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.option-btn:hover {
+  border-color: var(--accent-gem);
+  background: rgba(56, 189, 248, 0.1);
+  transform: translateY(-2px);
+}
+
+.option-btn:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-active);
+}
+
+.option-btn.selected {
+  border-color: var(--lego-yellow);
+  background: rgba(255, 213, 0, 0.15);
+  box-shadow: 0 0 15px rgba(255, 213, 0, 0.3);
+}
+
+.option-btn.correct {
+  border-color: var(--brand-primary) !important;
+  background: rgba(88, 204, 2, 0.25) !important;
+  color: #a3e635;
+}
+
+.option-btn.wrong {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.25) !important;
+  color: #fca5a5;
+}
+
+/* Number Input Pad */
+.math-number-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.math-number-input {
+  width: 140px;
+  height: 56px;
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.math-number-input:focus {
+  border-color: var(--accent-gem);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+/* Pixel Sidekick Bar */
+.sidekick-bar {
+  background: var(--bg-surface);
+  border-top: 2px solid var(--border-subtle);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.sidekick-avatar {
+  width: 48px;
+  height: 48px;
+  background: #334155;
+  border: 2px solid var(--accent-gem);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  animation: floatHead 2s infinite ease-in-out;
+}
+
+@keyframes floatHead {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.sidekick-bubble {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 4px;
+  font-size: 14px;
+  color: #e2e8f0;
+  flex: 1;
+}
+
+.sidekick-bubble strong {
+  color: var(--lego-yellow);
+  margin-right: 6px;
+}
+
+/* Bottom Control Footer */
+.lesson-footer {
+  height: 80px;
+  background: var(--bg-surface);
+  border-top: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  flex-shrink: 0;
+}

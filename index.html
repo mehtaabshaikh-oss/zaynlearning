@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Zayn Math Adventure - Master Math & Logic</title>
+  
+  <!-- Google Fonts: Fredoka (friendly gaming font), Space Grotesk & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/lesson.css">
+  <link rel="stylesheet" href="css/audio-visuals.css">
+  <link rel="stylesheet" href="css/locker.css">
+  <link rel="stylesheet" href="css/arcade.css">
+  <link rel="stylesheet" href="css/stemDetective.css">
+  <link rel="stylesheet" href="css/scienceLab.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <!-- Confetti & Floating Aura Canvas -->
+    <canvas id="effects-canvas"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <button id="avatar-btn" class="avatar-pill" title="Customize Minifig & Skins">
+          <div class="avatar-icon-wrap" id="top-avatar-preview"></div>
+          <div class="avatar-meta">
+            <span class="user-name">ZAYN</span>
+            <span class="user-rank-tag" id="user-aura-rank">Ohio Rookie</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="nav-stats">
+        <!-- Aura Points -->
+        <div class="stat-badge aura-badge" id="aura-stat" title="Math Aura Points">
+          <span class="stat-icon">📈</span>
+          <span class="stat-val" id="stat-aura">0</span>
+          <span class="stat-lbl">AURA</span>
+        </div>
+
+        <!-- Daily Streak -->
+        <div class="stat-badge streak-badge" id="streak-stat" title="Daily Streak">
+          <span class="stat-icon">🔥</span>
+          <span class="stat-val" id="stat-streak">1</span>
+          <span class="shield-indicator" id="streak-shield-count" title="Streak Shields">🛡️ 1</span>
+        </div>
+
+        <!-- Math Gems -->
+        <div class="stat-badge gem-badge" id="gem-stat" title="Math Gems">
+          <span class="stat-icon">💎</span>
+          <span class="stat-val" id="stat-gems">0</span>
+        </div>
+
+        <!-- Level & XP -->
+        <div class="stat-badge level-badge" id="level-stat" title="Level & XP">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-val" id="stat-level">Lv 1</span>
+          <div class="mini-xp-bar-wrap">
+            <div class="mini-xp-fill" id="top-xp-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <!-- Audio Mode Selector -->
+        <div class="audio-control-group">
+          <button id="audio-toggle-btn" class="icon-btn" title="Audio Options">
+            <span id="audio-status-icon">🎧</span>
+          </button>
+          <div id="audio-dropdown" class="audio-dropdown hidden">
+            <div class="audio-option-item" data-mode="phonk">
+              <span>🏎️ Drift Phonk Beats</span>
+              <span class="check-icon">✓</span>
+            </div>
+            <div class="audio-option-item" data-mode="lofi">
+              <span>🌲 Minecraft C418 Lo-Fi</span>
+            </div>
+            <div class="audio-option-item" data-mode="chiptune">
+              <span>🕹️ 8-Bit Retro Arcade</span>
+            </div>
+            <div class="audio-option-item" data-mode="mute">
+              <span>🔇 Mute Music & SFX</span>
+            </div>
+            <div class="audio-volume-slider">
+              <label>Vol:</label>
+              <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.7">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEM Detective Agency Quick Button (Temporarily Hidden) -->
+        <button id="quick-detective-btn" class="action-pill-btn detective-glow-btn" style="display: none; background: linear-gradient(135deg, #4338ca, #6366f1); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);" title="STEM Detective Agency">
+          <span>🔎 STEM SLEUTH</span>
+        </button>
+
+        <!-- Science Lab Quick Button -->
+        <button id="quick-science-btn" class="action-pill-btn science-glow-btn" style="background: linear-gradient(135deg, #0284c7, #06b6d4); box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);" title="Zayn Science Lab">
+          <span>🔬 SCIENCE LAB</span>
+        </button>
+
+        <!-- Arcade Hub Quick Button -->
+        <button id="quick-arcade-btn" class="action-pill-btn arcade-glow-btn" style="background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);" title="Arcade Games Hub">
+          <span>🕹️ ARCADE</span>
+        </button>
+
+        <!-- Speed Drill Quick Button -->
+        <button id="quick-drift-btn" class="action-pill-btn phonk-glow-btn" title="Phonk Drift Speed Arena">
+          <span>🏎️ DRIFT 60s</span>
+        </button>
+
+        <!-- 1% Club Quick Button -->
+        <button id="quick-logic-btn" class="action-pill-btn logic-glow-btn" title="The 1% Club Logic Vault">
+          <span>🧠 1% CLUB</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Views -->
+    <main id="main-content" class="main-viewport">
+      <!-- 1. MAP VIEW (Default) -->
+      <section id="view-map" class="view-panel active">
+        <!-- World Selector Carousel Tabs -->
+        <div class="world-tab-bar">
+          <button class="world-tab-btn active" data-world="1">
+            <span class="world-tab-icon">🧱</span>
+            <span class="world-tab-name">1. Lego Speedway</span>
+          </button>
+          <button class="world-tab-btn" data-world="2">
+            <span class="world-tab-icon">⛏️</span>
+            <span class="world-tab-name">2. Fraction Nether</span>
+          </button>
+          <button class="world-tab-btn" data-world="3">
+            <span class="world-tab-icon">🔋</span>
+            <span class="world-tab-name">3. Redstone Algebra</span>
+          </button>
+          <button class="world-tab-btn" data-world="4">
+            <span class="world-tab-icon">📐</span>
+            <span class="world-tab-name">4. Geometry Galaxy</span>
+          </button>
+          <button class="world-tab-btn" data-world="5">
+            <span class="world-tab-icon">🧠</span>
+            <span class="world-tab-name">5. 1% Club Vault</span>
+          </button>
+        </div>
+
+        <!-- World Banner Card -->
+        <div class="world-header-banner" id="current-world-banner">
+          <div class="banner-content">
+            <div class="banner-badge" id="world-badge-tag">WORLD 1</div>
+            <h1 class="banner-title" id="world-title">Lego Times Table Speedway</h1>
+            <p class="banner-subtitle" id="world-desc">Master multiplication arrays, fast division, and unlock drift tracks!</p>
+          </div>
+          <div class="banner-actions">
+            <button class="banner-btn" id="world-boss-shortcut">
+              <span>👑 Face Boss</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Daily Quest Card Widget -->
+        <div class="daily-mission-card">
+          <div class="mission-header">
+            <span class="mission-flair">⚡ TODAY'S MISSIONS</span>
+            <span class="mission-reward-badge">+150 XP • 💎 25 • 🛡️ Shield</span>
+          </div>
+          <div class="mission-list" id="daily-missions-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Duolingo-style Sinuous Biome Map Container -->
+        <div class="path-map-container" id="path-map-scroll">
+          <div class="path-canvas-wrap" id="path-canvas-wrap">
+            <svg id="path-svg" class="path-svg-line"></svg>
+            <div id="nodes-container" class="nodes-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ARCADE GAMES HUB VIEW (15-Game Catalog) -->
+      <section id="view-arcade-hub" class="view-panel hidden">
+        <div class="arcade-hub-header">
+          <h1 class="arcade-hub-title">🕹️ RETRO MATH ARCADE</h1>
+          <p class="arcade-hub-sub">Genuine action games directly connected to 4th-grade & gifted math skills!</p>
+        </div>
+
+        <!-- Category Tabs & Practice Mode Toggle -->
+        <div class="arcade-controls-bar">
+          <div class="arcade-category-tabs" id="arcade-cat-tabs">
+            <button class="arcade-cat-btn active" data-cat="all">ALL (20)</button>
+            <button class="arcade-cat-btn" data-cat="math">MATH</button>
+            <button class="arcade-cat-btn" data-cat="science">SCIENCE</button>
+            <button class="arcade-cat-btn" data-cat="logic">LOGIC</button>
+            <button class="arcade-cat-btn" data-cat="engineering">ENGINEERING</button>
+            <button class="arcade-cat-btn" data-cat="quick">QUICK PLAY</button>
+            <button class="arcade-cat-btn" data-cat="adventure">ADVENTURE</button>
+          </div>
+
+          <label class="arcade-mode-toggle" title="Practice Mode removes game over timers so you can learn without pressure">
+            <input type="checkbox" id="arcade-practice-mode-toggle">
+            <span>🛡️ Practice Mode (Untimed)</span>
+          </label>
+        </div>
+
+        <div class="arcade-games-grid" id="arcade-games-grid">
+          <!-- Game 1: Snake (Quick Play) -->
+          <div class="arcade-game-card" data-game="snake" data-cat="quick">
+            <div class="arcade-card-icon">🐍🍎</div>
+            <div class="arcade-card-title">Math Snake</div>
+            <div class="arcade-card-topic">MULTIPLICATION & FACTORS</div>
+            <p class="arcade-card-desc">Slither the snake to eat correct products, avoid distractors, and grow longer!</p>
+            <div class="arcade-card-stats" id="stats-card-snake">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY SNAKE ➔</button>
+          </div>
+
+          <!-- Game 2: Asteroid Blaster (Quick Play) -->
+          <div class="arcade-game-card" data-game="asteroids" data-cat="quick">
+            <div class="arcade-card-icon">🚀☄️</div>
+            <div class="arcade-card-title">Asteroid Blaster</div>
+            <div class="arcade-card-topic">DIVISION & MATH FLUENCY</div>
+            <p class="arcade-card-desc">Pilot your starship, shoot lasers, and blast math asteroids with combos & power-ups!</p>
+            <div class="arcade-card-stats" id="stats-card-asteroids">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY BLASTER ➔</button>
+          </div>
+
+          <!-- Game 3: Pizza Fraction Rush (Build) -->
+          <div class="arcade-game-card" data-game="pizza" data-cat="build">
+            <div class="arcade-card-icon">🍕🧑‍🍳</div>
+            <div class="arcade-card-title">Pizza Fraction Rush</div>
+            <div class="arcade-card-topic">FRACTIONS & EQUIVALENTS</div>
+            <p class="arcade-card-desc">Run a fast-paced pizzeria: craft slices matching customer fraction orders!</p>
+            <div class="arcade-card-stats" id="stats-card-pizza">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY PIZZA ➔</button>
+          </div>
+
+          <!-- Game 4: Math Ninja (Quick Play) -->
+          <div class="arcade-game-card" data-game="ninja" data-cat="quick">
+            <div class="arcade-card-icon">🥷🍉</div>
+            <div class="arcade-card-title">Math Ninja</div>
+            <div class="arcade-card-topic">MULTIPLES & PRIMES</div>
+            <p class="arcade-card-desc">Swipe and slice flying numbers matching the ninja rule (multiples, factors, primes)!</p>
+            <div class="arcade-card-stats" id="stats-card-ninja">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY NINJA ➔</button>
+          </div>
+
+          <!-- Game 5: Decimal Racer (Arcade) -->
+          <div class="arcade-game-card" data-game="racer" data-cat="arcade">
+            <div class="arcade-card-icon">🏎️⚡</div>
+            <div class="arcade-card-title">Decimal Racer</div>
+            <div class="arcade-card-topic">DECIMAL PLACE VALUE & NITRO</div>
+            <p class="arcade-card-desc">Change lanes to drive through larger decimals, fill your Nitro bar, and speed boost!</p>
+            <div class="arcade-card-stats" id="stats-card-racer">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY RACER ➔</button>
+          </div>
+
+          <!-- Game 6: Algebra Frogger (Puzzle) -->
+          <div class="arcade-game-card" data-game="frogger" data-cat="puzzle">
+            <div class="arcade-card-icon">🐸🪵</div>
+            <div class="arcade-card-title">Algebra Frogger</div>
+            <div class="arcade-card-topic">SOLVE FOR X & MISSING NUMBERS</div>
+            <p class="arcade-card-desc">Leap across drifting river logs by landing on the log containing the correct variable [x]!</p>
+            <div class="arcade-card-stats" id="stats-card-frogger">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY FROGGER ➔</button>
+          </div>
+
+          <!-- Game 7: Geometry Builder (Build) -->
+          <div class="arcade-game-card" data-game="geometry_builder" data-cat="build">
+            <div class="arcade-card-icon">📐🏗️</div>
+            <div class="arcade-card-title">Geometry Builder</div>
+            <div class="arcade-card-topic">AREA, PERIMETER & SHAPES</div>
+            <p class="arcade-card-desc">Drag vertices to construct shapes with target area & perimeter to build your Math City!</p>
+            <div class="arcade-card-stats">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY BUILDER ➔</button>
+          </div>
+
+          <!-- Game 8: Number Line Jumper (Puzzle) -->
+          <div class="arcade-game-card" data-game="number_line" data-cat="puzzle">
+            <div class="arcade-card-icon">🦘📏</div>
+            <div class="arcade-card-title">Number Line Jumper</div>
+            <div class="arcade-card-topic">FRACTIONS & NUMBER MAGNITUDE</div>
+            <p class="arcade-card-desc">Platform leap along a giant number line to land precisely on fraction benchmarks!</p>
+            <div class="arcade-card-stats">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY JUMPER ➔</button>
+          </div>
+
+          <!-- Game 9: Treasure Mine (Adventure) -->
+          <div class="arcade-game-card" data-game="treasure_mine" data-cat="adventure">
+            <div class="arcade-card-icon">⛏️💎</div>
+            <div class="arcade-card-title">Treasure Mine</div>
+            <div class="arcade-card-topic">WORD PROBLEMS & MULTI-STEP</div>
+            <p class="arcade-card-desc">Explore underground mine shafts and pick the correct tunnels to discover secret loot chambers!</p>
+            <div class="arcade-card-stats">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY MINE ➔</button>
+          </div>
+
+          <!-- Game 10: Flappy Math Bird (Quick Play) -->
+          <div class="arcade-game-card" data-game="flappy" data-cat="quick">
+            <div class="arcade-card-icon">🐦🧱</div>
+            <div class="arcade-card-title">Flappy Math Bird</div>
+            <div class="arcade-card-topic">FRACTION & DECIMAL GATES</div>
+            <p class="arcade-card-desc">Flap through pipe gates by flying into the gate with the equivalent value!</p>
+            <div class="arcade-card-stats" id="stats-card-flappy">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY FLAPPY ➔</button>
+          </div>
+
+          <!-- Game 11: Equation Escape Room (Puzzle) -->
+          <div class="arcade-game-card" data-game="escape" data-cat="puzzle">
+            <div class="arcade-card-icon">🔐🧪</div>
+            <div class="arcade-card-title">Equation Escape Room</div>
+            <div class="arcade-card-topic">MULTI-STEP ALGEBRA & CODES</div>
+            <p class="arcade-card-desc">Unlock digital safes, secret clocks, and code panels by solving connected mystery puzzles!</p>
+            <div class="arcade-card-stats" id="stats-card-escape">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY ESCAPE ➔</button>
+          </div>
+
+          <!-- Game 12: Math Defense (Arcade) -->
+          <div class="arcade-game-card" data-game="defense" data-cat="arcade">
+            <div class="arcade-card-icon">🏰🎯</div>
+            <div class="arcade-card-title">Math Defense</div>
+            <div class="arcade-card-topic">TOWER ATTACK FLUENCY</div>
+            <p class="arcade-card-desc">Defend your fortress against incoming math waves with charged laser & cannon towers!</p>
+            <div class="arcade-card-stats" id="stats-card-defense">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY DEFENSE ➔</button>
+          </div>
+
+          <!-- Game 13: Potion Lab (Build) -->
+          <div class="arcade-game-card" data-game="potion" data-cat="build">
+            <div class="arcade-card-icon">🧪✨</div>
+            <div class="arcade-card-title">Potion Lab</div>
+            <div class="arcade-card-topic">FRACTIONAL LIQUIDS & MEASUREMENT</div>
+            <p class="arcade-card-desc">Pour and combine fractional volumes of magical liquids to create creature transformations!</p>
+            <div class="arcade-card-stats" id="stats-card-potion">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY POTION ➔</button>
+          </div>
+
+          <!-- Game 14: Math Kart (Arcade) -->
+          <div class="arcade-game-card" data-game="kart" data-cat="arcade">
+            <div class="arcade-card-icon">🏎️🏁</div>
+            <div class="arcade-card-title">Math Kart Cup</div>
+            <div class="arcade-card-topic">ADAPTIVE CHAMPIONSHIP RACING</div>
+            <p class="arcade-card-desc">Race across themed GP tracks passing through boost gates and collecting power-ups!</p>
+            <div class="arcade-card-stats" id="stats-card-kart">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY KART ➔</button>
+          </div>
+
+          <!-- Game 15: Space Coordinates (Adventure) -->
+          <div class="arcade-game-card" data-game="coordinates" data-cat="adventure">
+            <div class="arcade-card-icon">🌌🛸</div>
+            <div class="arcade-card-title">Space Coordinates</div>
+            <div class="arcade-card-topic">GRID COORDINATES & REFLECTIONS</div>
+            <p class="arcade-card-desc">Chart uncharted solar systems by plotting (X, Y) coordinates and navigating gravity fields!</p>
+            <div class="arcade-card-stats" id="stats-card-coordinates">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PLAY COORDINATES ➔</button>
+          </div>
+
+          <!-- Game 16: Math Detective (Adventure / Puzzle) -->
+          <div class="arcade-game-card" data-game="detective" data-cat="adventure">
+            <div class="arcade-card-icon">🕵️🔍</div>
+            <div class="arcade-card-title">Math Detective</div>
+            <div class="arcade-card-topic">CASE FILES & DEDUCTION</div>
+            <p class="arcade-card-desc">Solve math clues to search lockers, inspect footprints, eliminate suspects, and crack the missing trophy case!</p>
+            <div class="arcade-card-stats" id="stats-card-detective">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">INVESTIGATE CASE ➔</button>
+          </div>
+
+          <!-- Game 17: Math Grid Jigsaw (Puzzle) -->
+          <div class="arcade-game-card" data-game="jigsaw" data-cat="logic puzzle math">
+            <div class="arcade-card-icon">🧩🖼️</div>
+            <div class="arcade-card-title">Math Grid Jigsaw</div>
+            <div class="arcade-card-topic">SNAP-TO-GRID MATH PUZZLE</div>
+            <p class="arcade-card-desc">Match math equations (72 ÷ 8 = 9) to grid coordinates to snap puzzle pieces and reveal full artwork!</p>
+            <div class="arcade-card-stats" id="stats-card-jigsaw">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">SOLVE JIGSAW ➔</button>
+          </div>
+
+          <!-- Game 18: Code Breaker (Logic + Math) -->
+          <div class="arcade-game-card" data-game="code_breaker" data-cat="logic math puzzle quick">
+            <div class="arcade-card-icon">🔐💎</div>
+            <div class="arcade-card-title">Code Breaker</div>
+            <div class="arcade-card-topic">PATTERNS, FUNCTIONS & DEDUCTION</div>
+            <p class="arcade-card-desc">Crack high-security vaults using geometric number patterns, function machines (x → 3x), and Mastermind deduction!</p>
+            <div class="arcade-card-stats" id="stats-card-code_breaker">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">CRACK VAULT ➔</button>
+          </div>
+
+          <!-- Game 19: Angle Cannon (Math + Science + Arcade) -->
+          <div class="arcade-game-card" data-game="angle_cannon" data-cat="math science quick arcade">
+            <div class="arcade-card-icon">🎯💣</div>
+            <div class="arcade-card-title">Angle Cannon</div>
+            <div class="arcade-card-topic">GEOMETRY, ANGLES & BALLISTICS</div>
+            <p class="arcade-card-desc">Rotate the cannon barrel, estimate acute, obtuse and right angles, and snipe targets with physics trajectory arc!</p>
+            <div class="arcade-card-stats" id="stats-card-angle_cannon">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">FIRE CANNON ➔</button>
+          </div>
+
+          <!-- Game 20: Rover Rescue (Logic + Engineering + Adventure) -->
+          <div class="arcade-game-card" data-game="rover_rescue" data-cat="logic engineering math adventure">
+            <div class="arcade-card-icon">🛰️🔴</div>
+            <div class="arcade-card-title">Rover Rescue</div>
+            <div class="arcade-card-topic">ALGORITHMS, SEQUENCING & MARS GRID</div>
+            <p class="arcade-card-desc">Program the autonomous Mars rover with visual command blocks (Forward, Turn, Repeat) to navigate terrain and rescue astronauts!</p>
+            <div class="arcade-card-stats" id="stats-card-rover_rescue">Best: 0 • Acc: 0%</div>
+            <button class="arcade-play-btn">PROGRAM ROVER ➔</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. ACTIVE ARCADE GAME ARENA (Canvas) -->
+      <section id="view-arcade-arena" class="view-panel hidden">
+        <div class="arcade-arena-top-bar">
+          <button class="close-arena-btn" id="exit-arcade-btn">✕ Exit Game</button>
+          <div class="arcade-game-math-prompt" id="arcade-math-prompt">EAT: 7 × 8 = ?</div>
+          <div class="arcade-game-stats">
+            <div class="arcade-stat-item">
+              <span class="arcade-level-badge" id="arcade-level-badge">WAVE 1</span>
+            </div>
+            <div class="arcade-stat-item">
+              <span class="arcade-combo-badge" id="arcade-combo-tag">1x COMBO</span>
+            </div>
+            <div class="arcade-stat-item">
+              <span>SCORE:</span>
+              <span class="arcade-score-val" id="arcade-score-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arcade-canvas-stage">
+          <canvas id="arcade-canvas" width="600" height="420"></canvas>
+        </div>
+
+        <!-- Eye-Level Focus Math Question Banner -->
+        <div class="arcade-focus-prompt-bar">
+          <div class="arcade-focus-prompt" id="arcade-focus-prompt">EAT: 7 × 8 = ?</div>
+        </div>
+
+        <!-- On-Screen Touch D-Pad for iPad -->
+        <div class="arcade-touch-controls" id="arcade-touch-controls-bar">
+          <div class="touch-dpad-grid">
+            <div></div>
+            <button class="touch-btn" id="touch-up">▲</button>
+            <div></div>
+            <button class="touch-btn" id="touch-left">◀</button>
+            <button class="touch-btn" id="touch-down">▼</button>
+            <button class="touch-btn" id="touch-right">▶</button>
+          </div>
+          <button class="action-touch-btn" id="touch-action">ACTION / JUMP / SHOOT 🎯</button>
+        </div>
+      </section>
+
+      <!-- 4. LESSON VIEW -->
+      <section id="view-lesson" class="view-panel hidden">
+        <div class="lesson-header">
+          <button class="close-lesson-btn" id="exit-lesson-btn" title="Exit Lesson">✕</button>
+          <div class="lesson-progress-bar-wrap">
+            <div class="lesson-progress-fill" id="lesson-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="lesson-score-badge">
+            <span id="lesson-step-indicator">Step 1/5</span>
+          </div>
+        </div>
+
+        <div class="lesson-stage" id="lesson-stage-container">
+          <!-- Dynamic Step: Discover, Example, Practice, Challenge, etc. -->
+        </div>
+
+        <!-- Pixel Sidekick Bubble -->
+        <div class="sidekick-bar" id="sidekick-bar">
+          <div class="sidekick-avatar" id="sidekick-avatar-face">🤖</div>
+          <div class="sidekick-bubble">
+            <strong id="sidekick-name">Pixel:</strong>
+            <span id="sidekick-text">"Let's lock in and master this concept! You got this!"</span>
+          </div>
+        </div>
+
+        <!-- Lesson Bottom Control Footer -->
+        <footer class="lesson-footer">
+          <button class="hint-pill-btn" id="lesson-hint-btn">💡 Hint (-30 pts)</button>
+          <button class="continue-pill-btn" id="lesson-check-btn">CHECK ANSWER ➔</button>
+        </footer>
+      </section>
+
+      <!-- 5. PHONK DRIFT ARENA VIEW -->
+      <section id="view-phonk-arena" class="view-panel hidden">
+        <div class="drift-arena-container">
+          <div class="drift-top-bar">
+            <button class="close-arena-btn" id="exit-drift-btn">✕ Exit</button>
+            <div class="drift-timer-box" id="drift-timer-box">
+              <span class="timer-flame">⏱️</span>
+              <span class="timer-countdown" id="drift-timer">60</span>s
+            </div>
+            <div class="drift-combo-meter" id="drift-combo-container">
+              <span class="combo-label">COMBO</span>
+              <span class="combo-multiplier" id="drift-combo-val">1x</span>
+              <div class="combo-flame-bar" id="drift-combo-bar"></div>
+            </div>
+            <div class="drift-score-box">
+              <span class="drift-score-val" id="drift-score">0</span>
+              <span class="drift-score-lbl">AURA</span>
+            </div>
+          </div>
+
+          <div class="drift-game-area" id="drift-game-area">
+            <div class="drift-speed-lines" id="drift-speed-lines"></div>
+            <div class="drift-question-card" id="drift-question-card">
+              <div class="drift-q-label">SPEED MULTIPLICATION</div>
+              <div class="drift-math-expression" id="drift-math-expr">7 × 8 = ?</div>
+              <div class="drift-options-grid" id="drift-options-grid">
+                <!-- 4 Rapid tap option buttons -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. THE 1% CLUB LOGIC VAULT VIEW -->
+      <section id="view-logic-club" class="view-panel hidden">
+        <div class="logic-vault-container">
+          <div class="logic-header">
+            <button class="close-arena-btn" id="exit-logic-btn">✕ Exit</button>
+            <div class="logic-tier-indicator" id="logic-tier-indicator">
+              <span class="tier-percent" id="logic-percent-tag">90% QUESTION</span>
+              <span class="tier-sub">90% of people can answer this</span>
+            </div>
+            <div class="logic-lives-container" id="logic-passes-indicator">
+              <span>🎟️ Pass: 1 Left</span>
+            </div>
+          </div>
+
+          <div class="logic-question-stage" id="logic-stage-content">
+            <!-- 1% Club Riddle Content -->
+          </div>
+
+          <div class="logic-footer">
+            <button class="logic-pass-btn" id="logic-use-pass-btn">USE PASS 🎟️</button>
+            <button class="continue-pill-btn" id="logic-submit-btn">LOCK IN ANSWER ➔</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. BOSS BATTLE VIEW -->
+      <section id="view-boss-battle" class="view-panel hidden">
+        <div class="boss-arena-container">
+          <div class="boss-top-bar">
+            <button class="close-arena-btn" id="exit-boss-btn">✕ Run Away</button>
+            <div class="boss-health-card">
+              <div class="boss-info-row">
+                <span class="boss-name" id="boss-display-name">THE SKIBIDI FRACTION GOLEM</span>
+                <span class="boss-hp-text" id="boss-hp-text">100 / 100 HP</span>
+              </div>
+              <div class="boss-hp-bar-wrap">
+                <div class="boss-hp-fill" id="boss-hp-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="boss-combat-stage">
+            <div class="boss-avatar-display" id="boss-avatar-display">
+              <div class="boss-sprite" id="boss-sprite-anim">🗿</div>
+              <div class="boss-status-speech" id="boss-speech">"You will never simplify these fractions!"</div>
+            </div>
+
+            <div class="boss-question-card" id="boss-question-card">
+              <!-- Boss question questions -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. STEM DETECTIVE AGENCY VIEW -->
+      <section id="view-stem-detective" class="view-panel hidden">
+        <div id="stem-detective-container" class="stem-detective-container">
+          <!-- Rendered via STEMDetectiveEngine -->
+        </div>
+      </section>
+
+      <!-- 9. ZAYN SCIENCE LAB VIEW -->
+      <section id="view-science-lab" class="view-panel hidden">
+        <div id="science-lab-container" class="science-lab-container">
+          <!-- Rendered via ScienceLabEngine -->
+        </div>
+      </section>
+    </main>
+
+    <!-- CUSTOM AVATAR & SHOP MODAL (LOCKER) -->
+    <div id="locker-modal" class="modal-overlay hidden">
+      <div class="locker-modal-content">
+        <div class="locker-modal-header">
+          <h2>🎒 Minifig & Skin Locker</h2>
+          <div class="locker-gem-pill">💎 <span id="locker-gems-val">150</span> Gems</div>
+          <button class="modal-close-btn" id="close-locker-btn">✕</button>
+        </div>
+
+        <div class="locker-body">
+          <!-- Avatar Live Canvas Preview -->
+          <div class="avatar-preview-pane">
+            <div class="avatar-canvas-holder" id="avatar-canvas-holder">
+              <!-- Rendered via SVG/Canvas -->
+            </div>
+            <div class="avatar-title-display">
+              <h3 id="avatar-display-name">Zayn</h3>
+              <p id="avatar-display-rank" class="rank-highlight">100k Aura Sigma Master</p>
+            </div>
+          </div>
+
+          <!-- Shop / Inventory Tabs -->
+          <div class="locker-tabs-pane">
+            <div class="locker-category-tabs">
+              <button class="locker-tab-btn active" data-cat="heads">👑 Heads / Helmets</button>
+              <button class="locker-tab-btn" data-cat="outfits">👕 Skins / Armor</button>
+              <button class="locker-tab-btn" data-cat="accessories">🕶️ Memes & Flair</button>
+              <button class="locker-tab-btn" data-cat="pets">🤖 Companions</button>
+            </div>
+
+            <div class="locker-items-grid" id="locker-items-grid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPREHENSIVE ARCADE END-OF-GAME RESULTS REPORT MODAL -->
+    <div id="arcade-results-modal" class="modal-overlay hidden">
+      <div class="arcade-summary-card">
+        <div class="summary-header-badge" id="summary-badge">ARCADE MATCH COMPLETE</div>
+        <h2 class="summary-game-title" id="summary-game-name">Math Snake</h2>
+
+        <div class="summary-stats-grid">
+          <div class="summary-stat-box highlight">
+            <span class="stat-box-label">FINAL SCORE</span>
+            <span class="stat-box-val" id="summary-score-val">1,250</span>
+          </div>
+          <div class="summary-stat-box highlight">
+            <span class="stat-box-label">MATH ACCURACY</span>
+            <span class="stat-box-val" id="summary-accuracy-val">92%</span>
+          </div>
+          <div class="summary-stat-box">
+            <span class="stat-box-label">CORRECT / WRONG</span>
+            <span class="stat-box-val" id="summary-correct-wrong-val">12 / 1</span>
+          </div>
+          <div class="summary-stat-box">
+            <span class="stat-box-label">LONGEST STREAK</span>
+            <span class="stat-box-val" id="summary-streak-val">🔥 8 In A Row</span>
+          </div>
+        </div>
+
+        <div class="summary-rewards-row">
+          <div class="prize-pill">
+            <span class="prize-icon">⭐</span>
+            <span class="prize-qty" id="summary-xp-val">+120 XP</span>
+          </div>
+          <div class="prize-pill">
+            <span class="prize-icon">💎</span>
+            <span class="prize-qty" id="summary-gems-val">+20 Gems</span>
+          </div>
+          <div class="prize-pill aura-prize">
+            <span class="prize-icon">📈</span>
+            <span class="prize-qty" id="summary-aura-val">+450 Aura</span>
+          </div>
+        </div>
+
+        <!-- Mistake Memory Notice -->
+        <div class="summary-mistake-box" id="summary-mistake-box" style="display: none;">
+          <strong>🧠 Skill Progress & Memory:</strong>
+          <span id="summary-mistake-text">Keep practicing the 7 × 8 and 9 × 6 fact families!</span>
+        </div>
+
+        <div class="summary-actions-row">
+          <button class="summary-btn summary-btn-secondary" id="summary-exit-btn">ARCADE HUB</button>
+          <button class="summary-btn summary-btn-primary" id="summary-replay-btn">PLAY AGAIN ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STANDARD LESSON REWARD / LEVEL UP / AURA POPUP MODAL -->
+    <div id="reward-modal" class="modal-overlay hidden">
+      <div class="reward-card-content">
+        <div class="reward-flair-icon" id="reward-icon">🎉</div>
+        <h2 class="reward-title" id="reward-title">LESSON COMPLETE!</h2>
+        <p class="reward-sub" id="reward-sub">You cooked that math problem with 100% accuracy!</p>
+
+        <div class="reward-prizes-row">
+          <div class="prize-pill">
+            <span class="prize-icon">⭐</span>
+            <span class="prize-qty" id="reward-xp">+100 XP</span>
+          </div>
+          <div class="prize-pill">
+            <span class="prize-icon">💎</span>
+            <span class="prize-qty" id="reward-gems">+15 Gems</span>
+          </div>
+          <div class="prize-pill aura-prize">
+            <span class="prize-icon">📈</span>
+            <span class="prize-qty" id="reward-aura">+500 Aura</span>
+          </div>
+        </div>
+
+        <div class="reward-stars-display" id="reward-stars-row">
+          <span class="star-pop">⭐</span>
+          <span class="star-pop">⭐</span>
+          <span class="star-pop">⭐</span>
+        </div>
+
+        <button class="continue-pill-btn reward-claim-btn" id="claim-reward-btn">CLAIM REWARDS & CONTINUE ➔</button>
+      </div>
+    </div>
+
+    <!-- STEM Detective Notebook Modal -->
+    <div id="stem-notebook-modal" class="modal-overlay stem-notebook-modal hidden">
+      <div class="stem-notebook-dossier">
+        <div class="stem-notebook-header">
+          <h3 class="stem-notebook-title">📓 Zayn's Official STEM Detective Notebook</h3>
+          <button class="icon-btn" id="close-stem-notebook-btn" style="background:none; border:none; color:#fde68a; font-size:1.5rem; cursor:pointer;">✕</button>
+        </div>
+        <div class="stem-notebook-body">
+          <h4 class="stem-notebook-section-title">Case Evidence & Field Observations</h4>
+          <ul class="stem-evidence-list" id="stem-evidence-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEM Detective Case Solved Modal -->
+    <div id="stem-solved-modal" class="modal-overlay stem-solved-modal hidden">
+      <div class="stem-solved-card">
+        <div class="stem-badge-award">🏆</div>
+        <h2 class="reward-title" id="stem-solved-title" style="color:#fde047; font-family:'Fredoka', cursive;">CASE SOLVED!</h2>
+        <p id="stem-solved-text" style="color:#cbd5e1; font-size:1.05rem; line-height:1.6;"></p>
+        
+        <div class="reward-prizes-row">
+          <div class="prize-pill"><span class="prize-icon">⭐</span><span>+500 XP</span></div>
+          <div class="prize-pill"><span class="prize-icon">💎</span><span>+100 Gems</span></div>
+          <div class="prize-pill aura-prize"><span class="prize-icon">📈</span><span>+2500 Aura</span></div>
+        </div>
+
+        <div style="background:rgba(99,102,241,0.2); border:1px solid #818cf8; border-radius:12px; padding:0.6rem 1.2rem; color:#fde047; font-weight:800; font-size:0.95rem;" id="stem-solved-badge-name">
+          NEW BADGE: MASTER STEM DETECTIVE 🔎
+        </div>
+
+        <button class="continue-pill-btn reward-claim-btn" id="close-stem-solved-btn">CLAIM REWARDS & CLOSE DOSSIER ➔</button>
+      </div>
+    </div>
+
+    <!-- Science Journal Dossier Modal -->
+    <div id="science-journal-modal" class="modal-overlay science-journal-modal hidden">
+      <div class="science-journal-dossier">
+        <div class="science-journal-header">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span style="font-size:1.6rem;">📖</span>
+            <h3 class="science-journal-title">Zayn's Science Journal & Discoveries</h3>
+          </div>
+          <button class="icon-btn" id="close-science-journal-btn" style="background:none; border:none; color:#fde68a; font-size:1.5rem; cursor:pointer;">✕</button>
+        </div>
+        <div class="science-journal-body">
+          <div class="science-journal-tabs">
+            <button class="journal-tab-btn active" data-cat="all">ALL DISCOVERIES</button>
+            <button class="journal-tab-btn" data-cat="physics">⚡ PHYSICS</button>
+            <button class="journal-tab-btn" data-cat="chemistry">⚛️ CHEMISTRY</button>
+            <button class="journal-tab-btn" data-cat="biology">🧬 BIOLOGY</button>
+          </div>
+          <div class="journal-cards-grid" id="science-journal-cards-container">
+            <!-- Populated dynamically by ScienceLabEngine -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Science New Discovery Celebration Modal -->
+    <div id="science-discovery-modal" class="modal-overlay science-discovery-modal hidden">
+      <div class="science-discovery-card">
+        <div class="discovery-badge-icon" id="discovery-modal-icon">🔬</div>
+        <h2 class="reward-title" id="discovery-modal-title" style="color:#fde047; font-family:'Fredoka', cursive;">NEW DISCOVERY!</h2>
+        <p id="discovery-modal-desc" style="color:#cbd5e1; font-size:1rem; line-height:1.5;"></p>
+        
+        <div class="reward-prizes-row">
+          <div class="prize-pill"><span class="prize-icon">⭐</span><span>+50 Discovery XP</span></div>
+          <div class="prize-pill"><span class="prize-icon">💎</span><span>+15 Gems</span></div>
+          <div class="prize-pill aura-prize"><span class="prize-icon">📈</span><span>+250 Aura</span></div>
+        </div>
+
+        <button class="continue-pill-btn reward-claim-btn" id="close-science-discovery-btn">LOG IN SCIENCE JOURNAL ➔</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="js/audio/soundEngine.js"></script>
+  <script src="js/data/curriculum.js"></script>
+  <script src="js/data/shopItems.js"></script>
+  <script src="js/data/achievements.js"></script>
+  <script src="js/data/scienceData.js"></script>
+  <script src="js/state/gameState.js"></script>
+  <script src="js/state/adaptiveEngine.js"></script>
+  <script src="js/components/avatarBuilder.js"></script>
+  <script src="js/components/interactiveWidgets.js"></script>
+  <script src="js/components/mapRenderer.js"></script>
+  <script src="js/components/lessonEngine.js"></script>
+  <script src="js/components/phonkDriftArena.js"></script>
+  <script src="js/components/logicClubEngine.js"></script>
+  <script src="js/components/bossBattleEngine.js"></script>
+  <script src="js/components/arcadeGames.js"></script>
+  <script src="js/components/stemDetectiveEngine.js"></script>
+  <script src="js/components/scienceLabEngine.js"></script>
+  <script src="js/components/lockerModal.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

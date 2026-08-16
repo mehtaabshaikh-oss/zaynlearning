@@ -1,0 +1,340 @@
+/* ==========================================================================
+   DUOLINGO-STYLE SINUOUS BIOME MAP VIEW
+   ========================================================================== */
+
+#view-map {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 20%, #172242 0%, #0d1222 100%);
+  position: relative;
+}
+
+/* World Switcher Tabs */
+.world-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(14, 19, 34, 0.9);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.world-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.world-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-game);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.world-tab-btn:hover {
+  color: var(--text-main);
+  border-color: var(--accent-gem);
+}
+
+.world-tab-btn.active {
+  background: var(--bg-surface);
+  border-color: var(--lego-yellow);
+  color: #fff;
+  box-shadow: 0 0 14px rgba(255, 213, 0, 0.25);
+  font-weight: 700;
+}
+
+/* Biome World Banner Header */
+.world-header-banner {
+  margin: 12px 20px 8px 20px;
+  padding: 16px 24px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-badge {
+  display: inline-block;
+  background: var(--lego-yellow);
+  color: var(--text-dark);
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.banner-title {
+  font-size: 22px;
+  font-family: var(--font-mono);
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.banner-subtitle {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.banner-btn {
+  background: linear-gradient(135deg, #e11d48, #be123c);
+  color: #fff;
+  border: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  box-shadow: 0 4px 0 #881337;
+  transition: transform var(--transition-fast);
+}
+
+.banner-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Daily Mission Card */
+.daily-mission-card {
+  margin: 0 20px 10px 20px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px dashed var(--accent-aura);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-flair {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--accent-aura);
+  letter-spacing: 0.5px;
+}
+
+.mission-reward-badge {
+  font-size: 12px;
+  color: var(--accent-gem);
+  font-weight: 600;
+}
+
+.mission-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.mission-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface-elevated);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.mission-item.completed {
+  color: var(--brand-primary);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+/* Path Map Scroll Area */
+.path-map-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 80px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-surface-elevated) transparent;
+}
+
+.path-canvas-wrap {
+  width: 100%;
+  max-width: 540px;
+  min-height: 850px;
+  position: relative;
+  margin: 20px auto;
+}
+
+.path-svg-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.nodes-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+/* Sinuous Node Item */
+.map-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.map-node:hover {
+  transform: translate(-50%, -55%) scale(1.08);
+}
+
+.map-node:active {
+  transform: translate(-50%, -45%) scale(0.96);
+}
+
+.node-circle-btn {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), 0 12px 24px rgba(0, 0, 0, 0.3);
+  position: relative;
+  background: var(--bg-surface);
+  transition: all 0.2s ease;
+}
+
+/* Node States */
+.map-node.unlocked .node-circle-btn {
+  background: linear-gradient(135deg, var(--brand-primary), #3ca300);
+  border-color: #a3e635;
+}
+
+.map-node.current .node-circle-btn {
+  background: linear-gradient(135deg, var(--lego-yellow), #f59e0b);
+  border-color: #fff;
+  animation: currentPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes currentPulse {
+  0%, 100% {
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), 0 0 25px rgba(255, 213, 0, 0.8);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 213, 0, 1);
+    transform: scale(1.06);
+  }
+}
+
+.map-node.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.map-node.locked:hover {
+  transform: translate(-50%, -50%);
+}
+
+.map-node.locked .node-circle-btn {
+  background: #334155;
+  border-color: #64748b;
+  box-shadow: 0 6px 0 #1e293b;
+}
+
+/* Special Node Types */
+.map-node.boss .node-circle-btn {
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  border-color: #fca5a5;
+}
+
+.map-node.chest .node-circle-btn {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  border-color: #fde68a;
+}
+
+.node-icon-display {
+  font-size: 32px;
+}
+
+.map-node.boss .node-icon-display {
+  font-size: 40px;
+}
+
+/* Star Rating Under Node */
+.node-stars-row {
+  display: flex;
+  gap: 2px;
+  margin-top: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+}
+
+.node-star {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.node-star.active {
+  color: var(--lego-yellow);
+}
+
+/* Node Title Tag Below */
+.node-title-tag {
+  margin-top: 4px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(14, 19, 34, 0.9);
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
