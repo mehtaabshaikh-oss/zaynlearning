@@ -409,6 +409,54 @@ class SnakeMathGame {
     }
   }
 
+  handlePointer(x, y, type) {
+    if (type === 'down') {
+      this.touchStartX = x;
+      this.touchStartY = y;
+    } else if (type === 'up' || type === 'move') {
+      if (this.touchStartX !== undefined && this.touchStartY !== undefined) {
+        const dx = x - this.touchStartX;
+        const dy = y - this.touchStartY;
+        const dist = Math.hypot(dx, dy);
+
+        // If swipe gesture detected (moved > 15px)
+        if (dist > 15) {
+          if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0 && this.direction.x === 0) this.nextDirection = { x: 1, y: 0 };
+            else if (dx < 0 && this.direction.x === 0) this.nextDirection = { x: -1, y: 0 };
+          } else {
+            if (dy > 0 && this.direction.y === 0) this.nextDirection = { x: 0, y: 1 };
+            else if (dy < 0 && this.direction.y === 0) this.nextDirection = { x: 0, y: -1 };
+          }
+          if (type === 'up') {
+            this.touchStartX = undefined;
+            this.touchStartY = undefined;
+          }
+          return;
+        }
+      }
+
+      // If simple tap on canvas relative to snake head
+      if (type === 'up' && this.snake && this.snake[0]) {
+        const headScreenX = this.snake[0].x * this.gridSize;
+        const headScreenY = this.snake[0].y * this.gridSize;
+        const dx = x - headScreenX;
+        const dy = y - headScreenY;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 0 && this.direction.x === 0) this.nextDirection = { x: 1, y: 0 };
+          else if (dx < 0 && this.direction.x === 0) this.nextDirection = { x: -1, y: 0 };
+        } else {
+          if (dy > 0 && this.direction.y === 0) this.nextDirection = { x: 0, y: 1 };
+          else if (dy < 0 && this.direction.y === 0) this.nextDirection = { x: 0, y: -1 };
+        }
+
+        this.touchStartX = undefined;
+        this.touchStartY = undefined;
+      }
+    }
+  }
+
   update() {
     const now = performance.now();
     if (now - this.lastTick < this.tickRate) return;
