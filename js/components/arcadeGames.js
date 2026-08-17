@@ -2646,16 +2646,37 @@ class EquationEscapeRoomGame {
     if (this.room === 1) {
       this.code1 = Math.floor(Math.random() * 5) + 4; // 4 to 8
       this.code2 = 48; // Pattern: 3, 6, 12, 24, 48
-      this.hub.setPrompt(`🔐 [${roomTitle}] PUZZLE 1/3: Solve 4 × x = ${4 * this.code1} for Digit 1`);
+      this.eqDisplay = `4 × x = ${4 * this.code1}`;
+      this.patDisplay = `3 ➔ 6 ➔ 12 ➔ 24 ➔ ?`;
+      this.hub.setPrompt(`🔐 [${roomTitle}] PUZZLE 1/3: Solve ${this.eqDisplay} for Digit 1`);
     } else if (this.room === 2) {
       this.code1 = Math.floor(Math.random() * 4) + 6; // 6 to 9
       this.code2 = 81; // Pattern: 1, 3, 9, 27, 81
-      this.hub.setPrompt(`🔐 [${roomTitle}] PUZZLE 1/3: Solve 3x + 5 = ${3 * this.code1 + 5} for Digit 1`);
+      this.eqDisplay = `3x + 5 = ${3 * this.code1 + 5}`;
+      this.patDisplay = `1 ➔ 3 ➔ 9 ➔ 27 ➔ ?`;
+      this.hub.setPrompt(`🔐 [${roomTitle}] PUZZLE 1/3: Solve ${this.eqDisplay} for Digit 1`);
     } else {
       this.code1 = Math.floor(Math.random() * 4) + 7; // 7 to 10
       this.code2 = 64; // Pattern: 4, 8, 16, 32, 64
-      this.hub.setPrompt(`🔐 [${roomTitle}] PUZZLE 1/3: Solve x ÷ 2 = ${this.code1} for Digit 1`);
+      this.eqDisplay = `x ÷ 2 = ${this.code1}`;
+      this.patDisplay = `4 ➔ 8 ➔ 16 ➔ 32 ➔ ?`;
+      this.hub.setPrompt(`🔐 [${roomTitle}] PUZZLE 1/3: Solve ${this.eqDisplay} for Digit 1`);
     }
+
+    // Persist shuffled choices once per puzzle!
+    this.stage1Choices = [
+      this.code1,
+      this.code1 + 2,
+      Math.max(1, this.code1 - 2),
+      this.code1 + 1
+    ].sort(() => Math.random() - 0.5);
+
+    this.stage2Choices = [
+      this.code2,
+      this.code2 - 12,
+      this.code2 + 10,
+      this.code2 - 6
+    ].sort(() => Math.random() - 0.5);
   }
 
   handlePointer(x, y, type) {
@@ -2663,24 +2684,31 @@ class EquationEscapeRoomGame {
     const roomTitle = this.roomNames[this.room - 1] || `Chamber ${this.room}`;
 
     if (this.stage === 1) {
-      const choices = [this.code1, this.code1 + 2, Math.max(1, this.code1 - 2), this.code1 + 1].sort(() => Math.random() - 0.5);
+      if (y >= 250 && y <= 315) {
+        let selectedIdx = -1;
+        for (let i = 0; i < 4; i++) {
+          const btnX = 60 + i * 125;
+          if (x >= btnX && x <= btnX + 110) {
+            selectedIdx = i;
+            break;
+          }
+        }
 
-      if (y >= 260 && y <= 320) {
-        let selected = null;
-        if (x >= 80 && x <= 180) selected = choices[0];
-        else if (x >= 200 && x <= 300) selected = choices[1];
-        else if (x >= 320 && x <= 420) selected = choices[2];
-        else if (x >= 440 && x <= 540) selected = choices[3];
-
-        if (selected !== null) {
+        if (selectedIdx !== -1 && this.stage1Choices) {
+          const selected = this.stage1Choices[selectedIdx];
           if (selected === this.code1) {
             this.correctCount++;
             this.currentStreak++;
             this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
             this.score += 250;
             this.stage = 2;
+            this.hub.scoreEl.textContent = this.score;
+
             if (window.soundEngine) window.soundEngine.playCorrect();
-            if (window.helpers) window.helpers.spawnAuraFloatingText(`Digit 1 Unlocked: [${this.code1}]! 🔓`, undefined, undefined, true);
+            if (window.helpers) {
+              window.helpers.spawnConfetti(50);
+              window.helpers.spawnAuraFloatingText(`Digit 1 Unlocked: [${this.code1}]! 🔓 +250 Aura`, undefined, undefined, true);
+            }
             
             if (this.room === 1) {
               this.hub.setPrompt(`🕰️ PUZZLE 2/3: Clock pattern: 3, 6, 12, 24, __? (Find Digit 2)`);
@@ -2693,39 +2721,48 @@ class EquationEscapeRoomGame {
             this.incorrectCount++;
             this.currentStreak = 0;
             if (window.soundEngine) window.soundEngine.playWrong();
+            if (window.helpers) window.helpers.spawnAuraFloatingText(`Incorrect value for x!`, x, y, false);
           }
         }
       }
     } else if (this.stage === 2) {
-      const choices = [this.code2, this.code2 - 12, this.code2 + 10, this.code2 - 6].sort(() => Math.random() - 0.5);
+      if (y >= 250 && y <= 315) {
+        let selectedIdx = -1;
+        for (let i = 0; i < 4; i++) {
+          const btnX = 60 + i * 125;
+          if (x >= btnX && x <= btnX + 110) {
+            selectedIdx = i;
+            break;
+          }
+        }
 
-      if (y >= 260 && y <= 320) {
-        let selected = null;
-        if (x >= 80 && x <= 180) selected = choices[0];
-        else if (x >= 200 && x <= 300) selected = choices[1];
-        else if (x >= 320 && x <= 420) selected = choices[2];
-        else if (x >= 440 && x <= 540) selected = choices[3];
-
-        if (selected !== null) {
+        if (selectedIdx !== -1 && this.stage2Choices) {
+          const selected = this.stage2Choices[selectedIdx];
           if (selected === this.code2) {
             this.correctCount++;
             this.currentStreak++;
             this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
             this.score += 300;
             this.stage = 3;
+            this.hub.scoreEl.textContent = this.score;
+
             if (window.soundEngine) window.soundEngine.playCorrect();
-            if (window.helpers) window.helpers.spawnAuraFloatingText(`Digit 2 Unlocked: [${this.code2}]! 🔓`, undefined, undefined, true);
+            if (window.helpers) {
+              window.helpers.spawnConfetti(60);
+              window.helpers.spawnAuraFloatingText(`Digit 2 Unlocked: [${this.code2}]! 🔓 +300 Aura`, undefined, undefined, true);
+            }
             this.hub.setPrompt(`🚪 PUZZLE 3/3: Combine codes [${this.code1} - ${this.code2}] ➔ Tap 'UNLOCK DOOR' to Escape!`);
           } else {
             this.incorrectCount++;
             this.currentStreak = 0;
             if (window.soundEngine) window.soundEngine.playWrong();
+            if (window.helpers) window.helpers.spawnAuraFloatingText(`Check the multiplication rule!`, x, y, false);
           }
         }
       }
     } else if (this.stage === 3) {
       // Escape Door Button
-      if (x >= 180 && x <= 420 && y >= 250 && y <= 320) {
+      if (x >= 160 && x <= 440 && y >= 240 && y <= 320) {
         this.correctCount++;
         this.currentStreak++;
         this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
@@ -2734,8 +2771,8 @@ class EquationEscapeRoomGame {
 
         if (window.soundEngine) window.soundEngine.playLevelUp();
         if (window.helpers) {
-          window.helpers.spawnConfetti(90);
-          window.helpers.spawnAuraFloatingText(`🏆 ESCAPED ${roomTitle.toUpperCase()}!`, undefined, undefined, true);
+          window.helpers.spawnConfetti(100);
+          window.helpers.spawnAuraFloatingText(`🏆 ESCAPED ${roomTitle.toUpperCase()}! +400 Aura`, undefined, undefined, true);
         }
 
         this.room++;
@@ -2776,60 +2813,64 @@ class EquationEscapeRoomGame {
     ctx.textAlign = 'center';
     ctx.fillText(`🔐 ESCAPE ROOM: ${roomTitle.toUpperCase()} (ROOM ${Math.min(this.room, this.maxRooms)}/3)`, 300, 30);
 
-    // Chamber Wall
+    // Chamber Wall Frame
     ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(40, 50, 520, 330);
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(30, 48, 540, 336, 12);
+    ctx.stroke();
 
     if (this.stage === 1) {
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 20px "Space Grotesk"';
+      ctx.font = 'bold 22px "Space Grotesk"';
       ctx.textAlign = 'center';
       
-      let eqText = `🔒 Digital Safe: 4 × x = ${4 * this.code1}`;
-      if (this.room === 2) eqText = `🔒 Terminal: 3x + 5 = ${3 * this.code1 + 5}`;
-      if (this.room === 3) eqText = `🔒 Alchemist Cauldron: x ÷ 2 = ${this.code1}`;
+      const eqText = `🔒 Digital Safe: ${this.eqDisplay}`;
+      ctx.fillText(eqText, 300, 105);
 
-      ctx.fillText(eqText, 300, 110);
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '15px "Fredoka"';
-      ctx.fillText('Tap the button with the correct value of x to crack Digit 1:', 300, 150);
+      ctx.font = '15px "Fredoka", sans-serif';
+      ctx.fillText('Tap the button with the correct value of x to crack Digit 1:', 300, 145);
 
-      const choices = [this.code1, this.code1 + 2, Math.max(1, this.code1 - 2), this.code1 + 1];
-      choices.forEach((c, idx) => {
-        const btnX = 80 + idx * 120;
+      (this.stage1Choices || []).forEach((c, idx) => {
+        const btnX = 60 + idx * 125;
         ctx.fillStyle = '#1e293b';
-        ctx.fillRect(btnX, 260, 100, 50);
+        ctx.beginPath();
+        ctx.roundRect(btnX, 255, 110, 52, 10);
+        ctx.fill();
         ctx.strokeStyle = '#38bdf8';
-        ctx.strokeRect(btnX, 260, 100, 50);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
         ctx.fillStyle = '#fde047';
         ctx.font = 'bold 18px "Space Grotesk"';
-        ctx.fillText(`x = ${c}`, btnX + 50, 292);
+        ctx.fillText(`x = ${c}`, btnX + 55, 287);
       });
     } else if (this.stage === 2) {
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 20px "Space Grotesk"';
+      ctx.font = 'bold 22px "Space Grotesk"';
       ctx.textAlign = 'center';
 
-      let patText = `🕰️ Clock Pattern: 3 ➔ 6 ➔ 12 ➔ 24 ➔ ?`;
-      if (this.room === 2) patText = `⚡ Cyber Pattern: 1 ➔ 3 ➔ 9 ➔ 27 ➔ ?`;
-      if (this.room === 3) patText = `🔮 Rune Pattern: 4 ➔ 8 ➔ 16 ➔ 32 ➔ ?`;
+      const patText = `🕰️ Sequence Pattern: ${this.patDisplay}`;
+      ctx.fillText(patText, 300, 105);
 
-      ctx.fillText(patText, 300, 110);
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '15px "Fredoka"';
-      ctx.fillText('Identify the multiplication sequence rule and tap the missing number:', 300, 150);
+      ctx.font = '15px "Fredoka", sans-serif';
+      ctx.fillText('Identify the multiplication sequence rule and tap the missing number:', 300, 145);
 
-      const choices = [this.code2, this.code2 - 12, this.code2 + 10, this.code2 - 6];
-      choices.forEach((c, idx) => {
-        const btnX = 80 + idx * 120;
+      (this.stage2Choices || []).forEach((c, idx) => {
+        const btnX = 60 + idx * 125;
         ctx.fillStyle = '#1e293b';
-        ctx.fillRect(btnX, 260, 100, 50);
+        ctx.beginPath();
+        ctx.roundRect(btnX, 255, 110, 52, 10);
+        ctx.fill();
         ctx.strokeStyle = '#a855f7';
-        ctx.strokeRect(btnX, 260, 100, 50);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
         ctx.fillStyle = '#fde047';
         ctx.font = 'bold 18px "Space Grotesk"';
-        ctx.fillText(`${c}`, btnX + 50, 292);
+        ctx.fillText(`${c}`, btnX + 55, 287);
       });
     } else if (this.stage === 3) {
       ctx.fillStyle = '#ffd500';
@@ -2837,11 +2878,14 @@ class EquationEscapeRoomGame {
       ctx.textAlign = 'center';
       ctx.fillText(`🎉 ESCAPE KEY CODE: [${this.code1} - ${this.code2}]`, 300, 120);
 
-      ctx.fillStyle = '#58cc02';
-      ctx.fillRect(180, 250, 240, 60);
+      ctx.fillStyle = '#22c55e';
+      ctx.beginPath();
+      ctx.roundRect(160, 245, 280, 58, 12);
+      ctx.fill();
+
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 18px "Space Grotesk"';
-      ctx.fillText('🚪 UNLOCK DOOR ➔', 300, 286);
+      ctx.fillText('🚪 UNLOCK DOOR ➔', 300, 281);
     }
   }
 }
