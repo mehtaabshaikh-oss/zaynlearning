@@ -22,6 +22,7 @@ class App {
     window.arcadeHub = new ArcadeHub();
     window.stemDetectiveEngine = new STEMDetectiveEngine();
     window.scienceLabEngine = new ScienceLabEngine();
+    window.classroomEngine = new ClassroomEngine();
     window.quickSyncModal = new QuickSyncModal();
 
     this.showView('view-arcade-hub');
@@ -60,6 +61,9 @@ class App {
     }
     if (viewId === 'view-science-lab' && window.scienceLabEngine) {
       window.scienceLabEngine.renderLabHub();
+    }
+    if (viewId === 'view-classroom-hub' && window.classroomEngine) {
+      window.classroomEngine.renderHub();
     }
   }
 

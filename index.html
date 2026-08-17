@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="css/stemDetective.css">
   <link rel="stylesheet" href="css/scienceLab.css">
   <link rel="stylesheet" href="css/logicClub.css">
+  <link rel="stylesheet" href="css/classroom.css">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -82,17 +83,22 @@
           <span>🕹️ ARCADE</span>
         </button>
 
-        <!-- 2. Science Lab -->
+        <!-- 2. Classroom Power-Ups (School Reinforcement) -->
+        <button id="quick-classroom-btn" class="action-pill-btn" style="background:#4338ca; border-color:#6366f1;" title="Classroom Power-Ups & School Curriculum">
+          <span>🎒 CLASSROOM</span>
+        </button>
+
+        <!-- 3. Science Lab -->
         <button id="quick-science-btn" class="action-pill-btn" title="Zayn Science Lab">
           <span>🔬 SCIENCE LAB</span>
         </button>
 
-        <!-- 3. Speed Math & Drift Arena -->
+        <!-- 4. Speed Math & Drift Arena -->
         <button id="quick-drift-btn" class="action-pill-btn" title="Star Speed Math & Phonk Drift Arena">
           <span>⚡ SPEED MATH</span>
         </button>
 
-        <!-- 4. 1% Club -->
+        <!-- 5. 1% Club -->
         <button id="quick-logic-btn" class="action-pill-btn" title="The 1% Club Logic Vault">
           <span>🧠 1% CLUB</span>
         </button>
@@ -589,6 +595,66 @@
           <!-- Rendered via ScienceLabEngine -->
         </div>
       </section>
+
+      <!-- 10. 🎒 CLASSROOM POWER-UPS HUB VIEW -->
+      <section id="view-classroom-hub" class="view-panel hidden">
+        <div class="classroom-header">
+          <h1 class="classroom-hub-title"><span>🎒</span> CLASSROOM POWER-UPS</h1>
+          <p class="classroom-hub-sub">Reinforce and master what you are learning at school with interactive concept toys and quick quizzes!</p>
+        </div>
+
+        <!-- Classroom Stats Summary Bar -->
+        <div class="classroom-stats-bar">
+          <div class="classroom-stat-box">
+            <div class="classroom-stat-icon">📚</div>
+            <div class="classroom-stat-info">
+              <span class="classroom-stat-num" id="classroom-stat-learned">0</span>
+              <span class="classroom-stat-label">Concepts Learned</span>
+            </div>
+          </div>
+          <div class="classroom-stat-box">
+            <div class="classroom-stat-icon">⭐</div>
+            <div class="classroom-stat-info">
+              <span class="classroom-stat-num" id="classroom-stat-mastered">0</span>
+              <span class="classroom-stat-label">Concepts Mastered</span>
+            </div>
+          </div>
+          <div class="classroom-stat-box">
+            <div class="classroom-stat-icon">🔥</div>
+            <div class="classroom-stat-info">
+              <span class="classroom-stat-num" id="classroom-stat-streak">1 🔥</span>
+              <span class="classroom-stat-label">Classroom Streak</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily School Word Feature Banner -->
+        <div class="classroom-daily-word-banner">
+          <div class="daily-word-content">
+            <span class="daily-word-tag">📚 TODAY'S SCHOOL VOCABULARY WORD</span>
+            <div class="daily-word-term" id="daily-word-term-text">ECOSYSTEM</div>
+            <div class="daily-word-desc" id="daily-word-desc-text">A community of living organisms interacting with nonliving things in their environment.</div>
+          </div>
+          <button class="daily-word-btn" id="classroom-daily-word-btn">LEARN WORD (+25 XP) ➔</button>
+        </div>
+
+        <!-- Category Filter Tabs & Quick Tools -->
+        <div class="classroom-tabs-bar">
+          <div class="classroom-category-pills">
+            <button class="classroom-cat-btn active" data-cat="science">🔬 SCIENCE (7 Units)</button>
+            <button class="classroom-cat-btn" data-cat="math">🔢 MATH (7 Units)</button>
+          </div>
+          <div class="classroom-quick-tools">
+            <button class="classroom-tool-btn" id="classroom-quick-quiz-btn">⚡ Quick School Quiz (10 Qs)</button>
+            <button class="classroom-tool-btn" id="classroom-dyk-feed-btn">💡 Did You Know Feed</button>
+          </div>
+        </div>
+
+        <!-- Topics Grid -->
+        <div class="classroom-topics-grid" id="classroom-topics-container">
+          <!-- Dynamically populated via ClassroomEngine -->
+        </div>
+      </section>
     </main>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile Screens <= 768px) -->
@@ -596,6 +662,10 @@
       <button class="mobile-nav-item active" data-view="view-arcade-hub" id="mob-nav-arcade">
         <span class="mob-nav-icon">🕹️</span>
         <span class="mob-nav-label">Arcade</span>
+      </button>
+      <button class="mobile-nav-item" data-view="view-classroom-hub" id="mob-nav-classroom">
+        <span class="mob-nav-icon">🎒</span>
+        <span class="mob-nav-label">Classroom</span>
       </button>
       <button class="mobile-nav-item" data-view="view-science-lab" id="mob-nav-science">
         <span class="mob-nav-icon">🔬</span>
@@ -610,6 +680,22 @@
         <span class="mob-nav-label">1% Club</span>
       </button>
     </nav>
+
+    <!-- CLASSROOM INTERACTIVE LESSON MODAL (LEARN -> SEE -> TRY -> QUIZ -> MASTER) -->
+    <div id="classroom-lesson-modal" class="modal-overlay hidden">
+      <div class="classroom-modal-box">
+        <div class="lesson-modal-header">
+          <div class="lesson-step-indicator" id="lesson-step-ind">STEP 1 / 5 • 💡 DID YOU KNOW?</div>
+          <button class="lesson-close-btn" onclick="window.classroomEngine.closeLesson()">✕</button>
+        </div>
+        <div class="lesson-modal-body" id="lesson-modal-content">
+          <!-- Dynamically rendered step content -->
+        </div>
+        <div class="lesson-modal-footer" id="lesson-modal-footer-btns">
+          <!-- Dynamic navigation buttons -->
+        </div>
+      </div>
+    </div>
 
     <!-- CUSTOM AVATAR & SHOP MODAL (LOCKER) -->
     <div id="locker-modal" class="modal-overlay hidden">
@@ -913,6 +999,7 @@
   <script src="js/data/badges.js"></script>
   <script src="js/data/scienceData.js"></script>
   <script src="js/data/logicClubData.js"></script>
+  <script src="js/data/classroomCurriculum.js"></script>
   <script src="js/state/gameState.js"></script>
   <script src="js/state/syncManager.js"></script>
   <script src="js/state/adaptiveEngine.js"></script>
@@ -927,6 +1014,7 @@
   <script src="js/components/arcadeGames.js"></script>
   <script src="js/components/stemDetectiveEngine.js"></script>
   <script src="js/components/scienceLabEngine.js"></script>
+  <script src="js/components/classroomEngine.js"></script>
   <script src="js/components/lockerModal.js"></script>
   <script src="js/components/quickSyncModal.js"></script>
   <script src="js/utils/helpers.js"></script>

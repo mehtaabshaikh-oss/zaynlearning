@@ -53,6 +53,10 @@ class GameState {
           skeleton: { completed: false, bestScore: 0 },
           elements: { completed: false, bestScore: 0 }
         }
+      },
+      classroomProgress: {
+        concepts: {},
+        parentPriorities: {}
       }
     };
   }

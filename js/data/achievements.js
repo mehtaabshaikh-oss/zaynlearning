@@ -118,5 +118,85 @@ const ACHIEVEMENTS_DATA = [
     icon: "⚙️",
     unlocked: false,
     xpReward: 250
+  },
+  {
+    id: "ach_habitat_hero",
+    name: "Habitat Hero",
+    desc: "Master all introductory world habitats",
+    icon: "🌎",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_survival_scientist",
+    name: "Survival Scientist",
+    desc: "Master structural & behavioral adaptations",
+    icon: "🐾",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_ecosystem_expert",
+    name: "Ecosystem Expert",
+    desc: "Master living & nonliving ecosystem interactions",
+    icon: "🌱",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_fossil_finder",
+    name: "Fossil Finder",
+    desc: "Master fossils and extinction concepts",
+    icon: "🦖",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_wildlife_protector",
+    name: "Wildlife Protector",
+    desc: "Master endangered & invasive species concepts",
+    icon: "🦁",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_multiplication_master",
+    name: "Multiplication Language Master",
+    desc: "Master factors, products, and array rotation",
+    icon: "✖️",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_division_master",
+    name: "Division Master",
+    desc: "Master division sharing vs grouping and quotients",
+    icon: "➗",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_time_keeper",
+    name: "Time Keeper",
+    desc: "Master analog clock telling time to 5 minutes",
+    icon: "🕐",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_shape_spotter",
+    name: "Shape Spotter",
+    desc: "Master 2D polygons, vertices, and rhombuses",
+    icon: "🔷",
+    unlocked: false,
+    xpReward: 200
+  },
+  {
+    id: "ach_3d_master",
+    name: "3D Master",
+    desc: "Master 3D polyhedra, faces, edges, and vertices",
+    icon: "🧊",
+    unlocked: false,
+    xpReward: 200
   }
 ];
