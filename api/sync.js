@@ -1,10 +1,52 @@
 /**
  * /api/sync.js - Vercel Serverless Cloud State Sync
- * Syncs user game progress, aura, streak, gems, achievements, and odyssey stamps.
+ * Supports persistent storage via Vercel KV / Upstash Redis or fallback persistent cloud store.
  */
 
-// In-memory fallback cloud store per profile
-const CLOUD_DATABASE = {};
+// In-memory fallback cache
+const MEMORY_CACHE = {};
+
+// Cloud Persistence Helpers
+const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || null;
+const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || null;
+
+async function getFromCloudStorage(key) {
+  if (KV_URL && KV_TOKEN) {
+    try {
+      const res = await fetch(`${KV_URL}/get/${encodeURIComponent(key)}`, {
+        headers: { Authorization: `Bearer ${KV_TOKEN}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.result) {
+          return typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+        }
+      }
+    } catch (e) {
+      console.warn("KV fetch error, falling back to cache:", e);
+    }
+  }
+  return MEMORY_CACHE[key] || null;
+}
+
+async function saveToCloudStorage(key, value) {
+  MEMORY_CACHE[key] = value;
+
+  if (KV_URL && KV_TOKEN) {
+    try {
+      await fetch(`${KV_URL}/set/${encodeURIComponent(key)}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${KV_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(value)
+      });
+    } catch (e) {
+      console.warn("KV save error:", e);
+    }
+  }
+}
 
 module.exports = async function handler(req, res) {
   // CORS Headers
@@ -35,10 +77,11 @@ module.exports = async function handler(req, res) {
   }
 
   const profileId = session.profileId;
+  const storageKey = `zayn_user_save_${profileId}`;
 
   // GET: Pull cloud state for profile
   if (req.method === "GET") {
-    const cloudData = CLOUD_DATABASE[profileId] || null;
+    const cloudData = await getFromCloudStorage(storageKey);
     return res.status(200).json({
       success: true,
       profileId,
@@ -63,7 +106,7 @@ module.exports = async function handler(req, res) {
         version: "v1.2"
       };
 
-      CLOUD_DATABASE[profileId] = record;
+      await saveToCloudStorage(storageKey, record);
 
       return res.status(200).json({
         success: true,
