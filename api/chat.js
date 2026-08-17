@@ -8,6 +8,8 @@ const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY
 
 const SYSTEM_INSTRUCTION = `You are "Nova", a friendly, enthusiastic, and brilliant AI study buddy and co-pilot for Zayn, an 8-year-old in 3rd/4th grade.
 
+CRITICAL OUTPUT RULE: Speak DIRECTLY to Zayn as Nova. Never output internal thoughts, meta-commentary, outlines, planning notes, or bulleted persona constraints. Only output your direct conversational reply.
+
 Pedagogical Guidelines:
 1. AGE-APPROPRIATE & ENGAGING: Explain concepts using fun, relatable analogies (LEGO bricks, pizza slices, rocket thrusters, Minecraft blocks, animals, superheroes).
 2. SOCRATIC & ENCOURAGING: Never just give away raw answers to homework problems immediately. Guide him step-by-step with visual breakdown questions and mental math shortcuts.
@@ -63,9 +65,6 @@ module.exports = async function handler(req, res) {
     // Format conversation history for Gemini API
     const contents = [];
 
-    // Prepend system prompt to the first user turn if systemInstruction fails
-    const fullPrompt = `${SYSTEM_INSTRUCTION}\n\nUser Question: ${message.trim()}`;
-
     if (Array.isArray(history)) {
       history.slice(-6).forEach(h => {
         if (h.role && h.text) {
@@ -79,10 +78,13 @@ module.exports = async function handler(req, res) {
 
     contents.push({
       role: 'user',
-      parts: [{ text: fullPrompt }]
+      parts: [{ text: message.trim() }]
     });
 
     const geminiPayload = {
+      systemInstruction: {
+        parts: [{ text: SYSTEM_INSTRUCTION }]
+      },
       contents: contents,
       generationConfig: {
         temperature: 0.7,
@@ -92,7 +94,7 @@ module.exports = async function handler(req, res) {
     };
 
     // First try dynamic list of available models for this specific API key
-    let targetModels = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro", "gemini-2.0-flash"];
+    let targetModels = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"];
 
     try {
       const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(GEMINI_API_KEY)}`);
@@ -115,34 +117,61 @@ module.exports = async function handler(req, res) {
     let lastError = null;
 
     for (const model of targetModels) {
-      // Try v1beta then v1
-      for (const apiVer of ["v1beta", "v1"]) {
-        try {
-          const url = `https://generativelanguage.googleapis.com/${apiVer}/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-          const response = await fetch(url, {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(geminiPayload)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const candidate = data.candidates && data.candidates[0];
+          replyText = candidate?.content?.parts?.[0]?.text;
+          if (replyText) break;
+        } else {
+          // If systemInstruction failed, try fallback without systemInstruction
+          const fallbackPayload = {
+            contents: [
+              ...contents.slice(0, -1),
+              {
+                role: 'user',
+                parts: [{ text: `[System Rule: You are Nova, friendly AI study buddy for Zayn. Speak directly to him with fun analogies. Never output thoughts or persona notes.]\n\n${message.trim()}` }]
+              }
+            ],
+            generationConfig: geminiPayload.generationConfig
+          };
+
+          const fallbackRes = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(geminiPayload)
+            body: JSON.stringify(fallbackPayload)
           });
 
-          if (response.ok) {
-            const data = await response.json();
+          if (fallbackRes.ok) {
+            const data = await fallbackRes.json();
             const candidate = data.candidates && data.candidates[0];
             replyText = candidate?.content?.parts?.[0]?.text;
             if (replyText) break;
-          } else {
-            const errData = await response.json().catch(() => ({}));
-            lastError = errData?.error?.message || `HTTP ${response.status}`;
           }
-        } catch (err) {
-          lastError = err.message;
+
+          const errData = await response.json().catch(() => ({}));
+          lastError = errData?.error?.message || `HTTP ${response.status}`;
         }
+      } catch (err) {
+        lastError = err.message;
       }
       if (replyText) break;
     }
 
     if (replyText) {
-      return res.status(200).json({ success: true, reply: replyText });
+      // Clean up any residual planning scratchpad if model outputted one
+      let cleaned = replyText.trim();
+      if (cleaned.includes('Paragraph 1:')) {
+        cleaned = cleaned.split(/Paragraph 1:.*?\*/i).pop().trim();
+      }
+      return res.status(200).json({ success: true, reply: cleaned });
     }
 
     return res.status(200).json({
