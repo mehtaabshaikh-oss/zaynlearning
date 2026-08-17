@@ -229,6 +229,8 @@ class ArcadeHub {
       this.currentGame = new AngleCannonGame(this);
     } else if (gameType === 'rover_rescue') {
       this.currentGame = new RoverRescueGame(this);
+    } else if (gameType === 'trivia_blitz') {
+      this.currentGame = new DidYouKnowTriviaGame(this);
     }
 
     if (this.currentGame) {
@@ -6357,7 +6359,298 @@ class RoverRescueGame {
   }
 }
 
+// ==========================================================================
+// 21. GAME 21: DID YOU KNOW? TRIVIA BLITZ (Curiosity, Geography & Science)
+// ==========================================================================
+class DidYouKnowTriviaGame {
+  constructor(hub) {
+    this.hub = hub;
+    this.questions = [];
+    this.currentIdx = 0;
+    this.score = 0;
+    this.combo = 1;
+    this.correctCount = 0;
+    this.incorrectCount = 0;
+    this.longestStreak = 0;
+    this.currentStreak = 0;
+    this.missedFacts = [];
+    this.selectedOption = null;
+    this.feedbackState = null; // 'correct' | 'wrong' | null
+    this.feedbackTimer = 0;
+    this.particles = [];
+  }
+
+  start() {
+    const bank = window.TRIVIA_FACTS_BANK || [];
+    const shuffled = [...bank].sort(() => Math.random() - 0.5);
+    this.questions = shuffled.slice(0, 10);
+    this.currentIdx = 0;
+    this.score = 0;
+    this.combo = 1;
+    this.correctCount = 0;
+    this.incorrectCount = 0;
+    this.longestStreak = 0;
+    this.currentStreak = 0;
+    this.missedFacts = [];
+    this.selectedOption = null;
+    this.feedbackState = null;
+    this.particles = [];
+
+    this.hub.setLevel("ROUND 1/10");
+    this.hub.setPrompt("💡 DID YOU KNOW? Read & answer the trivia!");
+    this.initParticles();
+  }
+
+  initParticles() {
+    this.particles = [];
+    for (let i = 0; i < 25; i++) {
+      this.particles.push({
+        x: Math.random() * 600,
+        y: Math.random() * 420,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        size: Math.random() * 2.5 + 1,
+        color: ['#38bdf8', '#fde047', '#a855f7', '#34d399'][Math.floor(Math.random() * 4)]
+      });
+    }
+  }
+
+  handleInput(code) {
+    if (this.feedbackState) return;
+    if (code === 'Digit1' || code === 'KeyA') this.submitAnswer(0);
+    else if (code === 'Digit2' || code === 'KeyB') this.submitAnswer(1);
+    else if (code === 'Digit3' || code === 'KeyC') this.submitAnswer(2);
+    else if (code === 'Digit4' || code === 'KeyD') this.submitAnswer(3);
+  }
+
+  handlePointer(x, y, type) {
+    if (type !== 'up' || this.feedbackState) return;
+
+    // 4 Option Button Hitboxes on Canvas
+    // Button 0: x: 30, y: 260, w: 260, h: 54
+    // Button 1: x: 310, y: 260, w: 260, h: 54
+    // Button 2: x: 30, y: 325, w: 260, h: 54
+    // Button 3: x: 310, y: 325, w: 260, h: 54
+    const hitTest = (bx, by, bw, bh) => (x >= bx && x <= bx + bw && y >= by && y <= by + bh);
+
+    if (hitTest(30, 260, 260, 54)) this.submitAnswer(0);
+    else if (hitTest(310, 260, 260, 54)) this.submitAnswer(1);
+    else if (hitTest(30, 325, 260, 54)) this.submitAnswer(2);
+    else if (hitTest(310, 325, 260, 54)) this.submitAnswer(3);
+  }
+
+  submitAnswer(choiceIdx) {
+    if (this.feedbackState) return;
+    const currentQ = this.questions[this.currentIdx];
+    if (!currentQ || choiceIdx >= currentQ.options.length) return;
+
+    this.selectedOption = choiceIdx;
+    const isCorrect = (choiceIdx === currentQ.answer);
+
+    if (isCorrect) {
+      this.feedbackState = 'correct';
+      this.correctCount++;
+      this.currentStreak++;
+      if (this.currentStreak > this.longestStreak) this.longestStreak = this.currentStreak;
+      this.combo = Math.min(5, Math.floor(this.currentStreak / 2) + 1);
+
+      const pts = 150 * this.combo;
+      this.score += pts;
+      this.hub.scoreEl.textContent = this.score.toLocaleString();
+      this.hub.comboTag.textContent = `${this.combo}x COMBO 🔥`;
+
+      if (window.soundEngine) window.soundEngine.playCorrect();
+      if (window.helpers) {
+        window.helpers.spawnAuraFloatingText(`+${pts} (${this.combo}x Streak!)`, 300, 200, true);
+        window.helpers.spawnConfetti(25);
+      }
+    } else {
+      this.feedbackState = 'wrong';
+      this.incorrectCount++;
+      this.currentStreak = 0;
+      this.combo = 1;
+      this.hub.comboTag.textContent = '1x COMBO';
+      this.missedFacts.push(currentQ.fact);
+
+      if (window.soundEngine) window.soundEngine.playWrong();
+      if (window.helpers) {
+        window.helpers.spawnAuraFloatingText(
+          this.hub.isPracticeMode ? "Missed! (Practice Safe 🛡️)" : "Missed! 📉",
+          300, 200, false
+        );
+      }
+    }
+
+    this.feedbackTimer = performance.now() + 2000;
+  }
+
+  update() {
+    const now = performance.now();
+
+    // Advance particles
+    this.particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = 600;
+      if (p.x > 600) p.x = 0;
+      if (p.y < 0) p.y = 420;
+      if (p.y > 420) p.y = 0;
+    });
+
+    // Advance to next question after feedback timer
+    if (this.feedbackState && now > this.feedbackTimer) {
+      this.feedbackState = null;
+      this.selectedOption = null;
+      this.currentIdx++;
+
+      if (this.currentIdx >= this.questions.length) {
+        this.endGame();
+      } else {
+        this.hub.setLevel(`ROUND ${this.currentIdx + 1}/10`);
+      }
+    }
+  }
+
+  render(ctx) {
+    // Dark Cosmos Background
+    ctx.fillStyle = '#080c1a';
+    ctx.fillRect(0, 0, 600, 420);
+
+    // Render Ambient Curiosity Particles
+    this.particles.forEach(p => {
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    const qData = this.questions[this.currentIdx];
+    if (!qData) return;
+
+    // Header Category Badge
+    ctx.fillStyle = '#1e1b4b';
+    ctx.beginPath(); ctx.roundRect(30, 16, 540, 32, 8); ctx.fill();
+    ctx.strokeStyle = '#4338ca'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = '#fde047';
+    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(`💡 DID YOU KNOW? • ${qData.category.toUpperCase()}`, 44, 32);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.textAlign = 'right';
+    ctx.fillText(`QUESTION ${this.currentIdx + 1} / 10`, 556, 32);
+
+    // Fact Spotlight Card
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath(); ctx.roundRect(30, 56, 540, 84, 12); ctx.fill();
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '600 13px "Fredoka", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    this.wrapText(ctx, `"${qData.fact}"`, 46, 68, 508, 20);
+
+    // Trivia Question Card
+    ctx.fillStyle = '#131d38';
+    ctx.beginPath(); ctx.roundRect(30, 150, 540, 96, 12); ctx.fill();
+    ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.fillStyle = '#fde047';
+    ctx.font = 'bold 11px "Space Grotesk"';
+    ctx.fillText('TRIVIA CHALLENGE:', 46, 160);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px "Space Grotesk"';
+    this.wrapText(ctx, qData.q, 46, 180, 508, 22);
+
+    // 4 Option Buttons (2x2 Grid)
+    const optCoords = [
+      { x: 30, y: 260, w: 260, h: 54, key: '1 / A' },
+      { x: 310, y: 260, w: 260, h: 54, key: '2 / B' },
+      { x: 30, y: 325, w: 260, h: 54, key: '3 / C' },
+      { x: 310, y: 325, w: 260, h: 54, key: '4 / D' }
+    ];
+
+    qData.options.forEach((opt, idx) => {
+      const b = optCoords[idx];
+      let bg = '#1e293b';
+      let border = '#475569';
+      let textColor = '#f8fafc';
+
+      if (this.feedbackState) {
+        if (idx === qData.answer) {
+          bg = '#14532d';
+          border = '#22c55e';
+          textColor = '#86efac';
+        } else if (idx === this.selectedOption) {
+          bg = '#7f1d1d';
+          border = '#ef4444';
+          textColor = '#fca5a5';
+        }
+      }
+
+      ctx.fillStyle = bg;
+      ctx.beginPath(); ctx.roundRect(b.x, b.y, b.w, b.h, 10); ctx.fill();
+      ctx.strokeStyle = border; ctx.lineWidth = 2; ctx.stroke();
+
+      // Key shortcut tag
+      ctx.fillStyle = '#64748b';
+      ctx.font = 'bold 10px "Space Grotesk"';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(b.key, b.x + 10, b.y + 6);
+
+      // Option label
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 13px "Space Grotesk"';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      this.wrapText(ctx, opt, b.x + 10, b.y + 30, b.w - 20, 16);
+    });
+
+    // Bottom Help Banner
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px "Space Grotesk"';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Tap buttons or press 1, 2, 3, 4 on keyboard to lock in answer', 300, 400);
+  }
+
+  wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    let currY = y;
+
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + words[n] + ' ';
+      const metrics = ctx.measureText(testLine);
+      const testWidth = metrics.width;
+      if (testWidth > maxWidth && n > 0) {
+        ctx.fillText(line, x, currY);
+        line = words[n] + ' ';
+        currY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    ctx.fillText(line, x, currY);
+  }
+
+  endGame() {
+    const total = this.correctCount + this.incorrectCount;
+    const acc = total > 0 ? Math.round((this.correctCount / total) * 100) : 0;
+    this.hub.showGameSummary({
+      gameName: "Did You Know? Trivia",
+      score: this.score,
+      accuracy: acc,
+      correct: this.correctCount,
+      incorrect: this.incorrectCount,
+      longestStreak: this.longestStreak,
+      missedSkills: Array.from(new Set(this.missedFacts))
+    });
+  }
+}
+
 window.ArcadeHub = ArcadeHub;
+
 
 
 
