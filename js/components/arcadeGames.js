@@ -4528,8 +4528,8 @@ class MathGridJigsawGame {
 class CodeBreakerGame {
   constructor(hub) {
     this.hub = hub;
-    this.stage = 1; // 1: Number Patterns, 2: Function Machines, 3: Mastermind Secret Code
-    this.maxStages = 3;
+    this.stage = 1;
+    this.maxStages = 8;
     this.score = 0;
     this.correctCount = 0;
     this.incorrectCount = 0;
@@ -4541,12 +4541,13 @@ class CodeBreakerGame {
     this.vaultAngle = 0;
     this.particles = [];
     this.activeQuestion = null;
+    this.advanceTimer = 0;
 
     // Mastermind State
     this.mastermindSecret = [];
-    this.currentGuess = [0, 0, 0];
+    this.currentGuess = [1, 2, 3];
     this.guessSlot = 0;
-    this.mastermindHistory = []; // { guess: [4,7,2], exact: 1, partial: 1 }
+    this.mastermindHistory = [];
     this.maxAttempts = 6;
   }
 
@@ -4565,35 +4566,40 @@ class CodeBreakerGame {
 
   nextChallenge() {
     this.vaultState = "locked";
+    this.vaultAngle = 0;
+    this.advanceTimer = 0;
     this.feedbackMsg = "";
 
-    if (this.stage === 1) {
-      // Geometric & Arithmetic Sequences
-      this.hub.setLevel("STAGE 1: PATTERNS");
+    if (this.stage <= 3) {
+      // Stage 1-3: Number Patterns & Sequences
       const patterns = [
-        { seq: [2, 4, 8, 16, "?"], ans: 32, rule: "Multiply by 2 (×2)", opts: [24, 30, 32, 64] },
         { seq: [3, 9, 27, "?"], ans: 81, rule: "Multiply by 3 (×3)", opts: [54, 81, 72, 90] },
+        { seq: [2, 4, 8, 16, "?"], ans: 32, rule: "Multiply by 2 (×2)", opts: [24, 30, 32, 64] },
         { seq: [5, 11, 17, 23, "?"], ans: 29, rule: "Add 6 (+6)", opts: [27, 29, 31, 35] },
-        { seq: [1, 4, 9, 16, 25, "?"], ans: 36, rule: "Perfect Squares (n²)", opts: [30, 35, 36, 49] },
+        { seq: [1, 4, 9, 16, 25, "?"], ans: 36, rule: "Square Numbers (n²)", opts: [30, 35, 36, 49] },
+        { seq: [1, 1, 2, 3, 5, 8, "?"], ans: 13, rule: "Fibonacci (Sum of last two)", opts: [11, 12, 13, 15] },
         { seq: [100, 85, 70, 55, "?"], ans: 40, rule: "Subtract 15 (-15)", opts: [45, 40, 35, 30] },
-        { seq: [2, 6, 18, 54, "?"], ans: 162, rule: "Multiply by 3 (×3)", opts: [108, 150, 162, 180] }
+        { seq: [2, 6, 18, 54, "?"], ans: 162, rule: "Multiply by 3 (×3)", opts: [108, 150, 162, 180] },
+        { seq: [4, 8, 16, 32, "?"], ans: 64, rule: "Multiply by 2 (×2)", opts: [48, 56, 64, 72] }
       ];
       this.activeQuestion = patterns[Math.floor(Math.random() * patterns.length)];
+      this.hub.setLevel(`VAULT ${this.stage}/${this.maxStages}: NUMBER PATTERN`);
       this.hub.setPrompt(`PATTERN: ${this.activeQuestion.seq.join("   ")} ➔ Enter Next Number`);
-    } else if (this.stage === 2) {
-      // Function Machine (x -> f(x))
-      this.hub.setLevel("STAGE 2: FUNCTION MACHINE");
+    } else if (this.stage <= 6) {
+      // Stage 4-6: Function Machine (x -> f(x))
       const funcs = [
-        { in1: 3, out1: 12, in2: 5, out2: 20, in3: 7, out3: 28, queryIn: 9, ans: 36, rule: "Rule: Output = Input × 4", opts: [27, 32, 36, 45] },
-        { in1: 2, out1: 7, in2: 4, out2: 13, in3: 6, out3: 19, queryIn: 8, ans: 25, rule: "Rule: Output = (Input × 3) + 1", opts: [21, 24, 25, 27] },
-        { in1: 12, out1: 6, in2: 20, out2: 10, in3: 32, out3: 16, queryIn: 48, ans: 24, rule: "Rule: Output = Input ÷ 2", opts: [18, 20, 24, 28] },
-        { in1: 4, out1: 17, in2: 5, out2: 26, in3: 6, out3: 37, queryIn: 7, ans: 50, rule: "Rule: Output = (Input × Input) + 1", opts: [42, 48, 50, 56] }
+        { in1: 3, out1: 12, in2: 5, out2: 20, in3: 7, out3: 28, queryIn: 9, ans: 36, rule: "Output = Input × 4", opts: [27, 32, 36, 45] },
+        { in1: 2, out1: 7, in2: 4, out2: 13, in3: 6, out3: 19, queryIn: 8, ans: 25, rule: "Output = (Input × 3) + 1", opts: [21, 24, 25, 27] },
+        { in1: 12, out1: 6, in2: 20, out2: 10, in3: 32, out3: 16, queryIn: 48, ans: 24, rule: "Output = Input ÷ 2", opts: [18, 20, 24, 28] },
+        { in1: 4, out1: 17, in2: 5, out2: 26, in3: 6, out3: 37, queryIn: 7, ans: 50, rule: "Output = (Input × Input) + 1", opts: [42, 48, 50, 56] },
+        { in1: 3, out1: 11, in2: 5, out2: 17, in3: 8, out3: 26, queryIn: 10, ans: 32, rule: "Output = (Input × 3) + 2", opts: [30, 32, 35, 36] }
       ];
       this.activeQuestion = funcs[Math.floor(Math.random() * funcs.length)];
+      this.hub.setLevel(`VAULT ${this.stage}/${this.maxStages}: FUNCTION MACHINE`);
       this.hub.setPrompt(`FUNCTION: [ ${this.activeQuestion.in1}➔${this.activeQuestion.out1} | ${this.activeQuestion.in2}➔${this.activeQuestion.out2} ] What is [ ${this.activeQuestion.queryIn} ➔ ? ]`);
     } else {
-      // Mastermind Code Cracker
-      this.hub.setLevel("STAGE 3: MASTERMIND VAULT");
+      // Stage 7-8: Mastermind Code Cracker
+      this.hub.setLevel(`VAULT ${this.stage}/${this.maxStages}: MASTERMIND SAFE`);
       const d1 = Math.floor(Math.random() * 8) + 1;
       let d2 = Math.floor(Math.random() * 8) + 1;
       while (d2 === d1) d2 = Math.floor(Math.random() * 8) + 1;
@@ -4610,18 +4616,13 @@ class CodeBreakerGame {
   handlePointer(x, y, type) {
     if (type !== 'down') return;
 
-    if (this.vaultState === 'opened') {
-      if (this.stage < this.maxStages) {
-        this.stage++;
-        this.nextChallenge();
-      } else {
-        this.endGame();
-      }
+    if (this.vaultState === 'opened' || this.vaultState === 'opening') {
+      this.advanceToNext();
       return;
     }
 
-    if (this.stage === 1 || this.stage === 2) {
-      // Option Buttons (x: 100, 220, 340, 460, y: 340, w: 100, h: 48)
+    if (this.stage <= 6) {
+      // Option Buttons (x: 65 + i * 125, y: 330, w: 110, h: 50)
       const opts = this.activeQuestion.opts || [];
       for (let i = 0; i < opts.length; i++) {
         const bx = 65 + i * 125;
@@ -4631,12 +4632,11 @@ class CodeBreakerGame {
           return;
         }
       }
-    } else if (this.stage === 3) {
+    } else {
       // Mastermind Interactive Slots & Keypad
-      // Slot increment/decrement buttons
       for (let s = 0; s < 3; s++) {
         const sx = 210 + s * 70;
-        // Up arrow (y: 200..230)
+        // Up arrow (y: 195..225)
         if (x >= sx && x <= sx + 50 && y >= 195 && y <= 225) {
           this.currentGuess[s] = (this.currentGuess[s] % 9) + 1;
           if (window.soundEngine) window.soundEngine.playTap();
@@ -4658,26 +4658,30 @@ class CodeBreakerGame {
     }
   }
 
+  advanceToNext() {
+    if (this.stage < this.maxStages) {
+      this.stage++;
+      this.nextChallenge();
+    } else {
+      this.endGame();
+    }
+  }
+
   handleInput(code) {
-    if (this.vaultState === 'opened') {
+    if (this.vaultState === 'opened' || this.vaultState === 'opening') {
       if (code === 'Space' || code === 'Enter') {
-        if (this.stage < this.maxStages) {
-          this.stage++;
-          this.nextChallenge();
-        } else {
-          this.endGame();
-        }
+        this.advanceToNext();
       }
       return;
     }
 
-    if (this.stage === 1 || this.stage === 2) {
+    if (this.stage <= 6) {
       const opts = this.activeQuestion.opts || [];
       if (code === 'Digit1' || code === 'KeyA') this.submitOption(opts[0]);
       if (code === 'Digit2' || code === 'KeyB') this.submitOption(opts[1]);
       if (code === 'Digit3' || code === 'KeyC') this.submitOption(opts[2]);
       if (code === 'Digit4' || code === 'KeyD') this.submitOption(opts[3]);
-    } else if (this.stage === 3) {
+    } else {
       if (code === 'Enter' || code === 'Space') this.submitMastermindGuess();
       if (code === 'ArrowLeft') this.guessSlot = Math.max(0, this.guessSlot - 1);
       if (code === 'ArrowRight') this.guessSlot = Math.min(2, this.guessSlot + 1);
@@ -4763,6 +4767,7 @@ class CodeBreakerGame {
 
   triggerVaultUnlock() {
     this.vaultState = 'opening';
+    this.advanceTimer = 140; // ~2.3 seconds countdown
     if (window.soundEngine) {
       window.soundEngine.playLevelUp();
       window.soundEngine.playChestOpen();
@@ -4791,6 +4796,15 @@ class CodeBreakerGame {
       this.vaultAngle += 0.08;
       if (this.vaultAngle >= Math.PI / 2) {
         this.vaultState = 'opened';
+      }
+    }
+
+    if (this.vaultState === 'opened') {
+      if (this.advanceTimer > 0) {
+        this.advanceTimer--;
+        if (this.advanceTimer === 0) {
+          this.advanceToNext();
+        }
       }
     }
 
@@ -4851,20 +4865,39 @@ class CodeBreakerGame {
       ctx.font = '50px serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('💎🏆✨', 0, 0);
+      ctx.fillText('💎🏆✨', 0, -10);
 
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 16px "Fredoka"';
-      ctx.fillText('+500 AURA • +100 XP • +25 GEMS', 0, 65);
-      ctx.fillStyle = '#34d399';
-      ctx.fillText('TAP ANYWHERE TO ADVANCE ➔', 0, 90);
+      ctx.font = 'bold 15px "Space Grotesk"';
+      ctx.fillText('+500 AURA • +100 XP • +25 GEMS', 0, 38);
+
+      // Pulse Next Button
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.roundRect(-100, 58, 200, 36, 8);
+      ctx.fill();
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 14px "Space Grotesk"';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(this.stage < this.maxStages ? 'NEXT VAULT ➔' : 'CLAIM VICTORY 🏆', 0, 76);
     } else {
-      // Rotating Tumbler Dial
+      // Draw Safe Door with Rotation Angle when opening
+      ctx.save();
+      ctx.translate(-140, 0); // hinge on left edge
       ctx.rotate(this.vaultAngle);
+
+      // Safe Door Face
       ctx.fillStyle = '#334155';
-      ctx.beginPath(); ctx.arc(0, 0, 65, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.roundRect(0, -110, 280, 220, 20);
+      ctx.fill();
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 4;
       ctx.stroke();
 
       // Dial Spokes
@@ -4872,8 +4905,8 @@ class CodeBreakerGame {
       ctx.lineWidth = 4;
       for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
         ctx.beginPath();
-        ctx.moveTo(Math.cos(a) * 20, Math.sin(a) * 20);
-        ctx.lineTo(Math.cos(a) * 55, Math.sin(a) * 55);
+        ctx.moveTo(140 + Math.cos(a) * 20, Math.sin(a) * 20);
+        ctx.lineTo(140 + Math.cos(a) * 55, Math.sin(a) * 55);
         ctx.stroke();
       }
 
@@ -4881,12 +4914,14 @@ class CodeBreakerGame {
       ctx.font = 'bold 24px "Space Grotesk"';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('🔐', 0, 0);
+      ctx.fillText('🔐', 140, 0);
+
+      ctx.restore(); // restore inner safe door
     }
-    ctx.restore();
+    ctx.restore(); // restore outer safe position
 
     // Stage Specific Content
-    if (this.stage === 1 && this.vaultState !== 'opened') {
+    if (this.stage <= 3 && this.vaultState !== 'opened') {
       // Sequence Display
       ctx.fillStyle = '#0f172a';
       ctx.beginPath(); ctx.roundRect(80, 20, 440, 50, 12); ctx.fill();
@@ -4917,21 +4952,21 @@ class CodeBreakerGame {
         ctx.font = '10px "Space Grotesk"';
         ctx.fillText(`[${i + 1}]`, bx + 55, by + 42);
       }
-    } else if (this.stage === 2 && this.vaultState !== 'opened') {
+    } else if (this.stage <= 6 && this.vaultState !== 'opened') {
       // Function Machine Table
       ctx.fillStyle = '#0f172a';
       ctx.beginPath(); ctx.roundRect(50, 15, 500, 60, 12); ctx.fill();
       ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2; ctx.stroke();
 
       ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 16px "Space Grotesk"';
+      ctx.font = 'bold 15px "Space Grotesk"';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`FUNCTION MACHINE [In ➔ Out]:  ${this.activeQuestion.in1}➔${this.activeQuestion.out1}  |  ${this.activeQuestion.in2}➔${this.activeQuestion.out2}  |  ${this.activeQuestion.in3}➔${this.activeQuestion.out3}`, 300, 35);
+      ctx.fillText(`FUNCTION MACHINE:  ${this.activeQuestion.in1}➔${this.activeQuestion.out1}  |  ${this.activeQuestion.in2}➔${this.activeQuestion.out2}  |  ${this.activeQuestion.in3}➔${this.activeQuestion.out3}`, 300, 32);
 
       ctx.fillStyle = '#fde047';
-      ctx.font = 'bold 18px "Space Grotesk"';
-      ctx.fillText(`What is the output for:  Input [ ${this.activeQuestion.queryIn} ] ➔ [ ? ]`, 300, 58);
+      ctx.font = 'bold 17px "Space Grotesk"';
+      ctx.fillText(`Find Output for:  Input [ ${this.activeQuestion.queryIn} ] ➔ [ ? ]`, 300, 56);
 
       // Options
       const opts = this.activeQuestion.opts || [];
@@ -4948,7 +4983,7 @@ class CodeBreakerGame {
         ctx.textBaseline = 'middle';
         ctx.fillText(opts[i], bx + 55, by + 25);
       }
-    } else if (this.stage === 3 && this.vaultState !== 'opened') {
+    } else if (this.stage > 6 && this.vaultState !== 'opened') {
       // Mastermind Guess Slots
       for (let s = 0; s < 3; s++) {
         const sx = 210 + s * 70;
