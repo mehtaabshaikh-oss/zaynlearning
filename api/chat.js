@@ -79,9 +79,6 @@ module.exports = async function handler(req, res) {
       parts: [{ text: message.trim() }]
     });
 
-    // Use Gemini 1.5 Flash (stable, fast, standard)
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
     const geminiPayload = {
       systemInstruction: {
         parts: [{ text: SYSTEM_INSTRUCTION }]
@@ -94,45 +91,50 @@ module.exports = async function handler(req, res) {
       }
     };
 
-    const response = await fetch(geminiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(geminiPayload)
-    });
+    // Try candidate models in order of speed and capability
+    const candidateModels = [
+      "gemini-1.5-flash-latest",
+      "gemini-1.5-flash",
+      "gemini-2.0-flash",
+      "gemini-1.5-pro"
+    ];
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API Error:", response.status, errorText);
+    let replyText = null;
+    let lastError = null;
 
-      // Attempt fallback to gemini-1.5-pro or gemini-2.0-flash
-      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-      const fallbackRes = await fetch(fallbackUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(geminiPayload)
-      });
+    for (const model of candidateModels) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY
+          },
+          body: JSON.stringify(geminiPayload)
+        });
 
-      if (fallbackRes.ok) {
-        const fbData = await fallbackRes.json();
-        const candidate = fbData.candidates && fbData.candidates[0];
-        const replyText = candidate?.content?.parts?.[0]?.text;
-        if (replyText) {
-          return res.status(200).json({ success: true, reply: replyText });
+        if (response.ok) {
+          const data = await response.json();
+          const candidate = data.candidates && data.candidates[0];
+          replyText = candidate?.content?.parts?.[0]?.text;
+          if (replyText) break;
+        } else {
+          const errData = await response.json().catch(() => ({}));
+          lastError = errData?.error?.message || `HTTP ${response.status}`;
+          console.error(`Gemini ${model} Error:`, lastError);
         }
+      } catch (err) {
+        lastError = err.message;
       }
-
-      return res.status(200).json({
-        reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini returned a ${response.status} response. Please verify in Google AI Studio that your API key is enabled and has no billing/project restrictions!`
-      });
     }
 
-    const data = await response.json();
-    const candidate = data.candidates && data.candidates[0];
-    const replyText = candidate?.content?.parts?.[0]?.text || "I was pondering that mystery! Ask me one more time! 🚀";
+    if (replyText) {
+      return res.status(200).json({ success: true, reply: replyText });
+    }
 
     return res.status(200).json({
-      success: true,
-      reply: replyText
+      reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini reported: "${lastError || 'Service temporarily unreachable'}". Please verify your key at aistudio.google.com!`
     });
   } catch (err) {
     console.error("AI Chat Handler Error:", err);
