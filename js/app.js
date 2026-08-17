@@ -43,6 +43,15 @@ class App {
       }
     });
 
+    // Update active state in Top Navigation Bar
+    const topNavBtns = document.querySelectorAll('.top-nav .action-pill-btn');
+    topNavBtns.forEach(btn => {
+      const btnTarget = btn.dataset.view;
+      const isMatch = (btnTarget === viewId) || 
+                      (btnTarget === 'view-arcade-hub' && (viewId === 'view-arcade-arena' || viewId === 'view-phonk-arena' || viewId === 'view-odyssey-hub'));
+      btn.classList.toggle('active', isMatch);
+    });
+
     // Update active state in Mobile Bottom Navigation
     const mobItems = document.querySelectorAll('.mobile-nav-item');
     mobItems.forEach(item => {
