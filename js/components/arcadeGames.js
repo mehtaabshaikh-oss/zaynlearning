@@ -1850,13 +1850,16 @@ class NumberLineJumperGame {
   constructor(hub) {
     this.hub = hub;
     this.stage = 1;
-    this.maxStages = 6;
+    this.maxStages = 8;
     this.score = 0;
     this.correctCount = 0;
     this.incorrectCount = 0;
     this.longestStreak = 0;
     this.currentStreak = 0;
     this.currentQ = null;
+    this.kangaroo = { x: 100, y: 190, targetX: 100, isJumping: false, jumpProgress: 0 };
+    this.lastAttempt = null; // { clickedRatio, actualRatio, error, success }
+    this.showSolution = false;
   }
 
   start() {
@@ -1865,60 +1868,229 @@ class NumberLineJumperGame {
     this.correctCount = 0;
     this.incorrectCount = 0;
     this.currentStreak = 0;
+    this.lastAttempt = null;
+    this.showSolution = false;
+    this.kangaroo = { x: 100, y: 190, targetX: 100, isJumping: false, jumpProgress: 0 };
     this.hub.setLevel(`STAGE ${this.stage}/${this.maxStages}`);
     this.generateStage();
   }
 
   generateStage() {
-    const stagePool = [
-      { prompt: "Tap where 1/2 (0.50) is located!", targetRatio: 0.50, label: "1/2" },
-      { prompt: "Tap where 3/4 (0.75) is located!", targetRatio: 0.75, label: "3/4" },
-      { prompt: "Tap where 1/4 (0.25) is located!", targetRatio: 0.25, label: "1/4" },
-      { prompt: "Tap where 4/8 (Equivalent to 1/2) is located!", targetRatio: 0.50, label: "4/8" },
-      { prompt: "Tap where 6/8 (Equivalent to 3/4) is located!", targetRatio: 0.75, label: "6/8" },
-      { prompt: "Tap where 1/8 (0.125) is located!", targetRatio: 0.125, label: "1/8" }
+    this.lastAttempt = null;
+    this.showSolution = false;
+    this.kangaroo.x = 100;
+    this.kangaroo.targetX = 100;
+    this.kangaroo.isJumping = false;
+
+    const questionBank = [
+      { prompt: "Leap kangaroo to 1/2!", targetRatio: 0.50, label: "1/2" },
+      { prompt: "Leap kangaroo to 3/4!", targetRatio: 0.75, label: "3/4" },
+      { prompt: "Leap kangaroo to 1/4!", targetRatio: 0.25, label: "1/4" },
+      { prompt: "Leap kangaroo to 3/8!", targetRatio: 0.375, label: "3/8" },
+      { prompt: "Leap kangaroo to 5/8!", targetRatio: 0.625, label: "5/8" },
+      { prompt: "Leap kangaroo to 0.70!", targetRatio: 0.70, label: "0.70" },
+      { prompt: "Leap kangaroo to 0.35!", targetRatio: 0.35, label: "0.35" },
+      { prompt: "Leap kangaroo to 0.85!", targetRatio: 0.85, label: "0.85" },
+      { prompt: "Leap kangaroo to 2/5!", targetRatio: 0.40, label: "2/5" },
+      { prompt: "Leap kangaroo to 4/5!", targetRatio: 0.80, label: "4/5" },
+      { prompt: "Leap kangaroo to 1/4 + 1/2!", targetRatio: 0.75, label: "3/4 (0.75)" },
+      { prompt: "Leap kangaroo to 1 - 1/3!", targetRatio: 0.667, label: "2/3 (~0.67)" }
     ];
 
-    this.currentQ = stagePool[Math.min(stagePool.length - 1, this.stage - 1)];
+    // Pick dynamic question
+    const pool = questionBank.sort(() => Math.random() - 0.5);
+    this.currentQ = pool[0];
+
     this.hub.setLevel(`STAGE ${this.stage}/${this.maxStages}`);
     this.hub.setPrompt(`🦘 NUMBER LINE: ${this.currentQ.prompt}`);
   }
 
   handlePointer(x, y, type) {
-    if (type !== 'down') return;
-    if (y >= 160 && y <= 260) {
+    if (type !== 'down' || this.kangaroo.isJumping || this.showSolution) return;
+    if (y >= 130 && y <= 270) {
       const lineStart = 100;
       const lineEnd = 500;
-      const clickedRatio = (x - lineStart) / (lineEnd - lineStart);
+      const clampedX = Math.max(lineStart, Math.min(lineEnd, x));
+      const clickedRatio = (clampedX - lineStart) / (lineEnd - lineStart);
+      const actualRatio = this.currentQ.targetRatio;
+      const diff = Math.abs(clickedRatio - actualRatio);
 
-      if (Math.abs(clickedRatio - this.currentQ.targetRatio) <= 0.09) {
+      this.kangaroo.targetX = clampedX;
+      this.kangaroo.isJumping = true;
+      this.kangaroo.jumpProgress = 0;
+
+      const isBullseye = diff <= 0.045;
+      const isGood = diff <= 0.095;
+
+      this.lastAttempt = {
+        clickedRatio: clickedRatio,
+        actualRatio: actualRatio,
+        clickedX: clampedX,
+        actualX: lineStart + actualRatio * (lineEnd - lineStart),
+        diff: diff,
+        isBullseye: isBullseye,
+        isGood: isGood
+      };
+
+      if (isGood) {
         this.correctCount++;
         this.currentStreak++;
         this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
 
-        const pts = 200 * this.stage;
+        const pts = isBullseye ? 300 * this.stage : 180 * this.stage;
         this.score += pts;
         this.hub.scoreEl.textContent = this.score;
 
         if (window.soundEngine) window.soundEngine.playLevelUp();
         if (window.helpers) {
-          window.helpers.spawnConfetti(70);
-          window.helpers.spawnAuraFloatingText(`PERFECT JUMP (${this.currentQ.label})! +${pts} Aura 🦘✨`, undefined, undefined, true);
+          if (isBullseye) window.helpers.spawnConfetti(70);
+          window.helpers.spawnAuraFloatingText(
+            isBullseye ? `🎯 BULLSEYE (${this.currentQ.label})! +${pts} Aura` : `✨ GREAT JUMP (${this.currentQ.label})! +${pts} Aura`,
+            clampedX,
+            160,
+            true
+          );
         }
 
-        this.stage++;
-        if (this.stage <= this.maxStages) {
-          this.generateStage();
-        } else {
-          this.endGame();
-        }
+        setTimeout(() => {
+          this.stage++;
+          if (this.stage <= this.maxStages) {
+            this.generateStage();
+          } else {
+            this.endGame();
+          }
+        }, 1400);
       } else {
         this.incorrectCount++;
         this.currentStreak = 0;
+        this.showSolution = true;
+
         if (window.soundEngine) window.soundEngine.playWrong();
-        if (window.helpers) window.helpers.spawnAuraFloatingText(`Missed landing! Try closer to ${this.currentQ.label}`, undefined, undefined, false);
+        if (window.helpers) {
+          window.helpers.spawnAuraFloatingText(
+            `Target was at ${this.currentQ.label}! (${Math.round(actualRatio * 100)}%)`,
+            clampedX,
+            160,
+            false
+          );
+        }
+
+        setTimeout(() => {
+          this.stage++;
+          if (this.stage <= this.maxStages) {
+            this.generateStage();
+          } else {
+            this.endGame();
+          }
+        }, 2200);
       }
     }
+  }
+
+  update() {
+    if (this.kangaroo.isJumping) {
+      this.kangaroo.jumpProgress += 0.08;
+      if (this.kangaroo.jumpProgress >= 1) {
+        this.kangaroo.jumpProgress = 1;
+        this.kangaroo.x = this.kangaroo.targetX;
+        this.kangaroo.isJumping = false;
+      } else {
+        const startX = 100;
+        this.kangaroo.x = startX + (this.kangaroo.targetX - startX) * this.kangaroo.jumpProgress;
+      }
+    }
+  }
+
+  render(ctx) {
+    ctx.fillStyle = '#080317';
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Header
+    ctx.fillStyle = '#fde047';
+    ctx.font = 'bold 16px "Space Grotesk"';
+    ctx.textAlign = 'center';
+    ctx.fillText(`🦘 NUMBER LINE ADVENTURE • STAGE ${Math.min(this.stage, this.maxStages)}/${this.maxStages}`, 300, 36);
+
+    // Challenge Box
+    ctx.fillStyle = '#1e1b4b';
+    ctx.beginPath();
+    ctx.roundRect(140, 52, 320, 34, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 16px "Space Grotesk"';
+    ctx.textAlign = 'center';
+    ctx.fillText(`TARGET: ${this.currentQ.label}`, 300, 75);
+
+    // Number Line Bar
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(100, 200);
+    ctx.lineTo(500, 200);
+    ctx.stroke();
+
+    // Subtle unlabelled benchmark tick marks (tenths & quarters) with NO text
+    for (let i = 1; i < 10; i++) {
+      const tx = 100 + i * 40;
+      const isQuarter = (i === 2.5 || i === 5 || i === 7.5);
+      const h = (i === 5) ? 20 : 12;
+      ctx.fillStyle = (i === 5) ? 'rgba(56, 189, 248, 0.6)' : 'rgba(255, 255, 255, 0.25)';
+      ctx.fillRect(tx - 1, 200 - h / 2, 2, h);
+    }
+
+    // Endpoints Only: 0 and 1
+    const endpoints = [
+      { x: 100, lbl: "0" },
+      { x: 500, lbl: "1" }
+    ];
+    endpoints.forEach(t => {
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(t.x - 3, 185, 6, 30);
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 18px "Space Grotesk"';
+      ctx.textAlign = 'center';
+      ctx.fillText(t.lbl, t.x, 242);
+    });
+
+    // If attempt made, draw target flag & result markers
+    if (this.lastAttempt) {
+      // Golden Actual Target Flag
+      ctx.fillStyle = '#eab308';
+      ctx.beginPath();
+      ctx.arc(this.lastAttempt.actualX, 200, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 13px "Space Grotesk"';
+      ctx.fillText(`🚩 Exact: ${this.currentQ.label}`, this.lastAttempt.actualX, 260);
+
+      // Player Landing Pin
+      ctx.fillStyle = this.lastAttempt.isGood ? '#22c55e' : '#ef4444';
+      ctx.beginPath();
+      ctx.arc(this.lastAttempt.clickedX, 200, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Kangaroo Character
+    const kX = this.kangaroo.x;
+    const arcHeight = this.kangaroo.isJumping ? Math.sin(this.kangaroo.jumpProgress * Math.PI) * 55 : 0;
+    const kY = 182 - arcHeight;
+
+    ctx.font = '36px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🦘', kX, kY);
+
+    // Prompt Instruction
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '14px "Space Grotesk", sans-serif';
+    ctx.fillText('Tap along the number line between 0 and 1 to estimate where the target sits!', 300, 310);
   }
 
   endGame() {
@@ -1933,50 +2105,6 @@ class NumberLineJumperGame {
       longestStreak: this.longestStreak,
       missedSkills: []
     });
-  }
-
-  update() {}
-
-  render(ctx) {
-    ctx.fillStyle = '#080317';
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    // Header
-    ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 16px "Space Grotesk"';
-    ctx.textAlign = 'center';
-    ctx.fillText(`🦘 NUMBER LINE ADVENTURE • STAGE ${Math.min(this.stage, this.maxStages)}/6`, 300, 40);
-
-    // Number Line Bar
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(100, 200);
-    ctx.lineTo(500, 200);
-    ctx.stroke();
-
-    // Benchmark Ticks: 0, 1/4, 1/2, 3/4, 1
-    const ticks = [
-      { x: 100, lbl: "0" },
-      { x: 200, lbl: "1/4" },
-      { x: 300, lbl: "1/2 (0.5)" },
-      { x: 400, lbl: "3/4" },
-      { x: 500, lbl: "1" }
-    ];
-
-    ticks.forEach(t => {
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(t.x - 2, 185, 4, 30);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 13px "Space Grotesk"';
-      ctx.textAlign = 'center';
-      ctx.fillText(t.lbl, t.x, 240);
-    });
-
-    // Instructions hint
-    ctx.fillStyle = '#a5b4fc';
-    ctx.font = '14px "Fredoka"';
-    ctx.fillText('Tap directly along the number line where the prompt lands!', 300, 310);
   }
 }
 
