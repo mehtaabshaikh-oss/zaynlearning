@@ -78,6 +78,11 @@ class PhonkDriftArena {
     this.startArena(newMode);
   }
 
+  isActive() {
+    const el = document.getElementById('view-phonk-arena');
+    return el && !el.classList.contains('hidden');
+  }
+
   startArena(mode = this.currentMode) {
     this.currentMode = mode;
     this.clearIntervals();
@@ -107,6 +112,10 @@ class PhonkDriftArena {
 
     // Main Overall Clock
     this.timerInterval = setInterval(() => {
+      if (!this.isActive()) {
+        this.clearIntervals();
+        return;
+      }
       this.timeLeft--;
       if (this.timerEl) this.timerEl.textContent = this.timeLeft;
       if (this.timeLeft <= 0) {
@@ -126,6 +135,10 @@ class PhonkDriftArena {
 
     const tickMs = 50;
     this.qTimerInterval = setInterval(() => {
+      if (!this.isActive()) {
+        this.clearIntervals();
+        return;
+      }
       this.qTimeLeft -= tickMs / 1000;
       if (this.qTimeLeft <= 0) {
         this.qTimeLeft = 0;
@@ -153,6 +166,10 @@ class PhonkDriftArena {
   }
 
   handleTimeOut() {
+    if (!this.isActive()) {
+      this.clearIntervals();
+      return;
+    }
     // 5 seconds elapsed on Star Speed Math question
     this.incorrectCount++;
     this.combo = 1;

@@ -47,6 +47,14 @@ class App {
       item.classList.toggle('active', item.dataset.view === viewId);
     });
 
+    // Clear and stop any background timers when leaving respective views
+    if (viewId !== 'view-phonk-arena' && window.phonkArena) {
+      window.phonkArena.clearIntervals();
+    }
+    if (viewId !== 'view-logic-club' && window.logicClub) {
+      window.logicClub.clearTimer();
+    }
+
     if (viewId === 'view-map' && window.mapRenderer) {
       window.mapRenderer.renderWorld(window.mapRenderer.currentWorldId);
     }

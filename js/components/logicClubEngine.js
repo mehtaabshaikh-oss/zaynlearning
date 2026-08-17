@@ -173,6 +173,11 @@ class LogicClubEngine {
     if (timerText) timerText.textContent = `${this.timer}s`;
 
     this.timerInterval = setInterval(() => {
+      const el = document.getElementById('view-logic-club');
+      if (!el || el.classList.contains('hidden')) {
+        this.clearTimer();
+        return;
+      }
       if (this.unlimitedTime) return;
       this.timer--;
       if (timerFill) timerFill.style.width = `${(this.timer / seconds) * 100}%`;
