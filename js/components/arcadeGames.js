@@ -6360,134 +6360,119 @@ class RoverRescueGame {
 }
 
 // ==========================================================================
-// 21. GAME 21: DID YOU KNOW? TRIVIA BLITZ (Curiosity, Geography & Science)
+// 21. GAME 21: DID YOU KNOW? DISCOVERY FLASHCARDS (Mind-Blowing World Facts)
 // ==========================================================================
 class DidYouKnowTriviaGame {
   constructor(hub) {
     this.hub = hub;
-    this.questions = [];
+    this.facts = [];
     this.currentIdx = 0;
-    this.score = 0;
-    this.combo = 1;
-    this.correctCount = 0;
-    this.incorrectCount = 0;
-    this.longestStreak = 0;
-    this.currentStreak = 0;
-    this.missedFacts = [];
-    this.selectedOption = null;
-    this.feedbackState = null; // 'correct' | 'wrong' | null
-    this.feedbackTimer = 0;
+    this.discoveredCount = 0;
     this.particles = [];
+    this.cardPulse = 0;
+    this.discoveredSet = new Set();
   }
 
   start() {
     const bank = window.TRIVIA_FACTS_BANK || [];
-    const shuffled = [...bank].sort(() => Math.random() - 0.5);
-    this.questions = shuffled.slice(0, 10);
+    this.facts = [...bank].sort(() => Math.random() - 0.5);
     this.currentIdx = 0;
-    this.score = 0;
-    this.combo = 1;
-    this.correctCount = 0;
-    this.incorrectCount = 0;
-    this.longestStreak = 0;
-    this.currentStreak = 0;
-    this.missedFacts = [];
-    this.selectedOption = null;
-    this.feedbackState = null;
-    this.particles = [];
-
-    this.hub.setLevel("ROUND 1/10");
-    this.hub.setPrompt("💡 DID YOU KNOW? Read & answer the trivia!");
+    this.discoveredCount = 0;
+    this.discoveredSet = new Set();
     this.initParticles();
+
+    this.hub.setLevel(`FACT 1/${this.facts.length}`);
+    this.hub.setPrompt("💡 DID YOU KNOW? Tap or press Space/Arrows to explore!");
+    this.awardDiscovery();
   }
 
   initParticles() {
     this.particles = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 30; i++) {
       this.particles.push({
         x: Math.random() * 600,
         y: Math.random() * 420,
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: (Math.random() - 0.5) * 0.8,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
         size: Math.random() * 2.5 + 1,
-        color: ['#38bdf8', '#fde047', '#a855f7', '#34d399'][Math.floor(Math.random() * 4)]
+        color: ['#38bdf8', '#fde047', '#a855f7', '#34d399', '#f472b6'][Math.floor(Math.random() * 5)]
       });
     }
   }
 
+  awardDiscovery() {
+    if (!this.discoveredSet.has(this.currentIdx)) {
+      this.discoveredSet.add(this.currentIdx);
+      this.discoveredCount++;
+      window.gameState.addXP(25);
+      window.gameState.addAura(10);
+
+      this.hub.scoreEl.textContent = (this.discoveredCount * 25).toLocaleString();
+      this.hub.comboTag.textContent = `${this.discoveredCount} DISCOVERED ⭐`;
+
+      if (window.soundEngine) window.soundEngine.playTap();
+      if (window.helpers) {
+        window.helpers.spawnAuraFloatingText("+25 XP 💡", 300, 120, true);
+        if (this.discoveredCount % 5 === 0) window.helpers.spawnConfetti(25);
+      }
+    }
+  }
+
   handleInput(code) {
-    if (this.feedbackState) return;
-    if (code === 'Digit1' || code === 'KeyA') this.submitAnswer(0);
-    else if (code === 'Digit2' || code === 'KeyB') this.submitAnswer(1);
-    else if (code === 'Digit3' || code === 'KeyC') this.submitAnswer(2);
-    else if (code === 'Digit4' || code === 'KeyD') this.submitAnswer(3);
+    if (code === 'ArrowRight' || code === 'Space' || code === 'Enter' || code === 'KeyD') {
+      this.nextFact();
+    } else if (code === 'ArrowLeft' || code === 'KeyA') {
+      this.prevFact();
+    } else if (code === 'KeyS' || code === 'KeyR') {
+      this.shuffleDeck();
+    }
   }
 
   handlePointer(x, y, type) {
-    if (type !== 'up' || this.feedbackState) return;
+    if (type !== 'up') return;
 
-    // 4 Option Button Hitboxes on Canvas
-    // Button 0: x: 30, y: 260, w: 260, h: 54
-    // Button 1: x: 310, y: 260, w: 260, h: 54
-    // Button 2: x: 30, y: 325, w: 260, h: 54
-    // Button 3: x: 310, y: 325, w: 260, h: 54
-    const hitTest = (bx, by, bw, bh) => (x >= bx && x <= bx + bw && y >= by && y <= by + bh);
-
-    if (hitTest(30, 260, 260, 54)) this.submitAnswer(0);
-    else if (hitTest(310, 260, 260, 54)) this.submitAnswer(1);
-    else if (hitTest(30, 325, 260, 54)) this.submitAnswer(2);
-    else if (hitTest(310, 325, 260, 54)) this.submitAnswer(3);
+    // Bottom Navigation Hitboxes
+    // Prev Button: x: 40, y: 348, w: 120, h: 46
+    // Shuffle Button: x: 175, y: 348, w: 150, h: 46
+    // Next Button: x: 340, y: 348, w: 220, h: 46
+    if (x >= 40 && x <= 160 && y >= 348 && y <= 394) {
+      this.prevFact();
+    } else if (x >= 175 && x <= 325 && y >= 348 && y <= 394) {
+      this.shuffleDeck();
+    } else if (x >= 340 && x <= 560 && y >= 348 && y <= 394) {
+      this.nextFact();
+    } else {
+      // Tap on main card area advances to next fact
+      this.nextFact();
+    }
   }
 
-  submitAnswer(choiceIdx) {
-    if (this.feedbackState) return;
-    const currentQ = this.questions[this.currentIdx];
-    if (!currentQ || choiceIdx >= currentQ.options.length) return;
+  nextFact() {
+    this.currentIdx = (this.currentIdx + 1) % this.facts.length;
+    this.hub.setLevel(`FACT ${this.currentIdx + 1}/${this.facts.length}`);
+    this.awardDiscovery();
+  }
 
-    this.selectedOption = choiceIdx;
-    const isCorrect = (choiceIdx === currentQ.answer);
+  prevFact() {
+    this.currentIdx = (this.currentIdx - 1 + this.facts.length) % this.facts.length;
+    this.hub.setLevel(`FACT ${this.currentIdx + 1}/${this.facts.length}`);
+    this.awardDiscovery();
+  }
 
-    if (isCorrect) {
-      this.feedbackState = 'correct';
-      this.correctCount++;
-      this.currentStreak++;
-      if (this.currentStreak > this.longestStreak) this.longestStreak = this.currentStreak;
-      this.combo = Math.min(5, Math.floor(this.currentStreak / 2) + 1);
-
-      const pts = 150 * this.combo;
-      this.score += pts;
-      this.hub.scoreEl.textContent = this.score.toLocaleString();
-      this.hub.comboTag.textContent = `${this.combo}x COMBO 🔥`;
-
-      if (window.soundEngine) window.soundEngine.playCorrect();
-      if (window.helpers) {
-        window.helpers.spawnAuraFloatingText(`+${pts} (${this.combo}x Streak!)`, 300, 200, true);
-        window.helpers.spawnConfetti(25);
-      }
-    } else {
-      this.feedbackState = 'wrong';
-      this.incorrectCount++;
-      this.currentStreak = 0;
-      this.combo = 1;
-      this.hub.comboTag.textContent = '1x COMBO';
-      this.missedFacts.push(currentQ.fact);
-
-      if (window.soundEngine) window.soundEngine.playWrong();
-      if (window.helpers) {
-        window.helpers.spawnAuraFloatingText(
-          this.hub.isPracticeMode ? "Missed! (Practice Safe 🛡️)" : "Missed! 📉",
-          300, 200, false
-        );
-      }
-    }
-
-    this.feedbackTimer = performance.now() + 2000;
+  shuffleDeck() {
+    const current = this.facts[this.currentIdx];
+    this.facts.sort(() => Math.random() - 0.5);
+    this.currentIdx = 0;
+    this.hub.setLevel(`FACT 1/${this.facts.length}`);
+    if (window.soundEngine) window.soundEngine.playTap();
+    if (window.helpers) window.helpers.spawnAuraFloatingText("Deck Shuffled! 🎲", 300, 200, true);
+    this.awardDiscovery();
   }
 
   update() {
-    const now = performance.now();
+    this.cardPulse += 0.04;
 
-    // Advance particles
+    // Advance background cosmic particles
     this.particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
@@ -6496,27 +6481,14 @@ class DidYouKnowTriviaGame {
       if (p.y < 0) p.y = 420;
       if (p.y > 420) p.y = 0;
     });
-
-    // Advance to next question after feedback timer
-    if (this.feedbackState && now > this.feedbackTimer) {
-      this.feedbackState = null;
-      this.selectedOption = null;
-      this.currentIdx++;
-
-      if (this.currentIdx >= this.questions.length) {
-        this.endGame();
-      } else {
-        this.hub.setLevel(`ROUND ${this.currentIdx + 1}/10`);
-      }
-    }
   }
 
   render(ctx) {
-    // Dark Cosmos Background
-    ctx.fillStyle = '#080c1a';
+    // Deep Space Background
+    ctx.fillStyle = '#070a18';
     ctx.fillRect(0, 0, 600, 420);
 
-    // Render Ambient Curiosity Particles
+    // Floating Ambient Nebula Particles
     this.particles.forEach(p => {
       ctx.fillStyle = p.color;
       ctx.beginPath();
@@ -6524,132 +6496,140 @@ class DidYouKnowTriviaGame {
       ctx.fill();
     });
 
-    const qData = this.questions[this.currentIdx];
-    if (!qData) return;
+    const item = this.facts[this.currentIdx];
+    if (!item) return;
 
-    // Header Category Badge
+    // 1. Top Header Category Bar
     ctx.fillStyle = '#1e1b4b';
-    ctx.beginPath(); ctx.roundRect(30, 16, 540, 32, 8); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(36, 14, 528, 36, 10); ctx.fill();
     ctx.strokeStyle = '#4338ca'; ctx.lineWidth = 1.5; ctx.stroke();
 
     ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.font = 'bold 14px "Space Grotesk", sans-serif';
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(`💡 DID YOU KNOW? • ${qData.category.toUpperCase()}`, 44, 32);
+    ctx.fillText(`💡 DID YOU KNOW? • ${item.category.toUpperCase()}`, 52, 32);
 
     ctx.fillStyle = '#38bdf8';
     ctx.textAlign = 'right';
-    ctx.fillText(`QUESTION ${this.currentIdx + 1} / 10`, 556, 32);
+    ctx.font = 'bold 13px "Space Grotesk", sans-serif';
+    ctx.fillText(`FACT ${this.currentIdx + 1} / ${this.facts.length}`, 548, 32);
 
-    // Fact Spotlight Card
-    ctx.fillStyle = '#0f172a';
-    ctx.beginPath(); ctx.roundRect(30, 56, 540, 84, 12); ctx.fill();
-    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
+    // 2. Center Hero Visual Badge (Glowing Circle with Pulse)
+    const pulseScale = 1 + Math.sin(this.cardPulse) * 0.05;
+    const categoryIcon = (item.category.match(/[\p{Emoji}]/u) || ['💡'])[0];
 
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = '600 13px "Fredoka", sans-serif';
-    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-    this.wrapText(ctx, `"${qData.fact}"`, 46, 68, 508, 20);
+    ctx.save();
+    ctx.translate(300, 96);
+    ctx.scale(pulseScale, pulseScale);
 
-    // Trivia Question Card
+    // Outer Glow Ring
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+    ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
+
+    // Badge Inner
     ctx.fillStyle = '#131d38';
-    ctx.beginPath(); ctx.roundRect(30, 150, 540, 96, 12); ctx.fill();
-    ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.stroke();
 
-    ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 11px "Space Grotesk"';
-    ctx.fillText('TRIVIA CHALLENGE:', 46, 160);
+    // Category Emoji
+    ctx.font = '28px "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(categoryIcon, 0, 2);
+
+    ctx.restore();
+
+    // 3. Single Large Centered Fact Card
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath(); ctx.roundRect(36, 142, 528, 192, 16); ctx.fill();
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Subtle Accent Top Border Line on Card
+    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(56, 142); ctx.lineTo(544, 142); ctx.stroke();
+
+    // Large, Beautiful Fact Headline / Body Text
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '600 18px "Fredoka", "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    this.wrapTextCentered(ctx, `"${item.fact}"`, 300, 168, 480, 28);
+
+    // 4. Bottom Control Buttons Bar
+    // PREV Button
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath(); ctx.roundRect(40, 348, 120, 46, 10); ctx.fill();
+    ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('⬅ PREV', 100, 371);
+
+    // SHUFFLE Button
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath(); ctx.roundRect(175, 348, 150, 46, 10); ctx.fill();
+    ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.fillText('🎲 SHUFFLE DECK', 250, 371);
+
+    // NEXT FACT Button (Primary High-Contrast Luminous Blue)
+    ctx.fillStyle = '#0284c7';
+    ctx.beginPath(); ctx.roundRect(340, 348, 224, 46, 10); ctx.fill();
+    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.stroke();
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 15px "Space Grotesk"';
-    this.wrapText(ctx, qData.q, 46, 180, 508, 22);
+    ctx.font = 'bold 14px "Space Grotesk"';
+    ctx.fillText('NEXT FACT ➔ (+25 XP)', 452, 371);
 
-    // 4 Option Buttons (2x2 Grid)
-    const optCoords = [
-      { x: 30, y: 260, w: 260, h: 54, key: '1 / A' },
-      { x: 310, y: 260, w: 260, h: 54, key: '2 / B' },
-      { x: 30, y: 325, w: 260, h: 54, key: '3 / C' },
-      { x: 310, y: 325, w: 260, h: 54, key: '4 / D' }
-    ];
-
-    qData.options.forEach((opt, idx) => {
-      const b = optCoords[idx];
-      let bg = '#1e293b';
-      let border = '#475569';
-      let textColor = '#f8fafc';
-
-      if (this.feedbackState) {
-        if (idx === qData.answer) {
-          bg = '#14532d';
-          border = '#22c55e';
-          textColor = '#86efac';
-        } else if (idx === this.selectedOption) {
-          bg = '#7f1d1d';
-          border = '#ef4444';
-          textColor = '#fca5a5';
-        }
-      }
-
-      ctx.fillStyle = bg;
-      ctx.beginPath(); ctx.roundRect(b.x, b.y, b.w, b.h, 10); ctx.fill();
-      ctx.strokeStyle = border; ctx.lineWidth = 2; ctx.stroke();
-
-      // Key shortcut tag
-      ctx.fillStyle = '#64748b';
-      ctx.font = 'bold 10px "Space Grotesk"';
-      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText(b.key, b.x + 10, b.y + 6);
-
-      // Option label
-      ctx.fillStyle = textColor;
-      ctx.font = 'bold 13px "Space Grotesk"';
-      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-      this.wrapText(ctx, opt, b.x + 10, b.y + 30, b.w - 20, 16);
-    });
-
-    // Bottom Help Banner
+    // Hint Text
     ctx.fillStyle = '#64748b';
     ctx.font = '11px "Space Grotesk"';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('Tap buttons or press 1, 2, 3, 4 on keyboard to lock in answer', 300, 400);
+    ctx.fillText('Tip: Press Spacebar or Arrow Keys on keyboard to flip cards', 300, 408);
   }
 
-  wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  wrapTextCentered(ctx, text, centerX, startY, maxWidth, lineHeight) {
     const words = text.split(' ');
     let line = '';
-    let currY = y;
+    const lines = [];
 
     for (let n = 0; n < words.length; n++) {
       const testLine = line + words[n] + ' ';
       const metrics = ctx.measureText(testLine);
       const testWidth = metrics.width;
       if (testWidth > maxWidth && n > 0) {
-        ctx.fillText(line, x, currY);
+        lines.push(line);
         line = words[n] + ' ';
-        currY += lineHeight;
       } else {
         line = testLine;
       }
     }
-    ctx.fillText(line, x, currY);
+    lines.push(line);
+
+    // Calculate centered vertical offset
+    const totalHeight = lines.length * lineHeight;
+    const offsetY = startY + Math.max(0, (140 - totalHeight) / 2);
+
+    lines.forEach((l, idx) => {
+      ctx.fillText(l.trim(), centerX, offsetY + idx * lineHeight);
+    });
   }
 
   endGame() {
-    const total = this.correctCount + this.incorrectCount;
-    const acc = total > 0 ? Math.round((this.correctCount / total) * 100) : 0;
     this.hub.showGameSummary({
-      gameName: "Did You Know? Trivia",
-      score: this.score,
-      accuracy: acc,
-      correct: this.correctCount,
-      incorrect: this.incorrectCount,
-      longestStreak: this.longestStreak,
-      missedSkills: Array.from(new Set(this.missedFacts))
+      gameName: "Did You Know? Discovery Cards",
+      score: this.discoveredCount * 25,
+      accuracy: 100,
+      correct: this.discoveredCount,
+      incorrect: 0,
+      longestStreak: this.discoveredCount,
+      missedSkills: []
     });
   }
 }
 
 window.ArcadeHub = ArcadeHub;
+
 
 
 
