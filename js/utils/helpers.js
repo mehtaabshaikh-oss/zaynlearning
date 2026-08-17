@@ -49,12 +49,20 @@ class Helpers {
 
     let displayText = text;
     if (!isPositive) {
-      if (!displayText.includes('Aura') && !displayText.includes('-')) {
-        displayText = `${displayText} (-25 Aura 📉)`;
-      }
-      // Deduct -25 Aura when wrong answer occurs
-      if (window.gameState && window.gameState.deductAura) {
-        window.gameState.deductAura(25);
+      const isPractice = window.arcadeHub && window.arcadeHub.isPracticeMode;
+      if (!isPractice) {
+        if (!displayText.includes('Aura') && !displayText.includes('-')) {
+          displayText = `${displayText} (-25 Aura 📉)`;
+        }
+        // Deduct -25 Aura when wrong answer occurs in ranked mode
+        if (window.gameState && window.gameState.deductAura) {
+          window.gameState.deductAura(25);
+        }
+      } else {
+        // Practice mode: gentle learning feedback with no penalty
+        if (displayText.includes('(-25 Aura 📉)')) {
+          displayText = displayText.replace('(-25 Aura 📉)', '(Practice Safe 🛡️)');
+        }
       }
     }
 

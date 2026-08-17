@@ -240,7 +240,9 @@ class ArcadeHub {
   loop() {
     if (!this.currentGame) return;
     this.currentGame.update();
+    if (!this.currentGame) return;
     this.currentGame.render(this.ctx);
+    if (!this.currentGame) return;
     this.gameLoopId = requestAnimationFrame(() => this.loop());
   }
 
@@ -337,7 +339,7 @@ class SnakeMathGame {
     this.foods = [];
     this.currentQ = null;
     this.lastTick = 0;
-    this.tickRate = 120;
+    this.tickRate = 130;
     this.score = 0;
     this.combo = 1;
     this.correctCount = 0;
@@ -346,9 +348,17 @@ class SnakeMathGame {
     this.currentStreak = 0;
     this.missedFacts = [];
     this.isGolden = false;
+
+    // Orientation 2-Second Countdown on Launch
+    this.isReady = false;
+    this.readyCountdown = 2.0;
+    this.lastFrameTime = performance.now();
   }
 
   start() {
+    this.isReady = false;
+    this.readyCountdown = 2.0;
+    this.lastFrameTime = performance.now();
     this.generateQuestion();
   }
 
@@ -368,10 +378,20 @@ class SnakeMathGame {
     this.foods = [];
     const usedVals = new Set([ans]);
 
-    // Spawn Correct Target
+    // Head position for safe spawn distancing
+    const headX = this.snake[0] ? this.snake[0].x : 10;
+    const headY = this.snake[0] ? this.snake[0].y : 10;
+
+    // Spawn Correct Target (at least 6 grid cells away from head)
+    let cx, cy;
+    do {
+      cx = Math.floor(Math.random() * 24) + 3;
+      cy = Math.floor(Math.random() * 16) + 3;
+    } while (Math.hypot(cx - headX, cy - headY) < 6);
+
     this.foods.push({
-      x: Math.floor(Math.random() * 24) + 3,
-      y: Math.floor(Math.random() * 16) + 3,
+      x: cx,
+      y: cy,
       val: ans,
       isCorrect: true,
       isGolden: this.isGolden
@@ -386,9 +406,15 @@ class SnakeMathGame {
       const wrong = ans + off;
       if (wrong > 0 && !usedVals.has(wrong)) {
         usedVals.add(wrong);
+        let wx, wy;
+        do {
+          wx = Math.floor(Math.random() * 24) + 3;
+          wy = Math.floor(Math.random() * 16) + 3;
+        } while (Math.hypot(wx - headX, wy - headY) < 5);
+
         this.foods.push({
-          x: Math.floor(Math.random() * 24) + 3,
-          y: Math.floor(Math.random() * 16) + 3,
+          x: wx,
+          y: wy,
           val: wrong,
           isCorrect: false,
           isGolden: false
@@ -398,6 +424,7 @@ class SnakeMathGame {
   }
 
   handleInput(code) {
+    this.isReady = true; // Player input immediately unfreezes snake
     if ((code === 'ArrowUp' || code === 'KeyW') && this.direction.y === 0) {
       this.nextDirection = { x: 0, y: -1 };
     } else if ((code === 'ArrowDown' || code === 'KeyS') && this.direction.y === 0) {
@@ -410,6 +437,7 @@ class SnakeMathGame {
   }
 
   handlePointer(x, y, type) {
+    this.isReady = true;
     if (type === 'down') {
       this.touchStartX = x;
       this.touchStartY = y;
@@ -459,6 +487,17 @@ class SnakeMathGame {
 
   update() {
     const now = performance.now();
+    const dt = (now - this.lastFrameTime) / 1000;
+    this.lastFrameTime = now;
+
+    if (!this.isReady) {
+      this.readyCountdown -= dt;
+      if (this.readyCountdown <= 0) {
+        this.isReady = true;
+      }
+      return; // Snake does not move during countdown
+    }
+
     if (now - this.lastTick < this.tickRate) return;
     this.lastTick = now;
 
@@ -570,6 +609,25 @@ class SnakeMathGame {
       ctx.fillStyle = i === 0 ? '#38bdf8' : '#0284c7';
       ctx.fillRect(seg.x * this.gridSize + 1, seg.y * this.gridSize + 1, this.gridSize - 2, this.gridSize - 2);
     });
+
+    // Ready Countdown Overlay
+    if (!this.isReady) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.fillRect(100, 160, 400, 80);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(100, 160, 400, 80);
+
+      ctx.fillStyle = '#fde047';
+      ctx.font = 'bold 20px "Space Grotesk"';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`🐍 READY! Starting in ${Math.ceil(this.readyCountdown)}s`, 300, 188);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '13px "Space Grotesk"';
+      ctx.fillText("Press Arrow Keys or Swipe to Move Immediately", 300, 215);
+    }
   }
 
   endGame() {

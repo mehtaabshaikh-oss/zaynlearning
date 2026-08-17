@@ -37,7 +37,7 @@ class SyncManager {
       const data = await res.json();
       if (data.success && data.state) {
         const cloud = data.state;
-        const local = window.gameState?.state;
+        const local = window.gameState?.data;
 
         if (local && cloud) {
           // If cloud has higher XP or newer progress, merge into local
@@ -76,7 +76,7 @@ class SyncManager {
 
     const payload = {
       studentId: this.studentId,
-      ...window.gameState.state
+      ...window.gameState.data
     };
 
     try {

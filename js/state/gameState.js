@@ -76,6 +76,9 @@ class GameState {
       console.warn("Could not save to localStorage", e);
     }
     this.notifyListeners();
+    if (window.syncManager && window.syncManager.schedulePush) {
+      window.syncManager.schedulePush();
+    }
   }
 
   ensureDefaults() {
@@ -88,7 +91,8 @@ class GameState {
   }
 
   checkDailyStreak() {
-    const today = new Date().toISOString().split('T')[0];
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const lastActive = this.data.lastActiveDate;
 
     if (!lastActive) {
@@ -123,10 +127,13 @@ class GameState {
 
   addXP(amount) {
     this.data.xp += amount;
-    const nextLevelXP = this.data.level * 350;
-    if (this.data.xp >= nextLevelXP) {
+    let leveledUp = false;
+    while (this.data.xp >= this.data.level * 350) {
       this.data.level += 1;
       this.data.gems += 25;
+      leveledUp = true;
+    }
+    if (leveledUp) {
       if (window.soundEngine) window.soundEngine.playLevelUp();
       if (window.helpers) window.helpers.spawnLevelUpCelebration(this.data.level);
     }
