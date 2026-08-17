@@ -471,10 +471,19 @@ class ClassroomEngine {
 
     const qData = this.quizQuestions[this.currentQuizIdx];
 
-    const optionsHTML = qData.options.map((opt, i) => `
+    // Dynamic Option Shuffling (so the correct answer is randomized across A, B, C, D)
+    const indexedOpts = qData.options.map((opt, i) => ({ text: opt, isCorrect: i === qData.answer }));
+    for (let i = indexedOpts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indexedOpts[i], indexedOpts[j]] = [indexedOpts[j], indexedOpts[i]];
+    }
+    this.currentShuffledQuizOpts = indexedOpts;
+    this.currentCorrectQuizIdx = indexedOpts.findIndex(o => o.isCorrect);
+
+    const optionsHTML = indexedOpts.map((optObj, i) => `
       <button class="quiz-opt-btn" onclick="window.classroomEngine.handleQuizChoice(${i})">
         <span style="opacity:0.6; font-family:'Space Grotesk'; font-weight:800;">${String.fromCharCode(65 + i)}.</span>
-        <span>${opt}</span>
+        <span>${optObj.text}</span>
       </button>
     `).join('');
 
@@ -497,15 +506,15 @@ class ClassroomEngine {
     const opts = document.querySelectorAll('.quiz-opt-btn');
     opts.forEach(b => b.disabled = true);
 
-    const isCorrect = (choiceIdx === qData.answer);
+    const isCorrect = (choiceIdx === this.currentCorrectQuizIdx);
     if (isCorrect) {
       this.quizScore++;
       opts[choiceIdx].classList.add('correct');
       if (window.soundEngine) window.soundEngine.playCorrect();
     } else {
       opts[choiceIdx].classList.add('wrong');
-      opts[qData.answer].classList.add('correct');
-      this.quizMistakes.push({ q: qData.q, correct: qData.options[qData.answer] });
+      opts[this.currentCorrectQuizIdx].classList.add('correct');
+      this.quizMistakes.push({ q: qData.q, correct: this.currentShuffledQuizOpts[this.currentCorrectQuizIdx].text });
       if (window.soundEngine) window.soundEngine.playWrong();
     }
 
