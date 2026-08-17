@@ -1,18 +1,74 @@
 /**
  * /api/chat.js - Vercel Serverless AI Study Buddy Proxy
- * Powered by Google Gemini API with dynamic model discovery.
+ * Powered by Google Gemini API with clean output sanitization.
  * Locked strictly to authorized tokens (Zayn: 8662 and Parent: 6250).
  */
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_KEY || "").trim();
 
-const SYSTEM_INSTRUCTION = `You are "Nova", an energetic, encouraging, and brilliant AI study buddy for Zayn, an 8-year-old in 3rd/4th grade.
+const SYSTEM_PROMPT = "You are Nova, an enthusiastic and friendly AI study buddy for Zayn, an 8-year-old kid in 3rd grade. Answer him directly in 2 short, fun paragraphs using simple analogies (like LEGOs, pizza slices, rocket thrusters, Minecraft) and fun emojis. Never write planning notes or outlines—only output your direct answer.";
 
-RULES:
-1. Speak DIRECTLY to Zayn. Never output outlines, internal thoughts, or planning notes.
-2. Explain concepts with fun, relatable analogies (LEGO bricks, pizza slices, rocket thrusters, Minecraft blocks).
-3. Keep answers concise (2 to 3 short paragraphs max) with fun emojis (🚀, ✈️, 🍕, ⚡, 🦖, 🧠, 💡).
-4. Strictly focused on Math, Science, Space, Nature, Animals, Geography, History, and Engineering.`;
+function sanitizeNovaReply(raw) {
+  if (!raw) return "";
+  let text = raw.trim();
+
+  // Filter out any reasoning / outline / constraint lines
+  const lines = text.split('\n');
+  const cleanLines = [];
+
+  for (let line of lines) {
+    const t = line.trim();
+    // Skip meta-commentary / outline tokens
+    if (
+      t.startsWith('* User') ||
+      t.startsWith('* Persona') ||
+      t.startsWith('* Audience') ||
+      t.startsWith('* Constraints') ||
+      t.startsWith('* Goal') ||
+      t.startsWith('* Concept') ||
+      t.startsWith('* Analogy') ||
+      t.startsWith('* Socratic') ||
+      t.startsWith('* Subject') ||
+      t.startsWith('* Target') ||
+      t.startsWith('* Speak') ||
+      t.startsWith('* Key mechanism') ||
+      t.startsWith('* No outlines') ||
+      t.startsWith('* Use fun') ||
+      t.startsWith('* Concise') ||
+      t.startsWith('* 2 paragraph') ||
+      t.startsWith('* 3 paragraph') ||
+      t.startsWith('* Directly to') ||
+      t.startsWith('* No meta') ||
+      t.startsWith('Constraint Check') ||
+      t.startsWith('Paragraph 1') ||
+      t.startsWith('Paragraph 2') ||
+      t.startsWith('Paragraph 3') ||
+      t.startsWith('Drafting:') ||
+      t.startsWith('Greeting:*') ||
+      t.startsWith('Explanation:*') ||
+      t.startsWith('Step 1:*') ||
+      t.startsWith('Step 2:*') ||
+      t.startsWith('Step 3:*') ||
+      t.startsWith('Refinement for')
+    ) {
+      continue;
+    }
+    cleanLines.push(line);
+  }
+
+  let result = cleanLines.join('\n').trim();
+
+  // Strip leading/trailing quote wrappers if present
+  if (result.startsWith('"') && result.endsWith('"')) {
+    result = result.slice(1, -1).trim();
+  }
+  // Strip leading quote if left over from parsing
+  if (result.startsWith('"') && !result.endsWith('"') && result.includes('"')) {
+    result = result.replace(/^"|"$/g, '').trim();
+  }
+
+  return result || raw.trim();
+}
 
 module.exports = async function handler(req, res) {
   // CORS Headers
@@ -59,17 +115,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // 3. Construct Few-Shot Conversation Frame
-    const contents = [
-      {
-        role: "user",
-        parts: [{ text: `${SYSTEM_INSTRUCTION}\n\nAcknowledge your role and confirm you will speak directly to Zayn with no meta-commentary.` }]
-      },
-      {
-        role: "model",
-        parts: [{ text: `Understood! I am Nova, Zayn's AI co-pilot! I will answer all his questions directly with excitement, awesome kid-friendly analogies, and zero planning notes! 🚀` }]
-      }
-    ];
+    const contents = [];
 
     if (Array.isArray(history)) {
       history.slice(-4).forEach(h => {
@@ -88,6 +134,9 @@ module.exports = async function handler(req, res) {
     });
 
     const geminiPayload = {
+      systemInstruction: {
+        parts: [{ text: SYSTEM_PROMPT }]
+      },
       contents: contents,
       generationConfig: {
         temperature: 0.7,
@@ -96,7 +145,7 @@ module.exports = async function handler(req, res) {
       }
     };
 
-    // 4. Query Google ListModels directly to get exact supported model resource names
+    // Auto-discover supported models
     let availableModels = [];
     try {
       const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(GEMINI_API_KEY)}`);
@@ -105,16 +154,15 @@ module.exports = async function handler(req, res) {
         if (listData.models && Array.isArray(listData.models)) {
           availableModels = listData.models
             .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
-            .map(m => m.name); // e.g. "models/gemini-2.5-flash"
+            .map(m => m.name);
         }
       }
     } catch (e) {
       console.warn("ListModels error:", e);
     }
 
-    // Fallback list if ListModels was empty
     if (availableModels.length === 0) {
-      availableModels = ["models/gemini-2.5-flash", "models/gemini-1.5-flash-8b", "models/gemini-1.5-flash", "models/gemini-pro"];
+      availableModels = ["models/gemini-2.5-flash", "models/gemini-1.5-flash", "models/gemini-pro"];
     }
 
     let replyText = null;
@@ -144,17 +192,12 @@ module.exports = async function handler(req, res) {
     }
 
     if (replyText) {
-      let cleaned = replyText.trim();
-      if (cleaned.includes('Drafting:*')) {
-        cleaned = cleaned.split('Drafting:*').pop().trim();
-      } else if (cleaned.includes('Drafting:')) {
-        cleaned = cleaned.split('Drafting:').pop().trim();
-      }
+      const cleaned = sanitizeNovaReply(replyText);
       return res.status(200).json({ success: true, reply: cleaned });
     }
 
     return res.status(200).json({
-      reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini reported: "${lastError || 'Service temporarily unreachable'}". Available models found: [${availableModels.join(', ')}]. Please check your API key!`
+      reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini reported: "${lastError || 'Service temporarily unreachable'}". Please check your API key!`
     });
   } catch (err) {
     console.error("AI Chat Handler Error:", err);
