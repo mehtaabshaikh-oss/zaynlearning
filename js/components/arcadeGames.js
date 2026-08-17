@@ -4117,8 +4117,9 @@ class MathDetectiveGame {
 class MathGridJigsawGame {
   constructor(hub) {
     this.hub = hub;
+    this.gridSize = 3; // 3 (3x3 = 9 tiles) or 4 (4x4 = 16 tiles)
     this.puzzleLevel = 1;
-    this.maxPuzzles = 3;
+    this.maxPuzzles = 5;
     this.score = 0;
     this.correctCount = 0;
     this.incorrectCount = 0;
@@ -4128,7 +4129,7 @@ class MathGridJigsawGame {
     this.gridNumbers = [];
     this.trayTiles = [];
     this.placedTiles = new Map(); // gridIdx -> tile
-    this.puzzleName = "Diamond Sword";
+    this.puzzle = null;
   }
 
   start() {
@@ -4140,134 +4141,192 @@ class MathGridJigsawGame {
     this.loadPuzzle();
   }
 
+  setGridSize(size) {
+    if (this.gridSize === size) return;
+    this.gridSize = size;
+    this.loadPuzzle();
+    if (window.soundEngine) window.soundEngine.playTap();
+  }
+
   loadPuzzle() {
     this.placedTiles.clear();
     this.selectedTileIdx = null;
 
-    if (this.puzzleLevel === 1) {
-      this.puzzleName = "Diamond Sword";
-      this.gridNumbers = [9, 12, 16, 24, 36, 42, 48, 54, 72];
-      this.trayTiles = [
-        { id: 0, eq: "72 ÷ 8", ans: 9, icon: "💎" },
-        { id: 1, eq: "48 ÷ 4", ans: 12, icon: "⚔️" },
-        { id: 2, eq: "4 × 4", ans: 16, icon: "✨" },
-        { id: 3, eq: "4 × 6", ans: 24, icon: "🛡️" },
-        { id: 4, eq: "6 × 6", ans: 36, icon: "💎" },
-        { id: 5, eq: "6 × 7", ans: 42, icon: "⚔️" },
-        { id: 6, eq: "8 × 6", ans: 48, icon: "✨" },
-        { id: 7, eq: "6 × 9", ans: 54, icon: "🗡️" },
-        { id: 8, eq: "9 × 8", ans: 72, icon: "👑" }
-      ].sort(() => Math.random() - 0.5);
-    } else if (this.puzzleLevel === 2) {
-      this.puzzleName = "Phonk Drift Racecar";
-      this.gridNumbers = [8, 14, 18, 25, 30, 45, 60, 63, 81];
-      this.trayTiles = [
-        { id: 0, eq: "56 ÷ 7", ans: 8, icon: "🏎️" },
-        { id: 1, eq: "2 × 7", ans: 14, icon: "⚡" },
-        { id: 2, eq: "3 × 6", ans: 18, icon: "🔥" },
-        { id: 3, eq: "5 × 5", ans: 25, icon: "🏁" },
-        { id: 4, eq: "6 × 5", ans: 30, icon: "🏎️" },
-        { id: 5, eq: "9 × 5", ans: 45, icon: "⚡" },
-        { id: 6, eq: "12 × 5", ans: 60, icon: "🔥" },
-        { id: 7, eq: "7 × 9", ans: 63, icon: "💨" },
-        { id: 8, eq: "9 × 9", ans: 81, icon: "🏆" }
-      ].sort(() => Math.random() - 0.5);
-    } else {
-      this.puzzleName = "Ender Dragon";
-      this.gridNumbers = [7, 15, 21, 28, 32, 49, 56, 64, 96];
-      this.trayTiles = [
-        { id: 0, eq: "49 ÷ 7", ans: 7, icon: "🐉" },
-        { id: 1, eq: "3 × 5", ans: 15, icon: "🔮" },
-        { id: 2, eq: "3 × 7", ans: 21, icon: "🌌" },
-        { id: 3, eq: "4 × 7", ans: 28, icon: "👁️" },
-        { id: 4, eq: "8 × 4", ans: 32, icon: "🐉" },
-        { id: 5, eq: "7 × 7", ans: 49, icon: "🔮" },
-        { id: 6, eq: "8 × 7", ans: 56, icon: "🌌" },
-        { id: 7, eq: "8 × 8", ans: 64, icon: "🔥" },
-        { id: 8, eq: "12 × 8", ans: 96, icon: "👑" }
-      ].sort(() => Math.random() - 0.5);
+    const minecraftItems = [
+      { name: "Diamond Sword", icon: "🗡️", color: "#38bdf8" },
+      { name: "Netherite Pickaxe", icon: "⛏️", color: "#818cf8" },
+      { name: "Enchanted Shield", icon: "🛡️", color: "#a855f7" },
+      { name: "Golden Apple", icon: "🍎", color: "#facc15" },
+      { name: "Creeper Face", icon: "🟩", color: "#22c55e" },
+      { name: "Ender Chest", icon: "📦", color: "#c084fc" },
+      { name: "Enchanted Bow", icon: "🏹", color: "#fb923c" },
+      { name: "Healing Potion", icon: "🧪", color: "#ec4899" },
+      { name: "Diamond Ore", icon: "💎", color: "#06b6d4" },
+      { name: "Battleaxe", icon: "🪓", color: "#f59e0b" }
+    ];
+
+    this.puzzle = minecraftItems[(this.puzzleLevel - 1) % minecraftItems.length];
+    const totalTiles = this.gridSize * this.gridSize; // 9 or 16
+
+    // Generate unique math equations and answers
+    const equationsPool = [
+      { eq: "72 ÷ 8", ans: 9 },
+      { eq: "48 ÷ 4", ans: 12 },
+      { eq: "4 × 4", ans: 16 },
+      { eq: "4 × 6", ans: 24 },
+      { eq: "6 × 6", ans: 36 },
+      { eq: "6 × 7", ans: 42 },
+      { eq: "8 × 6", ans: 48 },
+      { eq: "6 × 9", ans: 54 },
+      { eq: "9 × 8", ans: 72 },
+      { eq: "56 ÷ 7", ans: 8 },
+      { eq: "2 × 7", ans: 14 },
+      { eq: "3 × 6", ans: 18 },
+      { eq: "5 × 5", ans: 25 },
+      { eq: "6 × 5", ans: 30 },
+      { eq: "9 × 5", ans: 45 },
+      { eq: "12 × 5", ans: 60 },
+      { eq: "7 × 9", ans: 63 },
+      { eq: "9 × 9", ans: 81 },
+      { eq: "49 ÷ 7", ans: 7 },
+      { eq: "3 × 5", ans: 15 },
+      { eq: "3 × 7", ans: 21 },
+      { eq: "4 × 7", ans: 28 },
+      { eq: "8 × 4", ans: 32 },
+      { eq: "7 × 7", ans: 49 },
+      { eq: "8 × 7", ans: 56 },
+      { eq: "8 × 8", ans: 64 },
+      { eq: "12 × 8", ans: 96 }
+    ];
+
+    // Pick totalTiles unique answers
+    const shuffled = equationsPool.sort(() => Math.random() - 0.5);
+    const selected = [];
+    const usedAns = new Set();
+
+    for (const item of shuffled) {
+      if (!usedAns.has(item.ans)) {
+        usedAns.add(item.ans);
+        selected.push(item);
+        if (selected.length === totalTiles) break;
+      }
     }
 
-    this.hub.setLevel(`PUZZLE ${this.puzzleLevel}/${this.maxPuzzles}: ${this.puzzleName}`);
-    this.hub.setPrompt(`🧩 JIGSAW [${this.puzzleName}]: Tap a math tile on right, then tap its matching grid coordinate!`);
+    this.gridNumbers = selected.map(s => s.ans);
+    this.trayTiles = selected.map((s, idx) => ({
+      id: idx,
+      eq: s.eq,
+      ans: s.ans,
+      icon: this.puzzle.icon
+    })).sort(() => Math.random() - 0.5);
+
+    this.hub.setLevel(`PUZZLE ${this.puzzleLevel}/${this.maxPuzzles} • ${this.gridSize}x${this.gridSize} GRID`);
+    this.hub.setPrompt(`🧩 JIGSAW [${this.puzzle.name}]: Tap a math tile on right, then tap its matching grid answer!`);
   }
 
   handlePointer(x, y, type) {
     if (type !== 'down') return;
 
-    // Check click on Right Tray Tiles (x: 350 to 570, y: 70 to 360)
+    // 1. Check Grid Size Toggle Buttons (x: 400 to 575, y: 12 to 40)
+    if (y >= 12 && y <= 40) {
+      if (x >= 405 && x <= 485) {
+        this.setGridSize(3);
+        return;
+      } else if (x >= 495 && x <= 575) {
+        this.setGridSize(4);
+        return;
+      }
+    }
+
+    const totalTiles = this.gridSize * this.gridSize;
+
+    // 2. Check Click on Right Tray Tiles
+    const trayCols = this.gridSize === 3 ? 3 : 4;
+    const tileW = this.gridSize === 3 ? 68 : 52;
+    const tileH = this.gridSize === 3 ? 75 : 56;
+    const trayStartX = this.gridSize === 3 ? 345 : 325;
+    const trayGapX = this.gridSize === 3 ? 75 : 62;
+    const trayGapY = this.gridSize === 3 ? 82 : 62;
+
     for (let i = 0; i < this.trayTiles.length; i++) {
       const tile = this.trayTiles[i];
       if (Array.from(this.placedTiles.values()).includes(tile)) continue;
 
-      const col = i % 3;
-      const row = Math.floor(i / 3);
-      const tx = 350 + col * 75;
-      const ty = 90 + row * 90;
+      const col = i % trayCols;
+      const row = Math.floor(i / trayCols);
+      const tx = trayStartX + col * trayGapX;
+      const ty = 75 + row * trayGapY;
 
-      if (x >= tx && x <= tx + 65 && y >= ty && y <= ty + 75) {
+      if (x >= tx && x <= tx + tileW && y >= ty && y <= ty + tileH) {
         this.selectedTileIdx = i;
         if (window.soundEngine) window.soundEngine.playTap();
         return;
       }
     }
 
-    // Check click on Left 3x3 Grid Cells (x: 40 to 300, y: 80 to 360)
+    // 3. Check Click on Left Grid Cells
     if (this.selectedTileIdx !== null) {
       const selectedTile = this.trayTiles[this.selectedTileIdx];
+      const gridCellSize = this.gridSize === 3 ? 80 : 60;
+      const gridGap = this.gridSize === 3 ? 85 : 64;
+      const startX = this.gridSize === 3 ? 45 : 36;
+      const startY = this.gridSize === 3 ? 85 : 75;
 
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 3; c++) {
-          const gridIdx = r * 3 + c;
+      for (let r = 0; r < this.gridSize; r++) {
+        for (let c = 0; c < this.gridSize; c++) {
+          const gridIdx = r * this.gridSize + c;
           const targetNum = this.gridNumbers[gridIdx];
-          const gx = 45 + c * 85;
-          const gy = 90 + r * 85;
+          const gx = startX + c * gridGap;
+          const gy = startY + r * gridGap;
 
-          if (x >= gx && x <= gx + 75 && y >= gy && y <= gy + 75) {
+          if (x >= gx && x <= gx + gridCellSize && y >= gy && y <= gy + gridCellSize) {
             if (this.placedTiles.has(gridIdx)) {
               if (window.helpers) window.helpers.spawnAuraFloatingText("Cell already filled!", undefined, undefined, false);
               return;
             }
 
             if (selectedTile.ans === targetNum) {
-              // Correct snap!
+              // Correct match!
               this.placedTiles.set(gridIdx, selectedTile);
               this.selectedTileIdx = null;
               this.correctCount++;
               this.currentStreak++;
               this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
 
-              const pts = 150 * this.puzzleLevel;
+              const pts = (this.gridSize === 4 ? 200 : 150) * this.puzzleLevel;
               this.score += pts;
               this.hub.scoreEl.textContent = this.score;
 
               if (window.soundEngine) window.soundEngine.playLevelUp();
               if (window.helpers) {
                 window.helpers.spawnConfetti(50);
-                window.helpers.spawnAuraFloatingText(`PIECE SNAPPED! ${selectedTile.eq} = ${targetNum} 🧩✨`, undefined, undefined, true);
+                window.helpers.spawnAuraFloatingText(`PIECE SNAPPED! ${selectedTile.eq} = ${targetNum} 🧩✨`, gx + 30, gy, true);
               }
 
-              // Check if entire jigsaw complete
-              if (this.placedTiles.size === 9) {
-                this.score += 500;
+              // Check if full puzzle completed
+              if (this.placedTiles.size === totalTiles) {
+                const bonus = this.gridSize === 4 ? 800 : 500;
+                this.score += bonus;
+                this.hub.scoreEl.textContent = this.score;
+
                 if (window.soundEngine) window.soundEngine.playLevelUp();
                 if (window.helpers) {
                   window.helpers.spawnConfetti(120);
-                  window.helpers.spawnAuraFloatingText(`🎉 ${this.puzzleName.toUpperCase()} FULLY ASSEMBLED! +500 Bonus Aura`, undefined, undefined, true);
+                  window.helpers.spawnAuraFloatingText(`🎉 ${this.puzzle.name.toUpperCase()} ASSEMBLED! +${bonus} Bonus Aura`, undefined, undefined, true);
                 }
 
                 this.puzzleLevel++;
                 if (this.puzzleLevel <= this.maxPuzzles) {
-                  this.loadPuzzle();
+                  setTimeout(() => this.loadPuzzle(), 1200);
                 } else {
-                  this.endGame();
+                  setTimeout(() => this.endGame(), 1200);
                 }
               }
             } else {
               this.incorrectCount++;
               this.currentStreak = 0;
               if (window.soundEngine) window.soundEngine.playWrong();
-              if (window.helpers) window.helpers.spawnAuraFloatingText(`${selectedTile.eq} = ${selectedTile.ans}, not ${targetNum}!`, undefined, undefined, false);
+              if (window.helpers) window.helpers.spawnAuraFloatingText(`${selectedTile.eq} = ${selectedTile.ans}, not ${targetNum}!`, gx, gy, false);
             }
             return;
           }
@@ -4282,101 +4341,170 @@ class MathGridJigsawGame {
     ctx.fillStyle = '#0a0a1a';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    // Header
+    const totalTiles = this.gridSize * this.gridSize;
+
+    // Header Title
     ctx.fillStyle = '#fde047';
     ctx.font = 'bold 16px "Space Grotesk"';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`🧩 ${this.puzzle.name.toUpperCase()} (${this.placedTiles.size}/${totalTiles})`, 25, 26);
+
+    // Grid Size Selector Toggles (Top Right: 405 & 495)
+    // 3x3 Button
+    const is3x3 = this.gridSize === 3;
+    ctx.fillStyle = is3x3 ? '#3b82f6' : '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(405, 12, 78, 26, 6);
+    ctx.fill();
+    ctx.strokeStyle = is3x3 ? '#60a5fa' : '#475569';
+    ctx.lineWidth = is3x3 ? 2 : 1;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px "Space Grotesk"';
     ctx.textAlign = 'center';
-    ctx.fillText(`🧩 MATH GRID JIGSAW • ${this.puzzleName.toUpperCase()} (${this.placedTiles.size}/9 TILES)`, 300, 32);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('3×3 GRID', 444, 25);
+
+    // 4x4 Button
+    const is4x4 = this.gridSize === 4;
+    ctx.fillStyle = is4x4 ? '#7c3aed' : '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(495, 12, 78, 26, 6);
+    ctx.fill();
+    ctx.strokeStyle = is4x4 ? '#c084fc' : '#475569';
+    ctx.lineWidth = is4x4 ? 2 : 1;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.fillText('4×4 GRID', 534, 25);
 
     // Left Grid Board
-    ctx.fillStyle = '#1e1b4b';
-    ctx.fillRect(35, 75, 275, 275);
-    ctx.strokeStyle = '#6366f1';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(35, 75, 275, 275);
+    const gridBoardW = this.gridSize === 3 ? 265 : 265;
+    const gridBoardH = this.gridSize === 3 ? 265 : 265;
+    const boardX = 25;
+    const boardY = 55;
 
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        const gridIdx = r * 3 + c;
+    ctx.fillStyle = '#1e1b4b';
+    ctx.beginPath();
+    ctx.roundRect(boardX, boardY, gridBoardW, gridBoardH, 10);
+    ctx.fill();
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    const gridCellSize = this.gridSize === 3 ? 80 : 58;
+    const gridGap = this.gridSize === 3 ? 85 : 63;
+    const startX = this.gridSize === 3 ? 34 : 31;
+    const startY = this.gridSize === 3 ? 64 : 61;
+
+    for (let r = 0; r < this.gridSize; r++) {
+      for (let c = 0; c < this.gridSize; c++) {
+        const gridIdx = r * this.gridSize + c;
         const targetNum = this.gridNumbers[gridIdx];
-        const gx = 45 + c * 85;
-        const gy = 85 + r * 85;
+        const gx = startX + c * gridGap;
+        const gy = startY + r * gridGap;
 
         if (this.placedTiles.has(gridIdx)) {
           const placed = this.placedTiles.get(gridIdx);
           ctx.fillStyle = '#059669';
-          ctx.fillRect(gx, gy, 75, 75);
+          ctx.beginPath();
+          ctx.roundRect(gx, gy, gridCellSize, gridCellSize, 6);
+          ctx.fill();
           ctx.strokeStyle = '#34d399';
           ctx.lineWidth = 2;
-          ctx.strokeRect(gx, gy, 75, 75);
+          ctx.stroke();
 
-          ctx.font = '28px serif';
+          ctx.font = this.gridSize === 3 ? '28px serif' : '22px serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(placed.icon, gx + 37, gy + 37);
+          ctx.fillText(placed.icon, gx + gridCellSize / 2, gy + gridCellSize / 2);
         } else {
           ctx.fillStyle = '#312e81';
-          ctx.fillRect(gx, gy, 75, 75);
+          ctx.beginPath();
+          ctx.roundRect(gx, gy, gridCellSize, gridCellSize, 6);
+          ctx.fill();
           ctx.strokeStyle = '#4338ca';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(gx, gy, 75, 75);
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
 
           ctx.fillStyle = '#ffd500';
-          ctx.font = 'bold 20px "Space Grotesk"';
+          ctx.font = this.gridSize === 3 ? 'bold 19px "Space Grotesk"' : 'bold 15px "Space Grotesk"';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(targetNum, gx + 37, gy + 37);
+          ctx.fillText(targetNum, gx + gridCellSize / 2, gy + gridCellSize / 2);
         }
       }
     }
 
     // Right Tray
+    const trayBoardW = 280;
+    const trayBoardH = 265;
+    const trayBoardX = 305;
+    const trayBoardY = 55;
+
     ctx.fillStyle = '#1e293b';
-    ctx.fillRect(335, 75, 240, 275);
+    ctx.beginPath();
+    ctx.roundRect(trayBoardX, trayBoardY, trayBoardW, trayBoardH, 10);
+    ctx.fill();
     ctx.strokeStyle = '#475569';
     ctx.lineWidth = 2;
-    ctx.strokeRect(335, 75, 240, 275);
+    ctx.stroke();
 
     ctx.fillStyle = '#a5b4fc';
-    ctx.font = 'bold 12px "Space Grotesk"';
-    ctx.fillText('PUZZLE PIECES TRAY', 455, 65);
+    ctx.font = 'bold 11px "Space Grotesk"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('MINECRAFT PUZZLE PIECES TRAY', trayBoardX + trayBoardW / 2, trayBoardY - 6);
+
+    const trayCols = this.gridSize === 3 ? 3 : 4;
+    const tileW = this.gridSize === 3 ? 82 : 62;
+    const tileH = this.gridSize === 3 ? 76 : 56;
+    const trayStartX = this.gridSize === 3 ? 315 : 312;
+    const trayStartY = this.gridSize === 3 ? 64 : 62;
+    const trayGapX = this.gridSize === 3 ? 90 : 68;
+    const trayGapY = this.gridSize === 3 ? 84 : 62;
 
     for (let i = 0; i < this.trayTiles.length; i++) {
       const tile = this.trayTiles[i];
       const isPlaced = Array.from(this.placedTiles.values()).includes(tile);
       const isSelected = this.selectedTileIdx === i;
 
-      const col = i % 3;
-      const row = Math.floor(i / 3);
-      const tx = 345 + col * 75;
-      const ty = 85 + row * 85;
+      const col = i % trayCols;
+      const row = Math.floor(i / trayCols);
+      const tx = trayStartX + col * trayGapX;
+      const ty = trayStartY + row * trayGapY;
 
       if (isPlaced) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.fillRect(tx, ty, 68, 75);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.beginPath();
+        ctx.roundRect(tx, ty, tileW, tileH, 6);
+        ctx.fill();
       } else {
         ctx.fillStyle = isSelected ? '#ec4899' : '#334155';
-        ctx.fillRect(tx, ty, 68, 75);
+        ctx.beginPath();
+        ctx.roundRect(tx, ty, tileW, tileH, 6);
+        ctx.fill();
         ctx.strokeStyle = isSelected ? '#fff' : '#64748b';
-        ctx.lineWidth = isSelected ? 3 : 1;
-        ctx.strokeRect(tx, ty, 68, 75);
+        ctx.lineWidth = isSelected ? 2.5 : 1;
+        ctx.stroke();
 
-        ctx.font = '20px serif';
+        ctx.font = this.gridSize === 3 ? '18px serif' : '14px serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(tile.icon, tx + 34, ty + 24);
+        ctx.fillText(tile.icon, tx + tileW / 2, ty + (this.gridSize === 3 ? 22 : 16));
 
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 12px "Space Grotesk"';
-        ctx.fillText(tile.eq, tx + 34, ty + 54);
+        ctx.font = this.gridSize === 3 ? 'bold 12px "Space Grotesk"' : 'bold 10px "Space Grotesk"';
+        ctx.fillText(tile.eq, tx + tileW / 2, ty + (this.gridSize === 3 ? 52 : 38));
       }
     }
 
-    // Bottom Hint
+    // Bottom Guidance Hint
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '13px "Fredoka"';
+    ctx.font = '13px "Fredoka", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Match each equation to its solution on the grid to assemble the full artwork!', 300, 390);
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Tap a puzzle equation tile on the right, then tap its matching solution coordinate on the left!', 300, 345);
   }
 
   endGame() {
