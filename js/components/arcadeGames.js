@@ -180,6 +180,15 @@ class ArcadeHub {
   }
 
   launchGame(gameType) {
+    if (gameType === 'phonk_drift') {
+      if (window.app) window.app.showView('view-phonk-arena');
+      return;
+    }
+    if (gameType === 'global_odyssey') {
+      if (window.app) window.app.showView('view-odyssey-hub');
+      return;
+    }
+
     this.currentGameType = gameType;
     if (window.app) window.app.showView('view-arcade-arena');
     this.stopCurrentGame();

@@ -79,32 +79,22 @@
       </div>
 
       <div class="nav-right">
-        <!-- 1. Arcade Hub (Primary Home) -->
+        <!-- 1. Arcade Hub (Primary Home - includes all 23 games) -->
         <button id="quick-arcade-btn" class="action-pill-btn" title="Arcade Games Hub">
           <span>🕹️ ARCADE</span>
         </button>
 
-        <!-- 2. Global Odyssey (Scenario Adventures) -->
-        <button id="quick-odyssey-btn" class="action-pill-btn" style="background:#0284c7; border-color:#38bdf8;" title="Global Odyssey Scenario Quests">
-          <span>🌍 ODYSSEY</span>
-        </button>
-
-        <!-- 3. Classroom Power-Ups (School Reinforcement) -->
+        <!-- 2. Classroom Power-Ups (School Reinforcement) -->
         <button id="quick-classroom-btn" class="action-pill-btn" style="background:#4338ca; border-color:#6366f1;" title="Classroom Power-Ups & School Curriculum">
           <span>🎒 CLASSROOM</span>
         </button>
 
-        <!-- 4. Science Lab -->
+        <!-- 3. Science Lab -->
         <button id="quick-science-btn" class="action-pill-btn" title="Zayn Science Lab">
           <span>🔬 SCIENCE LAB</span>
         </button>
 
-        <!-- 5. Speed Math & Drift Arena -->
-        <button id="quick-drift-btn" class="action-pill-btn" title="Star Speed Math & Phonk Drift Arena">
-          <span>⚡ SPEED MATH</span>
-        </button>
-
-        <!-- 6. 1% Club -->
+        <!-- 4. The 1% Club -->
         <button id="quick-logic-btn" class="action-pill-btn" title="The 1% Club Logic Vault">
           <span>🧠 1% CLUB</span>
         </button>
@@ -408,6 +398,26 @@
             <div class="arcade-card-stats" id="stats-card-trivia_blitz">Best: 0 • Acc: 0%</div>
             <button class="arcade-play-btn">EXPLORE FACTS ➔</button>
           </div>
+
+          <!-- Game 22: Speed Math & Phonk Drift Arena (Math + Quick Reflexes) -->
+          <div class="arcade-game-card" data-game="phonk_drift" data-cat="math quick arcade">
+            <div class="arcade-card-icon">⚡🏎️</div>
+            <div class="arcade-card-title">Speed Math & Drift</div>
+            <div class="arcade-card-topic">STAR MATH & 60S PHONK DRIFT</div>
+            <p class="arcade-card-desc">Rapid-fire multiplication drill! 5-second Star Math sprint or 60-second drift arena from 1×1 to 12×10!</p>
+            <div class="arcade-card-stats" id="stats-card-phonk_drift">High Score: 0 Aura</div>
+            <button class="arcade-play-btn">START SPEED DRIFT ➔</button>
+          </div>
+
+          <!-- Game 23: Zayn's Global Odyssey (Adventure + Geography + Science + Math) -->
+          <div class="arcade-game-card" data-game="global_odyssey" data-cat="adventure geography science math logic">
+            <div class="arcade-card-icon">🌍✈️</div>
+            <div class="arcade-card-title">Global Odyssey</div>
+            <div class="arcade-card-topic">SCENARIO QUESTS & PASSPORT STAMPS</div>
+            <p class="arcade-card-desc">Story-driven scenario adventures! Navigate missed flights, foreign currencies, chemistry clues, and math codes to reach home!</p>
+            <div class="arcade-card-stats" id="stats-card-global_odyssey">Quests: Available</div>
+            <button class="arcade-play-btn">START ODYSSEY ➔</button>
+          </div>
         </div>
       </section>
 
@@ -674,6 +684,9 @@
 
       <!-- 11. 🌍 GLOBAL ODYSSEY: SCENARIO ADVENTURES VIEW -->
       <section id="view-odyssey-hub" class="view-panel hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <button class="close-arena-btn" id="exit-odyssey-btn" onclick="window.app.showView('view-arcade-hub')">✕ Back to Arcade</button>
+        </div>
         <div class="odyssey-header">
           <h1 class="odyssey-hub-title"><span>🌍</span> ZAYN'S GLOBAL ODYSSEY</h1>
           <p class="odyssey-hub-sub">Story-driven scenario adventures! Navigate real-world dilemma cards combining geography, science, math, history, and secret clues to find your way home!</p>
@@ -692,10 +705,6 @@
         <span class="mob-nav-icon">🕹️</span>
         <span class="mob-nav-label">Arcade</span>
       </button>
-      <button class="mobile-nav-item" data-view="view-odyssey-hub" id="mob-nav-odyssey">
-        <span class="mob-nav-icon">🌍</span>
-        <span class="mob-nav-label">Odyssey</span>
-      </button>
       <button class="mobile-nav-item" data-view="view-classroom-hub" id="mob-nav-classroom">
         <span class="mob-nav-icon">🎒</span>
         <span class="mob-nav-label">Classroom</span>
@@ -703,10 +712,6 @@
       <button class="mobile-nav-item" data-view="view-science-lab" id="mob-nav-science">
         <span class="mob-nav-icon">🔬</span>
         <span class="mob-nav-label">Science</span>
-      </button>
-      <button class="mobile-nav-item" data-view="view-phonk-arena" id="mob-nav-drift">
-        <span class="mob-nav-icon">🏎️</span>
-        <span class="mob-nav-label">Drift</span>
       </button>
       <button class="mobile-nav-item" data-view="view-logic-club" id="mob-nav-logic">
         <span class="mob-nav-icon">🧠</span>
