@@ -3,7 +3,7 @@
  * Stores all XP, gems, aura points, streaks, shields, inventory, and completed nodes.
  */
 
-const STORAGE_KEY = 'zayn_learning_live_v1';
+const STORAGE_KEY = 'zayn_learning_v2_cloud';
 
 class GameState {
   constructor() {
