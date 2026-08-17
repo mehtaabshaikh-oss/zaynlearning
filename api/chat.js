@@ -12,59 +12,75 @@ function sanitizeNovaReply(raw) {
   if (!raw) return "";
   let text = raw.trim();
 
-  // Filter out any reasoning / outline / constraint lines
+  // If the model outputted drafting markers, slice straight to the actual response
+  if (/Drafting/i.test(text)) {
+    const draftIndex = text.search(/Drafting/i);
+    if (draftIndex !== -1) {
+      text = text.substring(draftIndex);
+      text = text.replace(/Drafting\s*(Paragraph\s*\d+:?\*?|:?\*?)/gi, '');
+    }
+  }
+
+  // Remove trailing verification checklists
+  text = text.replace(/\*\s*\d+\s*short\s*paragraphs[\s\S]*$/i, '');
+  text = text.replace(/\*\s*Direct\s*answer[\s\S]*$/i, '');
+  text = text.replace(/\*\s*No\s*meta[\s\S]*$/i, '');
+  text = text.replace(/\*\s*Constraint\s*Check[\s\S]*$/i, '');
+
   const lines = text.split('\n');
-  const cleanLines = [];
+  const clean = [];
+  let startedActualText = false;
 
   for (let line of lines) {
-    const t = line.trim();
-    // Skip meta-commentary / outline tokens
-    if (
-      t.startsWith('* User') ||
-      t.startsWith('* Persona') ||
-      t.startsWith('* Audience') ||
-      t.startsWith('* Constraints') ||
-      t.startsWith('* Goal') ||
-      t.startsWith('* Concept') ||
-      t.startsWith('* Analogy') ||
-      t.startsWith('* Socratic') ||
-      t.startsWith('* Subject') ||
-      t.startsWith('* Target') ||
-      t.startsWith('* Speak') ||
-      t.startsWith('* Key mechanism') ||
-      t.startsWith('* No outlines') ||
-      t.startsWith('* Use fun') ||
-      t.startsWith('* Concise') ||
-      t.startsWith('* 2 paragraph') ||
-      t.startsWith('* 3 paragraph') ||
-      t.startsWith('* Directly to') ||
-      t.startsWith('* No meta') ||
-      t.startsWith('Constraint Check') ||
-      t.startsWith('Paragraph 1') ||
-      t.startsWith('Paragraph 2') ||
-      t.startsWith('Paragraph 3') ||
-      t.startsWith('Drafting:') ||
-      t.startsWith('Greeting:*') ||
-      t.startsWith('Explanation:*') ||
-      t.startsWith('Step 1:*') ||
-      t.startsWith('Step 2:*') ||
-      t.startsWith('Step 3:*') ||
-      t.startsWith('Refinement for')
-    ) {
-      continue;
+    const trimmed = line.trim();
+    if (!startedActualText) {
+      // Skip meta-commentary, persona rules, and planning lines at the top
+      if (
+        trimmed.startsWith('*') ||
+        trimmed.endsWith('grade).') ||
+        trimmed.endsWith('buddy).') ||
+        trimmed.startsWith('No planning') ||
+        trimmed.startsWith('Simple analogies') ||
+        trimmed.startsWith('Use emojis') ||
+        trimmed.startsWith('Concept:') ||
+        trimmed.startsWith('Analogy:') ||
+        trimmed.startsWith('Target:') ||
+        trimmed.startsWith('Goal:') ||
+        trimmed.startsWith('Audience:') ||
+        trimmed.startsWith('Persona:') ||
+        trimmed.startsWith('Constraints:') ||
+        trimmed.startsWith('Subject:') ||
+        trimmed.startsWith('2 short, fun paragraphs') ||
+        trimmed.startsWith('2 paragraphs') ||
+        trimmed.startsWith('3 paragraphs')
+      ) {
+        continue;
+      }
+      if (trimmed.length > 0) {
+        startedActualText = true;
+      }
     }
-    cleanLines.push(line);
+    if (startedActualText) {
+      // Stop if we hit a trailing checklist
+      if (
+        trimmed.startsWith('* Simple analogies?') ||
+        trimmed.startsWith('* Fun emojis?') ||
+        trimmed.startsWith('* Direct answer?') ||
+        trimmed.startsWith('* 2 paragraphs') ||
+        trimmed.startsWith('* 2 short') ||
+        trimmed.startsWith('* No planning')
+      ) {
+        break;
+      }
+      clean.push(line);
+    }
   }
 
-  let result = cleanLines.join('\n').trim();
+  let result = clean.join('\n').trim();
 
-  // Strip leading/trailing quote wrappers if present
+  // Strip wrapping quotes if any
   if (result.startsWith('"') && result.endsWith('"')) {
     result = result.slice(1, -1).trim();
-  }
-  // Strip leading quote if left over from parsing
-  if (result.startsWith('"') && !result.endsWith('"') && result.includes('"')) {
-    result = result.replace(/^"|"$/g, '').trim();
   }
 
   return result || raw.trim();
@@ -141,7 +157,10 @@ module.exports = async function handler(req, res) {
       generationConfig: {
         temperature: 0.7,
         maxOutputTokens: 1000,
-        topP: 0.95
+        topP: 0.95,
+        thinkingConfig: {
+          thinkingBudget: 0
+        }
       }
     };
 
@@ -183,6 +202,23 @@ module.exports = async function handler(req, res) {
           replyText = candidate?.content?.parts?.[0]?.text;
           if (replyText) break;
         } else {
+          // If thinkingConfig wasn't supported by this model, retry without it
+          const retryPayload = { ...geminiPayload };
+          delete retryPayload.generationConfig.thinkingConfig;
+
+          const retryRes = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(retryPayload)
+          });
+
+          if (retryRes.ok) {
+            const data = await retryRes.json();
+            const candidate = data.candidates && data.candidates[0];
+            replyText = candidate?.content?.parts?.[0]?.text;
+            if (replyText) break;
+          }
+
           const errData = await response.json().catch(() => ({}));
           lastError = `${fullModelName}: ${errData?.error?.message || `HTTP ${response.status}`}`;
         }
