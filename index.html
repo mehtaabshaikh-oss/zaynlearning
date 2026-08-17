@@ -87,9 +87,9 @@
           <span>🔬 SCIENCE LAB</span>
         </button>
 
-        <!-- 3. Speed Drift 60s -->
-        <button id="quick-drift-btn" class="action-pill-btn" title="Phonk Drift Speed Arena">
-          <span>🏎️ DRIFT 60s</span>
+        <!-- 3. Speed Math & Drift Arena -->
+        <button id="quick-drift-btn" class="action-pill-btn" title="Star Speed Math & Phonk Drift Arena">
+          <span>⚡ SPEED MATH</span>
         </button>
 
         <!-- 4. 1% Club -->
@@ -463,14 +463,21 @@
         </footer>
       </section>
 
-      <!-- 5. PHONK DRIFT ARENA VIEW -->
+      <!-- 5. SPEED ARENA VIEW (Phonk Drift 60s & Star Speed Math 2-Min) -->
       <section id="view-phonk-arena" class="view-panel hidden">
         <div class="drift-arena-container">
           <div class="drift-top-bar">
             <button class="close-arena-btn" id="exit-drift-btn">✕ Exit</button>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="speed-mode-toggle-group" id="speed-mode-toggle-group">
+              <button class="speed-mode-btn active" id="mode-btn-drift" data-mode="drift">🏎️ 60s Drift</button>
+              <button class="speed-mode-btn" id="mode-btn-star" data-mode="star">⭐ Star Speed Math (2 Min • 5s/Q)</button>
+            </div>
+
             <div class="drift-timer-box" id="drift-timer-box">
               <span class="timer-flame">⏱️</span>
-              <span class="timer-countdown" id="drift-timer">60</span>s
+              <span class="timer-countdown" id="drift-timer">60</span><span id="drift-timer-unit">s</span>
             </div>
             <div class="drift-combo-meter" id="drift-combo-container">
               <span class="combo-label">COMBO</span>
@@ -485,8 +492,24 @@
 
           <div class="drift-game-area" id="drift-game-area">
             <div class="drift-speed-lines" id="drift-speed-lines"></div>
+
             <div class="drift-question-card" id="drift-question-card">
-              <div class="drift-q-label">SPEED MULTIPLICATION</div>
+              <div class="drift-card-header">
+                <div class="drift-q-label" id="drift-q-mode-title">SPEED MULTIPLICATION</div>
+                <div class="drift-q-stats" id="drift-q-stats">⚡ Tables: 1×1 to 12×10</div>
+              </div>
+
+              <!-- 5-Second Per-Question Progress Bar (Active in Star Speed Math) -->
+              <div class="speed-q-timer-wrap hidden" id="speed-q-timer-wrap">
+                <div class="speed-q-timer-label">
+                  <span>Question Timer</span>
+                  <span id="speed-q-timer-val">5.0s</span>
+                </div>
+                <div class="speed-q-timer-bar-bg">
+                  <div class="speed-q-timer-bar-fill" id="speed-q-timer-bar-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+
               <div class="drift-math-expression" id="drift-math-expr">7 × 8 = ?</div>
               <div class="drift-options-grid" id="drift-options-grid">
                 <!-- 4 Rapid tap option buttons -->
