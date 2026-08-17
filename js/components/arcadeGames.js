@@ -3197,15 +3197,17 @@ class PotionLabGame {
   constructor(hub) {
     this.hub = hub;
     this.potionNum = 1;
-    this.maxPotions = 5;
-    this.currentLiquidLevel = 0; // in 1/4 cups (0 to 4)
-    this.targetLevel = 3;
-    this.targetName = "Dragon Elixir";
+    this.maxPotions = 6;
+    this.currentEighths = 0; // in 1/8 cups (0 to 8 = 1 whole cup)
+    this.targetEighths = 4;
+    this.recipe = null;
     this.score = 0;
     this.correctCount = 0;
     this.incorrectCount = 0;
     this.longestStreak = 0;
     this.currentStreak = 0;
+    this.potionColors = ['#a855f7', '#06b6d4', '#f59e0b', '#ec4899', '#22c55e', '#eab308'];
+    this.bubbles = [];
   }
 
   start() {
@@ -3218,38 +3220,53 @@ class PotionLabGame {
   }
 
   generateRecipe() {
-    this.currentLiquidLevel = 0;
-    const recipes = [
-      { name: "Frog Hopper Brew", req: 2, label: "2/4 (1/2) Cup" },
-      { name: "Dragon Flame Elixir", req: 3, label: "3/4 Cup" },
-      { name: "Phoenix Rebirth Draught", req: 4, label: "4/4 (1 Whole) Cup" },
-      { name: "Goblin Invisibility Potion", req: 1, label: "1/4 Cup" },
-      { name: "Cosmic Aura Tonic", req: 3, label: "3/4 Cup" }
+    this.currentEighths = 0;
+    this.bubbles = [];
+
+    const recipeBank = [
+      { name: "Frog Hopper Brew", targetFrac: "1/2", reqEighths: 4, ingredient: "Frog Extract" },
+      { name: "Dragon Flame Elixir", targetFrac: "3/4", reqEighths: 6, ingredient: "Dragon Ember" },
+      { name: "Phoenix Rebirth Draught", targetFrac: "1 Whole", reqEighths: 8, ingredient: "Phoenix Tears" },
+      { name: "Goblin Invisibility Potion", targetFrac: "1/4", reqEighths: 2, ingredient: "Shadow Dust" },
+      { name: "Moonlight Starlight Tonic", targetFrac: "3/8", reqEighths: 3, ingredient: "Moon Dust" },
+      { name: "Cosmic Aura Elixir", targetFrac: "5/8", reqEighths: 5, ingredient: "Cosmic Essence" },
+      { name: "Golden Sun Draught", targetFrac: "7/8", reqEighths: 7, ingredient: "Sunlight Nectar" }
     ];
 
-    const rec = recipes[Math.min(recipes.length - 1, this.potionNum - 1)];
-    this.targetLevel = rec.req;
-    this.targetName = rec.name;
+    const pool = recipeBank.sort(() => Math.random() - 0.5);
+    this.recipe = pool[0];
+    this.targetEighths = this.recipe.reqEighths;
 
-    this.hub.setLevel(`POTION ${this.potionNum}/${this.maxPotions}: ${rec.name}`);
-    this.hub.setPrompt(`🧪 BREW [${rec.name}]: Fill beaker to ${rec.label}! (Tap '+1/4' or '-1/4')`);
+    this.hub.setLevel(`POTION ${this.potionNum}/${this.maxPotions}: ${this.recipe.name}`);
+    this.hub.setPrompt(`🧪 BREW [${this.recipe.name}]: Measure exactly ${this.recipe.targetFrac} Cup of ${this.recipe.ingredient}!`);
   }
 
   handlePointer(x, y, type) {
     if (type !== 'down') return;
-    // Add +1/4
-    if (x >= 120 && x <= 220 && y >= 340 && y <= 390) {
-      this.currentLiquidLevel = Math.min(4, this.currentLiquidLevel + 1);
+    // Add +1/8 Cup (Flask 1)
+    if (x >= 60 && x <= 165 && y >= 340 && y <= 390) {
+      if (this.currentEighths < 8) {
+        this.currentEighths++;
+        this.spawnBubbles();
+        if (window.soundEngine) window.soundEngine.playTap();
+      }
+    }
+    // Add +1/4 Cup (Flask 2)
+    else if (x >= 180 && x <= 285 && y >= 340 && y <= 390) {
+      if (this.currentEighths <= 6) {
+        this.currentEighths += 2;
+        this.spawnBubbles();
+        if (window.soundEngine) window.soundEngine.playTap();
+      }
+    }
+    // Empty Flask (Reset)
+    else if (x >= 300 && x <= 390 && y >= 340 && y <= 390) {
+      this.currentEighths = 0;
       if (window.soundEngine) window.soundEngine.playTap();
     }
-    // Remove -1/4
-    else if (x >= 240 && x <= 340 && y >= 340 && y <= 390) {
-      this.currentLiquidLevel = Math.max(0, this.currentLiquidLevel - 1);
-      if (window.soundEngine) window.soundEngine.playTap();
-    }
-    // Brew Potion
-    else if (x >= 360 && x <= 480 && y >= 340 && y <= 390) {
-      if (this.currentLiquidLevel === this.targetLevel) {
+    // Brew Potion Button
+    else if (x >= 405 && x <= 540 && y >= 340 && y <= 390) {
+      if (this.currentEighths === this.targetEighths) {
         this.correctCount++;
         this.currentStreak++;
         this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
@@ -3260,80 +3277,191 @@ class PotionLabGame {
 
         if (window.soundEngine) window.soundEngine.playLevelUp();
         if (window.helpers) {
-          window.helpers.spawnConfetti(80);
-          window.helpers.spawnAuraFloatingText(`✨ ${this.targetName.toUpperCase()} BREWED! +${pts} Aura`, undefined, undefined, true);
+          window.helpers.spawnConfetti(90);
+          window.helpers.spawnAuraFloatingText(`✨ PERFECT MEASURE (${this.recipe.targetFrac} Cup)! +${pts} Aura`, 300, 180, true);
         }
 
         this.potionNum++;
         if (this.potionNum <= this.maxPotions) {
-          this.generateRecipe();
+          setTimeout(() => this.generateRecipe(), 1200);
         } else {
-          this.endGame();
+          setTimeout(() => this.endGame(), 1200);
         }
       } else {
         this.incorrectCount++;
         this.currentStreak = 0;
         if (window.soundEngine) window.soundEngine.playWrong();
-        if (window.helpers) window.helpers.spawnAuraFloatingText(`You have ${this.currentLiquidLevel}/4 cup, recipe calls for ${this.targetLevel}/4!`, undefined, undefined, false);
+        if (window.helpers) {
+          window.helpers.spawnAuraFloatingText(`Beaker has ${this.currentEighths}/8 Cup, recipe needed ${this.recipe.targetFrac} Cup!`, 300, 180, false);
+        }
       }
     }
   }
 
-  update() {}
+  spawnBubbles() {
+    for (let i = 0; i < 6; i++) {
+      this.bubbles.push({
+        x: 235 + Math.random() * 130,
+        y: 290,
+        r: Math.random() * 4 + 2,
+        speed: Math.random() * 1.5 + 1
+      });
+    }
+  }
+
+  update() {
+    for (let i = this.bubbles.length - 1; i >= 0; i--) {
+      const b = this.bubbles[i];
+      b.y -= b.speed;
+      const fillH = (this.currentEighths / 8) * 200;
+      const topY = 300 - fillH;
+      if (b.y < topY) {
+        this.bubbles.splice(i, 1);
+      }
+    }
+  }
 
   render(ctx) {
-    ctx.fillStyle = '#1e1b4b';
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    const themeColor = this.potionColors[(this.potionNum - 1) % this.potionColors.length];
 
     // Header
     ctx.fillStyle = '#fde047';
     ctx.font = 'bold 16px "Space Grotesk"';
     ctx.textAlign = 'center';
-    ctx.fillText(`🧪 ALCHEMY LAB • POTION ${Math.min(this.potionNum, this.maxPotions)}/5: ${this.targetName}`, 300, 35);
+    ctx.fillText(`🧪 ALCHEMY LAB • POTION ${Math.min(this.potionNum, this.maxPotions)}/${this.maxPotions}: ${this.recipe.name}`, 300, 32);
 
-    // Beaker Outline
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(220, 80, 160, 220);
+    // Target Recipe Banner
+    ctx.fillStyle = '#1e1b4b';
+    ctx.beginPath();
+    ctx.roundRect(140, 48, 320, 34, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
 
-    // Graduation Lines: 1/4, 2/4 (1/2), 3/4, 1 cup
-    for (let i = 1; i <= 4; i++) {
-      const lineY = 300 - (i * 55);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-      ctx.beginPath();
-      ctx.moveTo(220, lineY);
-      ctx.lineTo(260, lineY);
-      ctx.stroke();
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 15px "Space Grotesk"';
+    ctx.textAlign = 'center';
+    ctx.fillText(`RECIPE: Add exactly ${this.recipe.targetFrac} Cup`, 300, 71);
 
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 12px "Space Grotesk"';
-      ctx.fillText(`${i}/4 cup`, 175, lineY + 4);
-    }
+    // Glass Beaker Body
+    ctx.fillStyle = 'rgba(30, 41, 59, 0.5)';
+    ctx.fillRect(230, 100, 140, 200);
 
     // Liquid Fill
-    if (this.currentLiquidLevel > 0) {
-      const fillH = this.currentLiquidLevel * 55;
-      ctx.fillStyle = 'rgba(168, 85, 247, 0.75)';
-      ctx.fillRect(222, 300 - fillH, 156, fillH);
+    if (this.currentEighths > 0) {
+      const fillH = (this.currentEighths / 8) * 200;
+      const topY = 300 - fillH;
+
+      ctx.fillStyle = themeColor;
+      ctx.fillRect(232, topY, 136, fillH);
+
+      // Surface glow line
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(232, topY);
+      ctx.lineTo(368, topY);
+      ctx.stroke();
     }
 
-    // Buttons
-    ctx.fillStyle = '#3b82f6';
-    ctx.fillRect(120, 340, 100, 44);
+    // Bubbles
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    this.bubbles.forEach(b => {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Glass Beaker Rim & Outline
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(230, 100, 140, 200);
+
+    // Graduation Lines (8 equal parts for eighths)
+    for (let i = 1; i <= 8; i++) {
+      const lineY = 300 - (i * 25);
+      const isHalf = (i === 4);
+      const isQuarter = (i === 2 || i === 6);
+      const isTop = (i === 8);
+
+      ctx.strokeStyle = (isHalf || isTop) ? '#38bdf8' : 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = (isHalf || isTop) ? 2 : 1;
+      ctx.beginPath();
+      ctx.moveTo(230, lineY);
+      ctx.lineTo(230 + (isHalf || isTop ? 22 : 12), lineY);
+      ctx.stroke();
+
+      // Only label clean benchmark endpoints (0, 1/2, 1 Cup) - NO SPOILERS!
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 11px "Space Grotesk"';
+      ctx.textAlign = 'right';
+      if (isTop) {
+        ctx.fillStyle = '#fde047';
+        ctx.fillText('1 Full Cup', 222, lineY + 4);
+      } else if (isHalf) {
+        ctx.fillText('1/2 Cup', 222, lineY + 4);
+      }
+    }
+
+    // Current Flask Status on Beaker
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Current: ${this.currentEighths}/8 Cup`, 380, 200);
+
+    // Flask Buttons
+    // + 1/8 Cup Button
+    ctx.fillStyle = '#2563eb';
+    ctx.beginPath();
+    ctx.roundRect(60, 340, 105, 48, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#60a5fa';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 15px "Space Grotesk"';
     ctx.textAlign = 'center';
-    ctx.fillText('+ 1/4 Cup', 170, 367);
+    ctx.fillText('+ 1/8 Cup', 112, 370);
 
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(240, 340, 100, 44);
+    // + 1/4 Cup Button
+    ctx.fillStyle = '#7c3aed';
+    ctx.beginPath();
+    ctx.roundRect(180, 340, 105, 48, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#c084fc';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
     ctx.fillStyle = '#fff';
-    ctx.fillText('- 1/4 Cup', 290, 367);
+    ctx.font = 'bold 15px "Space Grotesk"';
+    ctx.fillText('+ 1/4 Cup', 232, 370);
 
-    ctx.fillStyle = '#58cc02';
-    ctx.fillRect(360, 340, 120, 44);
+    // Empty Flask Button
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    ctx.roundRect(300, 340, 90, 48, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#f87171';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
     ctx.fillStyle = '#fff';
-    ctx.fillText('BREW ✨', 420, 367);
+    ctx.font = 'bold 14px "Space Grotesk"';
+    ctx.fillText('💧 Empty', 345, 370);
+
+    // Brew Potion Button
+    ctx.fillStyle = '#16a34a';
+    ctx.beginPath();
+    ctx.roundRect(405, 340, 135, 48, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#4ade80';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px "Space Grotesk"';
+    ctx.fillText('✨ BREW POTION', 472, 370);
   }
 
   endGame() {
