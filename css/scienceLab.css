@@ -910,7 +910,137 @@
     width: 200px;
     height: 200px;
   }
+
+  .cell-lab-layout, .space-lab-layout {
+    grid-template-columns: 1fr !important;
+  }
 }
+
+/* --------------------------------------------------------------------------
+   8. SUBSTANCE SELECTOR & INTERACTIVE LAB ADDITIONS
+   -------------------------------------------------------------------------- */
+.matter-substance-bar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.substance-pill-btn {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.substance-pill-btn:hover {
+  background: #334155;
+  color: #fff;
+}
+
+.substance-pill-btn.active {
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  border-color: #38bdf8;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.cell-lab-layout, .space-lab-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.cell-canvas-container, .space-canvas-container {
+  background: #020617;
+  border: 2px solid #1e293b;
+  border-radius: 16px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.cell-canvas-container canvas, .space-canvas-container canvas {
+  width: 100%;
+  height: auto;
+  max-width: 600px;
+  border-radius: 12px;
+  background: #020617;
+}
+
+.organelle-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.organelle-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 0.5rem;
+  color: #cbd5e1;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.organelle-btn:hover {
+  background: #334155;
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.organelle-btn.selected {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.planet-jump-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.planet-jump-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.4rem;
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.planet-jump-btn.active {
+  background: #f59e0b;
+  border-color: #fbbf24;
+  color: #000;
+}
+
 
 /* --------------------------------------------------------------------------
    7. ELEMENT LAB REAL-WORLD POP QUIZ

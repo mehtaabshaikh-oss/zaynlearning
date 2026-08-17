@@ -11,11 +11,24 @@
 
 class ScienceLabEngine {
   constructor() {
-    this.currentView = 'hub'; // 'hub', 'matter', 'skeleton', 'elements'
+    this.currentView = 'hub'; // 'hub', 'matter', 'skeleton', 'elements', 'cells', 'space'
     this.activeElemIndex = 5; // Default: Carbon (Atomic #6)
     this.matterTemp = 20; // Default: 20°C (Liquid)
+    this.matterMaterial = 'water'; // 'water', 'co2', 'lava', 'plasma'
     this.matterAnimationId = null;
     this.atomAnimationId = null;
+    this.cellAnimationId = null;
+    this.spaceAnimationId = null;
+    this.cellSpecimen = 'plant'; // 'plant', 'animal'
+    this.cellZoom = 100; // 40, 100, 400
+    this.cellActiveOrganelle = 'mitochondria';
+    this.cellAngle = 0;
+    this.spaceTimeSpeed = 1;
+    this.spaceSelectedPlanet = 'earth';
+    this.spaceAngle = 0;
+    this.jumpY = 0;
+    this.jumpVy = 0;
+    this.isJumping = false;
     this.skeletonState = {
       placedBones: new Set(),
       selectedBoneId: null,
@@ -118,16 +131,16 @@ class ScienceLabEngine {
           <div class="science-world-header">
             <div class="science-world-icon">🧊</div>
             <div>
-              <h3 class="science-world-title">States of Matter Lab</h3>
-              <span class="science-world-tag">PHYSICS & CHEMISTRY</span>
+              <h3 class="science-world-title">States of Matter & Phase Lab</h3>
+              <span class="science-world-tag">THERMAL PHYSICS</span>
             </div>
           </div>
-          <p class="science-world-desc">Control thermal heat! Watch solid ice crystals melt into fluid water, then boil into energetic gas particles.</p>
+          <p class="science-world-desc">Control thermal heat! Watch ice melt into fluid water, dry ice sublimate into gas, and superheated plasma lightning!</p>
           <div class="science-world-topics">
-            <span class="science-topic-pill">Solids, Liquids, Gases</span>
-            <span class="science-topic-pill">Melting & Freezing</span>
-            <span class="science-topic-pill">Evaporation</span>
-            <span class="science-topic-pill">Condensation</span>
+            <span class="science-topic-pill">Solids & Liquids</span>
+            <span class="science-topic-pill">Sublimation (CO₂)</span>
+            <span class="science-topic-pill">Star Plasma (4th State)</span>
+            <span class="science-topic-pill">Kinetic Heat Energy</span>
           </div>
           <button class="science-enter-btn">ENTER MATTER LAB ➔</button>
         </div>
@@ -138,53 +151,54 @@ class ScienceLabEngine {
             <div class="science-world-icon">🦴</div>
             <div>
               <h3 class="science-world-title">Skeleton Builder</h3>
-              <span class="science-world-tag">HUMAN BIOLOGY LAB</span>
+              <span class="science-world-tag">ANATOMY & BIOLOGY</span>
             </div>
           </div>
-          <p class="science-world-desc">Construct the human skeletal frame bone by bone! Discover how the femur, skull, ribs, and pivot joints protect and move your body.</p>
+          <p class="science-world-desc">Assemble all 206 bones of the human skeleton! Test ball-and-socket vs hinge joints and discover bone biomechanics.</p>
           <div class="science-world-topics">
-            <span class="science-topic-pill">Femur & Cranium</span>
-            <span class="science-topic-pill">Ball-and-Socket Joints</span>
-            <span class="science-topic-pill">Hinge Joints</span>
-            <span class="science-topic-pill">Organ Protection</span>
+            <span class="science-topic-pill">Human Skeleton</span>
+            <span class="science-topic-pill">Bone Biomechanics</span>
+            <span class="science-topic-pill">Hinge & Ball Joints</span>
           </div>
           <button class="science-enter-btn">BUILD SKELETON ➔</button>
         </div>
 
-        <!-- 4. Biology: Cell & Microscope (Preview) -->
-        <div class="science-world-card" style="opacity: 0.9;" data-lab="cell_preview">
+        <!-- 4. Biology: Cell & Microscope -->
+        <div class="science-world-card" data-lab="cells">
           <div class="science-world-header">
             <div class="science-world-icon">🧬</div>
             <div>
-              <h3 class="science-world-title">Build a Cell & Microscope</h3>
+              <h3 class="science-world-title">Cell Explorer & Virtual Microscope</h3>
               <span class="science-world-tag">CELL BIOLOGY</span>
             </div>
           </div>
-          <p class="science-world-desc">Examine onion cells under virtual magnification! Assemble cell membranes, mitochondria powerhouses, and plant chloroplasts.</p>
+          <p class="science-world-desc">Examine living plant and animal cells under 400x magnification! Watch mitochondria generate ATP power and chloroplasts harvest light.</p>
           <div class="science-world-topics">
-            <span class="science-topic-pill">Microscopy</span>
-            <span class="science-topic-pill">Mitochondria</span>
+            <span class="science-topic-pill">400x Microscope</span>
+            <span class="science-topic-pill">Mitochondria Powerhouse</span>
+            <span class="science-topic-pill">Chloroplasts</span>
             <span class="science-topic-pill">Plant vs Animal</span>
           </div>
-          <button class="science-enter-btn">COMING SOON (PHASE 2) ➔</button>
+          <button class="science-enter-btn">EXPLORE CELLS ➔</button>
         </div>
 
-        <!-- 5. Earth & Solar System (Preview) -->
-        <div class="science-world-card" style="opacity: 0.9;" data-lab="space_preview">
+        <!-- 5. Earth & Solar System Orbit Simulator -->
+        <div class="science-world-card" data-lab="space">
           <div class="science-world-header">
             <div class="science-world-icon">🌎</div>
             <div>
-              <h3 class="science-world-title">Earth & Solar System</h3>
-              <span class="science-world-tag">EARTH & SPACE</span>
+              <h3 class="science-world-title">Solar System & Gravity Simulator</h3>
+              <span class="science-world-tag">ASTRONOMY & GRAVITY</span>
             </div>
           </div>
-          <p class="science-world-desc">Drill deep into Earth's crust, mantle, and molten core! Race planetary orbits around the Sun and test gravity on Mars and Jupiter.</p>
+          <p class="science-world-desc">Simulate planetary orbits around the Sun! Test gravity on the Moon, Mars, and Jupiter with the interactive Astronaut Jump simulator.</p>
           <div class="science-world-topics">
-            <span class="science-topic-pill">Earth Layers</span>
-            <span class="science-topic-pill">Planetary Gravity</span>
-            <span class="science-topic-pill">Orbital Periods</span>
+            <span class="science-topic-pill">8 Planet Orbits</span>
+            <span class="science-topic-pill">Time Speed (1x-100x)</span>
+            <span class="science-topic-pill">Planetary Gravity (g)</span>
+            <span class="science-topic-pill">Astronaut Jump Sim</span>
           </div>
-          <button class="science-enter-btn">COMING SOON (PHASE 4) ➔</button>
+          <button class="science-enter-btn">LAUNCH ORBITS ➔</button>
         </div>
       </div>
     `;
@@ -195,11 +209,7 @@ class ScienceLabEngine {
     cards.forEach(card => {
       card.addEventListener('click', () => {
         const lab = card.dataset.lab;
-        if (lab === 'elements' || lab === 'matter' || lab === 'skeleton') {
-          this.launchLab(lab);
-        } else {
-          if (window.helpers) window.helpers.spawnAuraFloatingText("Unlocked in upcoming Science Lab expansion! 🚀", undefined, undefined, true);
-        }
+        this.launchLab(lab);
       });
     });
   }
@@ -216,6 +226,10 @@ class ScienceLabEngine {
       this.renderSkeletonBuilderLab();
     } else if (labType === 'elements') {
       this.renderElementLab();
+    } else if (labType === 'cells') {
+      this.renderCellLab();
+    } else if (labType === 'space') {
+      this.renderSpaceLab();
     }
   }
 
@@ -227,6 +241,14 @@ class ScienceLabEngine {
     if (this.atomAnimationId) {
       cancelAnimationFrame(this.atomAnimationId);
       this.atomAnimationId = null;
+    }
+    if (this.cellAnimationId) {
+      cancelAnimationFrame(this.cellAnimationId);
+      this.cellAnimationId = null;
+    }
+    if (this.spaceAnimationId) {
+      cancelAnimationFrame(this.spaceAnimationId);
+      this.spaceAnimationId = null;
     }
   }
 
@@ -241,10 +263,21 @@ class ScienceLabEngine {
       <div class="science-workbench">
         <div class="science-workbench-header">
           <div class="science-workbench-title-box">
-            <h2 class="science-workbench-title">🧊 States of Matter Lab</h2>
-            <p class="science-workbench-subtitle">Adjust thermal temperature to observe molecular kinetic energy and phase changes!</p>
+            <h2 class="science-workbench-title">🧊 States of Matter & Phase Lab</h2>
+            <p class="science-workbench-subtitle">Adjust thermal temperature to observe molecular kinetic energy, phase changes, and the 4th state of matter!</p>
           </div>
-          <button class="science-back-btn" id="science-back-to-hub-btn">◀ Science Lab</button>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="science-quiz-launch-btn" id="matter-quiz-header-btn">🧪 Phase Quiz (+100 Aura)</button>
+            <button class="science-back-btn" id="science-back-to-hub-btn">◀ Science Lab</button>
+          </div>
+        </div>
+
+        <!-- Substance Switcher Bar -->
+        <div class="matter-substance-bar" id="matter-substance-bar">
+          <button class="substance-pill-btn ${this.matterMaterial === 'water' ? 'active' : ''}" data-mat="water">💧 Water (H₂O)</button>
+          <button class="substance-pill-btn ${this.matterMaterial === 'co2' ? 'active' : ''}" data-mat="co2">💨 Dry Ice (CO₂) [Sublimation!]</button>
+          <button class="substance-pill-btn ${this.matterMaterial === 'lava' ? 'active' : ''}" data-mat="lava">🌋 Magma / Lava Rock</button>
+          <button class="substance-pill-btn ${this.matterMaterial === 'plasma' ? 'active' : ''}" data-mat="plasma">⚡ Star Plasma (4th State)</button>
         </div>
 
         <div class="matter-stage-layout">
@@ -259,13 +292,13 @@ class ScienceLabEngine {
               <span style="font-size:0.8rem; color:#94a3b8; font-weight:700;">THERMAL TEMPERATURE</span>
               <div class="matter-temp-gauge" id="matter-temp-val">${this.matterTemp}°C</div>
               
-              <input type="range" class="matter-slider" id="matter-temp-slider" min="-50" max="150" value="${this.matterTemp}">
+              <input type="range" class="matter-slider" id="matter-temp-slider" min="-80" max="150" value="${this.matterTemp}">
 
               <div class="matter-state-badge" id="matter-state-badge">💧 LIQUID WATER</div>
 
               <div style="display:flex; gap:0.5rem; justify-content:center; margin-top:0.5rem;">
-                <button class="science-enter-btn" id="matter-cool-btn" style="flex:1; padding:0.4rem;">❄️ Freeze (0°C)</button>
-                <button class="science-enter-btn" id="matter-heat-btn" style="flex:1; padding:0.4rem; background:#dc2626;">🔥 Boil (100°C)</button>
+                <button class="science-enter-btn" id="matter-cool-btn" style="flex:1; padding:0.4rem;">❄️ Absolute Cold</button>
+                <button class="science-enter-btn" id="matter-heat-btn" style="flex:1; padding:0.4rem; background:#dc2626;">🔥 Super Heat</button>
               </div>
             </div>
 
@@ -278,6 +311,30 @@ class ScienceLabEngine {
     `;
 
     document.getElementById('science-back-to-hub-btn').addEventListener('click', () => this.renderLabHub());
+    document.getElementById('matter-quiz-header-btn').addEventListener('click', () => this.openMatterQuizModal());
+
+    // Substance Selector Buttons
+    const matBtns = container.querySelectorAll('.substance-pill-btn');
+    matBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        matBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.matterMaterial = btn.dataset.mat;
+        if (this.matterMaterial === 'plasma') this.matterTemp = 10000;
+        else if (this.matterMaterial === 'lava') this.matterTemp = 800;
+        else if (this.matterMaterial === 'co2') this.matterTemp = -50;
+        else this.matterTemp = 20;
+
+        const slider = document.getElementById('matter-temp-slider');
+        if (this.matterMaterial === 'plasma') { slider.min = "1000"; slider.max = "20000"; slider.value = "10000"; }
+        else if (this.matterMaterial === 'lava') { slider.min = "100"; slider.max = "1500"; slider.value = "800"; }
+        else if (this.matterMaterial === 'co2') { slider.min = "-100"; slider.max = "60"; slider.value = "-50"; }
+        else { slider.min = "-50"; slider.max = "150"; slider.value = "20"; }
+
+        this.setMatterTemp(this.matterTemp);
+        this.initMatterParticles();
+      });
+    });
 
     const slider = document.getElementById('matter-temp-slider');
     slider.addEventListener('input', (e) => {
@@ -285,15 +342,18 @@ class ScienceLabEngine {
     });
 
     document.getElementById('matter-cool-btn').addEventListener('click', () => {
-      this.setMatterTemp(-15);
-      slider.value = -15;
+      const minVal = parseInt(slider.min, 10);
+      this.setMatterTemp(minVal);
+      slider.value = minVal;
     });
 
     document.getElementById('matter-heat-btn').addEventListener('click', () => {
-      this.setMatterTemp(110);
-      slider.value = 110;
+      const maxVal = parseInt(slider.max, 10);
+      this.setMatterTemp(maxVal);
+      slider.value = maxVal;
     });
 
+    this.setMatterTemp(this.matterTemp);
     this.initMatterParticles();
     this.startMatterSimulation();
   }
@@ -304,16 +364,75 @@ class ScienceLabEngine {
     const badgeEl = document.getElementById('matter-state-badge');
     const expEl = document.getElementById('matter-explanation-text');
 
-    if (tempValEl) tempValEl.textContent = `${temp}°C`;
+    if (tempValEl) tempValEl.textContent = `${temp.toLocaleString()}°C`;
 
+    if (this.matterMaterial === 'plasma') {
+      if (badgeEl) {
+        badgeEl.textContent = "⚡ 4TH STATE: IONIZED PLASMA";
+        badgeEl.style.color = "#ec4899";
+        badgeEl.style.borderColor = "#ec4899";
+      }
+      if (expEl) {
+        expEl.innerHTML = `<strong>⚡ Plasma (4th State of Matter):</strong> At extreme temperatures over 10,000°C, electrons are ripped away from nuclei, creating a superheated sea of glowing ions that conducts electricity like lightning and the surface of stars!`;
+      }
+      return;
+    }
+
+    if (this.matterMaterial === 'co2') {
+      if (temp <= -78.5) {
+        if (badgeEl) {
+          badgeEl.textContent = "🧊 SOLID DRY ICE (CO₂)";
+          badgeEl.style.color = "#38bdf8";
+          badgeEl.style.borderColor = "#38bdf8";
+        }
+        if (expEl) {
+          expEl.innerHTML = `<strong>🧊 Solid Dry Ice:</strong> Below -78.5°C, Carbon Dioxide molecules lock into a solid frosty crystal.`;
+        }
+      } else {
+        if (badgeEl) {
+          badgeEl.textContent = "💨 SUBLIMATION: CO₂ GAS FOG";
+          badgeEl.style.color = "#a855f7";
+          badgeEl.style.borderColor = "#a855f7";
+        }
+        if (expEl) {
+          expEl.innerHTML = `<strong>💨 Sublimation Phase:</strong> Dry Ice never turns into a liquid puddle at normal air pressure! It sublimates directly from solid ice into spooky, dense CO₂ gas fog!`;
+        }
+      }
+      return;
+    }
+
+    if (this.matterMaterial === 'lava') {
+      if (temp <= 700) {
+        if (badgeEl) {
+          badgeEl.textContent = "🪨 SOLID BASALT ROCK";
+          badgeEl.style.color = "#94a3b8";
+          badgeEl.style.borderColor = "#94a3b8";
+        }
+        if (expEl) {
+          expEl.innerHTML = `<strong>🪨 Solid Igneous Rock:</strong> Silicate minerals are locked into cold, hardened volcanic rock.`;
+        }
+      } else {
+        if (badgeEl) {
+          badgeEl.textContent = "🌋 GLOWING MOLTEN MAGMA";
+          badgeEl.style.color = "#f97316";
+          badgeEl.style.borderColor = "#f97316";
+        }
+        if (expEl) {
+          expEl.innerHTML = `<strong>🌋 Molten Lava:</strong> Intense planetary heat melts solid rocks into glowing orange-red liquid magma that flows like thick honey!`;
+        }
+      }
+      return;
+    }
+
+    // Default: Water (H2O)
     if (temp <= 0) {
       if (badgeEl) {
-        badgeEl.textContent = "🧊 SOLID (ICE)";
+        badgeEl.textContent = "🧊 SOLID (ICE CRYSTAL)";
         badgeEl.style.color = "#38bdf8";
         badgeEl.style.borderColor = "#38bdf8";
       }
       if (expEl) {
-        expEl.innerHTML = `<strong>🧊 Solid State:</strong> Thermal energy is low. Water molecules lock into an organized crystalline lattice, vibrating in place.`;
+        expEl.innerHTML = `<strong>🧊 Solid State:</strong> Thermal kinetic energy is low. Water molecules lock into a rigid hexagon lattice, vibrating in place.`;
       }
       this.checkMatterDiscovery('term_freezing');
     } else if (temp < 100) {
@@ -358,7 +477,8 @@ class ScienceLabEngine {
         vx: (Math.random() - 0.5) * 2,
         vy: (Math.random() - 0.5) * 2,
         baseX: 100 + (i % 8) * 45,
-        baseY: 80 + Math.floor(i / 8) * 40
+        baseY: 80 + Math.floor(i / 8) * 40,
+        sparkTimer: Math.random() * 10
       });
     }
   }
@@ -390,9 +510,9 @@ class ScienceLabEngine {
     ctx.lineTo(530, 40);
     ctx.stroke();
 
-    // Burner Heat Glow under Beaker if temp > 50
+    // Burner Heat Glow under Beaker if temp is high
     if (this.matterTemp > 50) {
-      const flameAlpha = Math.min(1, (this.matterTemp - 50) / 100);
+      const flameAlpha = Math.min(1, this.matterTemp / (this.matterMaterial === 'plasma' ? 10000 : 150));
       ctx.fillStyle = `rgba(239, 68, 68, ${flameAlpha * 0.5})`;
       ctx.beginPath();
       ctx.arc(300, 340, 60, 0, Math.PI * 2);
@@ -400,44 +520,517 @@ class ScienceLabEngine {
     }
 
     const temp = this.matterTemp;
-    const speedMult = temp <= 0 ? 0.3 : (temp < 100 ? (temp / 40) + 1 : (temp / 15) + 3);
+    const mat = this.matterMaterial;
 
     for (let p of this.particles) {
-      if (temp <= 0) {
-        // Solid Lattice Vibration
-        p.x = p.baseX + (Math.random() - 0.5) * 2.5;
-        p.y = p.baseY + (Math.random() - 0.5) * 2.5;
-      } else if (temp < 100) {
-        // Liquid translation bounded by gravity & beaker
-        p.x += p.vx * speedMult * 0.4;
-        p.y += p.vy * speedMult * 0.4 + 0.3; // gentle gravity pull
-
-        if (p.x < 85) { p.x = 85; p.vx *= -1; }
-        if (p.x > 515) { p.x = 515; p.vx *= -1; }
-        if (p.y < 120) { p.y = 120; p.vy *= -1; }
-        if (p.y > 295) { p.y = 295; p.vy *= -0.8; }
-      } else {
-        // Gas high-speed dispersion
-        p.x += p.vx * speedMult * 0.6;
-        p.y += p.vy * speedMult * 0.6 - 0.5; // thermal lift
-
+      if (mat === 'plasma') {
+        // Plasma: Super energetic swirling particles with electric sparks
+        p.x += p.vx * 4.5;
+        p.y += p.vy * 4.5;
         if (p.x < 85) { p.x = 85; p.vx *= -1; }
         if (p.x > 515) { p.x = 515; p.vx *= -1; }
         if (p.y < 30) { p.y = 30; p.vy *= -1; }
         if (p.y > 295) { p.y = 295; p.vy *= -1; }
-      }
 
-      // Draw H2O Molecule: Oxygen (Red) + 2 Hydrogen (White/Cyan)
-      ctx.fillStyle = temp <= 0 ? '#38bdf8' : (temp < 100 ? '#3b82f6' : '#f59e0b');
+        // Glow
+        ctx.fillStyle = '#ec4899';
+        ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath(); ctx.arc(p.x + 8 * Math.cos(p.sparkTimer), p.y + 8 * Math.sin(p.sparkTimer), 3, 0, Math.PI * 2); ctx.fill();
+        p.sparkTimer += 0.2;
+      } else if (mat === 'co2') {
+        if (temp <= -78.5) {
+          // Solid Dry Ice crystal
+          p.x = p.baseX + (Math.random() - 0.5) * 1.5;
+          p.y = p.baseY + (Math.random() - 0.5) * 1.5;
+        } else {
+          // Sublimation directly into rising white gas fog!
+          p.x += p.vx * 2;
+          p.y += p.vy * 2 - 1.2; // Rapid upward sublimation
+          if (p.x < 85) { p.x = 85; p.vx *= -1; }
+          if (p.x > 515) { p.x = 515; p.vx *= -1; }
+          if (p.y < 30) { p.y = 290; p.x = 100 + Math.random() * 400; }
+          if (p.y > 295) { p.y = 295; p.vy *= -1; }
+        }
+
+        ctx.fillStyle = temp <= -78.5 ? '#e2e8f0' : 'rgba(216, 180, 254, 0.8)';
+        ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.fill();
+        // O=C=O linear molecule dots
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath(); ctx.arc(p.x - 6, p.y, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x + 6, p.y, 4, 0, Math.PI * 2); ctx.fill();
+      } else if (mat === 'lava') {
+        if (temp <= 700) {
+          p.x = p.baseX + (Math.random() - 0.5);
+          p.y = p.baseY + (Math.random() - 0.5);
+          ctx.fillStyle = '#64748b';
+        } else {
+          // Slow viscous lava flow
+          p.x += p.vx * 0.4;
+          p.y += p.vy * 0.4 + 0.4;
+          if (p.x < 85) { p.x = 85; p.vx *= -1; }
+          if (p.x > 515) { p.x = 515; p.vx *= -1; }
+          if (p.y < 120) { p.y = 120; p.vy *= -1; }
+          if (p.y > 295) { p.y = 295; p.vy *= -0.5; }
+          ctx.fillStyle = '#f97316';
+        }
+        ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI * 2); ctx.fill();
+      } else {
+        // Water H2O
+        const speedMult = temp <= 0 ? 0.3 : (temp < 100 ? (temp / 40) + 1 : (temp / 15) + 3);
+        if (temp <= 0) {
+          p.x = p.baseX + (Math.random() - 0.5) * 2.5;
+          p.y = p.baseY + (Math.random() - 0.5) * 2.5;
+        } else if (temp < 100) {
+          p.x += p.vx * speedMult * 0.4;
+          p.y += p.vy * speedMult * 0.4 + 0.3;
+          if (p.x < 85) { p.x = 85; p.vx *= -1; }
+          if (p.x > 515) { p.x = 515; p.vx *= -1; }
+          if (p.y < 120) { p.y = 120; p.vy *= -1; }
+          if (p.y > 295) { p.y = 295; p.vy *= -0.8; }
+        } else {
+          p.x += p.vx * speedMult * 0.6;
+          p.y += p.vy * speedMult * 0.6 - 0.5;
+          if (p.x < 85) { p.x = 85; p.vx *= -1; }
+          if (p.x > 515) { p.x = 515; p.vx *= -1; }
+          if (p.y < 30) { p.y = 30; p.vy *= -1; }
+          if (p.y > 295) { p.y = 295; p.vy *= -1; }
+        }
+
+        ctx.fillStyle = temp <= 0 ? '#38bdf8' : (temp < 100 ? '#3b82f6' : '#f59e0b');
+        ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(p.x - 7, p.y - 7, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x + 7, p.y - 7, 5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+
+  openMatterQuizModal() {
+    this.openElementQuizModal();
+  }
+
+  // ==========================================================================
+  // 4. CELL EXPLORER & VIRTUAL MICROSCOPE LAB
+  // ==========================================================================
+  renderCellLab() {
+    const container = document.getElementById('science-lab-container');
+    if (!container) return;
+
+    const organelleInfo = {
+      mitochondria: { name: "Mitochondria ⚡", role: "The Powerhouse of the Cell", desc: "Turns glucose sugar from your food into ATP chemical energy sparks that power every muscle and thought!" },
+      chloroplast: { name: "Chloroplast 🌿", role: "Photosynthesis Solar Factory", desc: "Found exclusively in plant cells! Absorbs green sunlight to manufacture glucose food from water and carbon dioxide." },
+      nucleus: { name: "Nucleus 🧠", role: "Cell Command Center", desc: "The brain of the cell that safely houses the double-helix DNA master blueprints for building proteins." },
+      cellwall: { name: "Cell Wall & Membrane 🛡️", role: "Structural Armor & Security Gate", desc: "Plant cell walls are built of rigid cellulose fibers that keep giant trees standing tall against gravity!" },
+      vacuole: { name: "Central Vacuole 💧", role: "Hydration Storage Tank", desc: "Stores water and nutrients. When filled with water, it creates turgor pressure so plant leaves don't wilt." }
+    };
+
+    const activeOrg = organelleInfo[this.cellActiveOrganelle] || organelleInfo.mitochondria;
+
+    container.innerHTML = `
+      <div class="science-workbench">
+        <div class="science-workbench-header">
+          <div class="science-workbench-title-box">
+            <h2 class="science-workbench-title">🧬 Cell Explorer & Virtual Microscope</h2>
+            <p class="science-workbench-subtitle">Zoom into living plant and animal cells under 400x magnification! Inspect organelle powerhouses and chloroplast factories.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="science-quiz-launch-btn" id="cell-quiz-btn">🧪 Cell Quiz (+100 Aura)</button>
+            <button class="science-back-btn" id="science-back-to-hub-btn">◀ Science Lab</button>
+          </div>
+        </div>
+
+        <div class="cell-lab-layout">
+          <!-- Microscope Canvas Stage -->
+          <div class="cell-canvas-container">
+            <canvas id="cell-microscope-canvas" width="560" height="380"></canvas>
+          </div>
+
+          <!-- Controls & Organelle Inspector -->
+          <div class="matter-controls-sidebar">
+            <div class="matter-temp-card">
+              <span style="font-size:0.8rem; color:#94a3b8; font-weight:700;">SPECIMEN SLIDE</span>
+              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+                <button class="substance-pill-btn ${this.cellSpecimen === 'plant' ? 'active' : ''}" id="specimen-plant-btn" style="flex:1;">🧅 Plant Onion Cell</button>
+                <button class="substance-pill-btn ${this.cellSpecimen === 'animal' ? 'active' : ''}" id="specimen-animal-btn" style="flex:1;">🐾 Animal Cheek Cell</button>
+              </div>
+
+              <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">MAGNIFICATION</span>
+                <span style="font-family:var(--font-mono); color:#fde047; font-weight:700;">${this.cellZoom}x</span>
+              </div>
+              <input type="range" class="matter-slider" id="cell-zoom-slider" min="40" max="400" step="60" value="${this.cellZoom}">
+            </div>
+
+            <!-- Organelle Selectors -->
+            <span style="font-size:0.8rem; color:#94a3b8; font-weight:700; margin-top:0.5rem; display:block;">CLICK ORGANELLE TO INSPECT:</span>
+            <div class="organelle-card-grid">
+              <button class="organelle-btn ${this.cellActiveOrganelle === 'mitochondria' ? 'selected' : ''}" data-org="mitochondria">⚡ Mitochondria</button>
+              <button class="organelle-btn ${this.cellActiveOrganelle === 'nucleus' ? 'selected' : ''}" data-org="nucleus">🧠 Nucleus (DNA)</button>
+              <button class="organelle-btn ${this.cellActiveOrganelle === 'chloroplast' ? 'selected' : ''}" data-org="chloroplast">🌿 Chloroplast</button>
+              <button class="organelle-btn ${this.cellActiveOrganelle === 'cellwall' ? 'selected' : ''}" data-org="cellwall">🛡️ Cell Wall</button>
+              <button class="organelle-btn ${this.cellActiveOrganelle === 'vacuole' ? 'selected' : ''}" data-org="vacuole">💧 Vacuole</button>
+            </div>
+
+            <div class="matter-explanation-box" id="organelle-detail-box" style="margin-top:0.75rem;">
+              <h4 style="color:#fde047; margin-bottom:0.25rem;">${activeOrg.name}</h4>
+              <p style="color:#38bdf8; font-weight:700; font-size:0.85rem; margin-bottom:0.25rem;">${activeOrg.role}</p>
+              <p style="color:#cbd5e1; font-size:0.85rem; line-height:1.45;">${activeOrg.desc}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('science-back-to-hub-btn').addEventListener('click', () => this.renderLabHub());
+    document.getElementById('cell-quiz-btn').addEventListener('click', () => this.openElementQuizModal());
+
+    document.getElementById('specimen-plant-btn').addEventListener('click', () => {
+      this.cellSpecimen = 'plant';
+      this.renderCellLab();
+    });
+
+    document.getElementById('specimen-animal-btn').addEventListener('click', () => {
+      this.cellSpecimen = 'animal';
+      this.renderCellLab();
+    });
+
+    const zoomSlider = document.getElementById('cell-zoom-slider');
+    zoomSlider.addEventListener('input', (e) => {
+      this.cellZoom = parseInt(e.target.value, 10);
+      this.renderCellLab();
+    });
+
+    const orgBtns = container.querySelectorAll('.organelle-btn');
+    orgBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.cellActiveOrganelle = btn.dataset.org;
+        if (window.soundEngine) window.soundEngine.playTap();
+        this.renderCellLab();
+      });
+    });
+
+    this.startCellMicroscopeSimulation();
+  }
+
+  startCellMicroscopeSimulation() {
+    const canvas = document.getElementById('cell-microscope-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const loop = () => {
+      if (this.currentView !== 'cells') return;
+      this.updateAndRenderCell(ctx, canvas);
+      this.cellAnimationId = requestAnimationFrame(loop);
+    };
+    this.cellAnimationId = requestAnimationFrame(loop);
+  }
+
+  updateAndRenderCell(ctx, canvas) {
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    this.cellAngle += 0.02;
+
+    // Microscope Lens Circular Viewport
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 160, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Cytoplasm Background
+    ctx.fillStyle = this.cellSpecimen === 'plant' ? '#064e3b' : '#1e1b4b';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Zoom scale
+    const scale = this.cellZoom / 100;
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+
+    // Plant Cell Wall (Hexagonal / Rectangular) vs Animal Membrane (Rounded)
+    if (this.cellSpecimen === 'plant') {
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(-120, -100, 240, 200);
+      ctx.strokeStyle = '#059669';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(-110, -90, 220, 180);
+    } else {
+      ctx.strokeStyle = '#818cf8';
+      ctx.lineWidth = 8;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+      ctx.roundRect(-110, -90, 220, 180, 50);
+      ctx.stroke();
+    }
+
+    // Central Nucleus with DNA
+    ctx.fillStyle = this.cellActiveOrganelle === 'nucleus' ? '#f59e0b' : '#6366f1';
+    ctx.beginPath();
+    ctx.arc(0, 0, 36, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px "Space Grotesk"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('NUCLEUS', 0, 0);
+
+    // Mitochondria (Oval with zigzag inner cristae)
+    const mitoPositions = [[-65, -50], [65, 50], [-70, 45]];
+    mitoPositions.forEach(([mx, my]) => {
+      ctx.fillStyle = this.cellActiveOrganelle === 'mitochondria' ? '#ec4899' : '#f43f5e';
+      ctx.beginPath();
+      ctx.ellipse(mx, my, 22, 12, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    // Chloroplasts (Only in Plant Cells!)
+    if (this.cellSpecimen === 'plant') {
+      const chloroPositions = [[-60, 0], [60, -45], [0, 65], [60, 0]];
+      chloroPositions.forEach(([chx, chy]) => {
+        ctx.fillStyle = this.cellActiveOrganelle === 'chloroplast' ? '#22c55e' : '#15803d';
+        ctx.beginPath();
+        ctx.ellipse(chx, chy, 18, 10, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#86efac';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+    }
+
+    ctx.restore();
+
+    // Microscope Lens Frame & Crosshairs
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 160, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - 160, cy); ctx.lineTo(cx + 160, cy);
+    ctx.moveTo(cx, cy - 160); ctx.lineTo(cx, cy + 160);
+    ctx.stroke();
+  }
+
+  // ==========================================================================
+  // 5. SOLAR SYSTEM ORBIT & GRAVITY SIMULATOR LAB
+  // ==========================================================================
+  renderSpaceLab() {
+    const container = document.getElementById('science-lab-container');
+    if (!container) return;
+
+    const gravityData = {
+      moon: { name: "The Moon 🌕", g: 0.16, jumpHeight: "6x Higher!", desc: "With 1/6th Earth gravity, an astronaut can leap over buildings with slow-motion floating hangtime!" },
+      mars: { name: "Mars 🔴", g: 0.38, jumpHeight: "2.6x Higher!", desc: "Mars has 38% of Earth's gravity. You can easily dunk a basketball on a 25-foot rim!" },
+      earth: { name: "Earth 🌍", g: 1.0, jumpHeight: "Standard 1x", desc: "Our home planet pulls downward at standard 1.0g (9.8 m/s²), keeping oceans and atmosphere in place." },
+      jupiter: { name: "Jupiter 🪐", g: 2.5, jumpHeight: "Super Heavy!", desc: "The giant gas planet has 2.5x Earth gravity. Your body would weigh 250% heavier, making jumping nearly impossible!" }
+    };
+
+    const activeGrav = gravityData[this.spaceSelectedPlanet] || gravityData.earth;
+
+    container.innerHTML = `
+      <div class="science-workbench">
+        <div class="science-workbench-header">
+          <div class="science-workbench-title-box">
+            <h2 class="science-workbench-title">🌎 Solar System Orbit & Gravity Simulator</h2>
+            <p class="science-workbench-subtitle">Simulate planetary orbits around the Sun and test how gravity affects astronaut jumps on the Moon, Mars, and Jupiter!</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="science-quiz-launch-btn" id="space-quiz-btn">🧪 Space Quiz (+100 Aura)</button>
+            <button class="science-back-btn" id="science-back-to-hub-btn">◀ Science Lab</button>
+          </div>
+        </div>
+
+        <div class="space-lab-layout">
+          <!-- Solar Orbit Canvas Stage -->
+          <div class="space-canvas-container">
+            <canvas id="space-orbit-canvas" width="560" height="380"></canvas>
+          </div>
+
+          <!-- Gravity Jump Controls -->
+          <div class="matter-controls-sidebar">
+            <div class="matter-temp-card">
+              <span style="font-size:0.8rem; color:#94a3b8; font-weight:700;">ORBIT SPEED OF TIME</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.25rem;">
+                <span style="font-size:0.75rem; color:#94a3b8;">TIME WARP</span>
+                <span style="font-family:var(--font-mono); color:#fde047; font-weight:700;" id="space-speed-val">${this.spaceTimeSpeed}x</span>
+              </div>
+              <input type="range" class="matter-slider" id="space-time-slider" min="1" max="50" value="${this.spaceTimeSpeed}">
+            </div>
+
+            <!-- Planetary Gravity Selector -->
+            <span style="font-size:0.8rem; color:#94a3b8; font-weight:700; margin-top:0.75rem; display:block;">TEST GRAVITY ON WORLD:</span>
+            <div class="planet-jump-grid">
+              <button class="planet-jump-btn ${this.spaceSelectedPlanet === 'moon' ? 'active' : ''}" data-planet="moon">🌕 Moon (0.16g)</button>
+              <button class="planet-jump-btn ${this.spaceSelectedPlanet === 'mars' ? 'active' : ''}" data-planet="mars">🔴 Mars (0.38g)</button>
+              <button class="planet-jump-btn ${this.spaceSelectedPlanet === 'earth' ? 'active' : ''}" data-planet="earth">🌍 Earth (1.0g)</button>
+              <button class="planet-jump-btn ${this.spaceSelectedPlanet === 'jupiter' ? 'active' : ''}" data-planet="jupiter">🪐 Jupiter (2.5g)</button>
+            </div>
+
+            <div class="matter-explanation-box" style="margin-top:0.5rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="color:#fde047;">${activeGrav.name}</h4>
+                <span style="color:#38bdf8; font-weight:700; font-family:var(--font-mono);">${activeGrav.jumpHeight}</span>
+              </div>
+              <p style="color:#cbd5e1; font-size:0.85rem; line-height:1.4; margin-top:0.25rem;">${activeGrav.desc}</p>
+            </div>
+
+            <!-- Jump Trigger Button -->
+            <button class="element-quiz-next-btn" id="space-astronaut-jump-btn" style="margin-top:0.75rem;">
+              🚀 JUMP ON ${this.spaceSelectedPlanet.toUpperCase()}!
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('science-back-to-hub-btn').addEventListener('click', () => this.renderLabHub());
+    document.getElementById('space-quiz-btn').addEventListener('click', () => this.openElementQuizModal());
+
+    const timeSlider = document.getElementById('space-time-slider');
+    timeSlider.addEventListener('input', (e) => {
+      this.spaceTimeSpeed = parseInt(e.target.value, 10);
+      const valEl = document.getElementById('space-speed-val');
+      if (valEl) valEl.textContent = `${this.spaceTimeSpeed}x`;
+    });
+
+    const planetBtns = container.querySelectorAll('.planet-jump-btn');
+    planetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.spaceSelectedPlanet = btn.dataset.planet;
+        this.jumpY = 0;
+        this.jumpVy = 0;
+        this.isJumping = false;
+        if (window.soundEngine) window.soundEngine.playTap();
+        this.renderSpaceLab();
+      });
+    });
+
+    document.getElementById('space-astronaut-jump-btn').addEventListener('click', () => {
+      if (this.isJumping) return;
+      this.isJumping = true;
+      this.jumpVy = -12; // initial jump upward impulse
+      if (window.soundEngine) window.soundEngine.playPowerup();
+    });
+
+    this.startSpaceOrbitSimulation();
+  }
+
+  startSpaceOrbitSimulation() {
+    const canvas = document.getElementById('space-orbit-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const loop = () => {
+      if (this.currentView !== 'space') return;
+      this.updateAndRenderSpace(ctx, canvas);
+      this.spaceAnimationId = requestAnimationFrame(loop);
+    };
+    this.spaceAnimationId = requestAnimationFrame(loop);
+  }
+
+  updateAndRenderSpace(ctx, canvas) {
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2 - 20;
+
+    this.spaceAngle += 0.01 * this.spaceTimeSpeed;
+
+    // Glowing Central Sun
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.3)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Planet Orbits: [name, radius, speedMultiplier, color, size]
+    const planets = [
+      ["Mercury", 42, 4.1, "#94a3b8", 4],
+      ["Venus", 65, 1.6, "#fbbf24", 6],
+      ["Earth", 92, 1.0, "#38bdf8", 7],
+      ["Mars", 120, 0.53, "#ef4444", 5],
+      ["Jupiter", 155, 0.08, "#f97316", 13],
+      ["Saturn", 195, 0.03, "#fde047", 10]
+    ];
+
+    planets.forEach(([name, radius, speed, color, size]) => {
+      // Orbit Ring
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Planet Position
+      const pAngle = this.spaceAngle * speed;
+      const px = cx + Math.cos(pAngle) * radius;
+      const py = cy + Math.sin(pAngle) * radius;
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(px, py, size, 0, Math.PI * 2);
       ctx.fill();
 
-      // Hydrogen ears
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(p.x - 7, p.y - 7, 5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(p.x + 7, p.y - 7, 5, 0, Math.PI * 2); ctx.fill();
+      // Saturn Rings
+      if (name === "Saturn") {
+        ctx.strokeStyle = 'rgba(253, 224, 71, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(px, py, size + 6, size / 2, 0.3, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+
+    // Draw Astronaut Jump Ground on Bottom Right Corner
+    const gx = 80;
+    const gy = 330;
+
+    // Gravity Constant for Selected Planet
+    const gMap = { moon: 0.15, mars: 0.38, earth: 1.0, jupiter: 2.5 };
+    const gVal = gMap[this.spaceSelectedPlanet] || 1.0;
+
+    if (this.isJumping) {
+      this.jumpY += this.jumpVy;
+      this.jumpVy += gVal * 0.45; // gravity pull down
+      if (this.jumpY >= 0) {
+        this.jumpY = 0;
+        this.jumpVy = 0;
+        this.isJumping = false;
+      }
     }
+
+    // Ground Platform
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(20, 340, 520, 30);
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(20, 340, 520, 30);
+
+    // Astronaut Character
+    const ax = 120;
+    const ay = 320 + this.jumpY;
+
+    ctx.font = '32px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('👨‍🚀', ax, ay);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px "Space Grotesk"';
+    ctx.textAlign = 'left';
+    ctx.fillText(`JUMP HEIGHT: ${Math.round(Math.abs(this.jumpY))} px (${this.spaceSelectedPlanet.toUpperCase()} GRAVITY: ${gVal}g)`, 155, 335);
   }
 
   // ==========================================================================
