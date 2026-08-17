@@ -25,6 +25,7 @@ class App {
     window.scienceLabEngine = new ScienceLabEngine();
     window.classroomEngine = new ClassroomEngine();
     window.globalOdysseyEngine = new GlobalOdysseyEngine();
+    window.aiChatBuddy = new AIChatBuddy();
 
     this.showView('view-arcade-hub');
     this.updateTopBarHUD();

@@ -99,6 +99,10 @@ class CloudAuth {
         rankLabel.textContent = "Parent Admin 🛡️";
       }
     }
+
+    if (window.aiChatBuddy && window.aiChatBuddy.updateVisibility) {
+      window.aiChatBuddy.updateVisibility();
+    }
   }
 
   async loadCloudSave() {
