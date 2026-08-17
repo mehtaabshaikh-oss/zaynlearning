@@ -4169,94 +4169,122 @@ class MathDetectiveGame {
 
     if (this.clueStep === 1) {
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 18px "Space Grotesk"';
-      ctx.fillText(this.currentCase.clue1.prompt, 300, 140);
+      ctx.font = 'bold 16px "Space Grotesk"';
+      this.drawWrappedText(ctx, this.currentCase.clue1.prompt, 300, 125, 480, 22);
+
       ctx.fillStyle = '#38bdf8';
-      ctx.font = '14px "Fredoka"';
-      ctx.fillText('Tap the locker with the correct multiplication product:', 300, 180);
+      ctx.font = '13px "Space Grotesk"';
+      this.drawWrappedText(ctx, 'Tap the locker with the correct multiplication product:', 300, 195, 480, 18);
 
       this.currentCase.clue1.options.forEach((opt, idx) => {
         const btnX = 60 + idx * 130;
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(btnX, 260, 115, 65);
+        ctx.fillRect(btnX, 255, 115, 65);
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 2;
-        ctx.strokeRect(btnX, 260, 115, 65);
+        ctx.strokeRect(btnX, 255, 115, 65);
 
         ctx.fillStyle = '#ffd500';
         ctx.font = 'bold 18px "Space Grotesk"';
-        ctx.fillText(`🚪 #${opt}`, btnX + 57, 298);
+        ctx.fillText(`🚪 #${opt}`, btnX + 57, 293);
       });
     } else if (this.clueStep === 2) {
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 18px "Space Grotesk"';
-      ctx.fillText(this.currentCase.clue2.prompt, 300, 130);
+      ctx.font = 'bold 16px "Space Grotesk"';
+      this.drawWrappedText(ctx, this.currentCase.clue2.prompt, 300, 125, 480, 22);
+
       ctx.fillStyle = '#38bdf8';
-      ctx.font = '14px "Fredoka"';
-      ctx.fillText(`Solve for the missing variable to find the correct ${this.currentCase.clue2.label}:`, 300, 180);
+      ctx.font = '13px "Space Grotesk"';
+      this.drawWrappedText(ctx, `Solve for the missing variable to find the correct ${this.currentCase.clue2.label}:`, 300, 195, 480, 18);
 
       this.currentCase.clue2.options.forEach((opt, idx) => {
         const btnX = 60 + idx * 130;
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(btnX, 260, 115, 65);
+        ctx.fillRect(btnX, 255, 115, 65);
         ctx.strokeStyle = '#a855f7';
         ctx.lineWidth = 2;
-        ctx.strokeRect(btnX, 260, 115, 65);
+        ctx.strokeRect(btnX, 255, 115, 65);
 
         ctx.fillStyle = '#ffd500';
         ctx.font = 'bold 17px "Space Grotesk"';
-        ctx.fillText(`${this.currentCase.clue2.label} ${opt}`, btnX + 57, 298);
+        ctx.fillText(`${this.currentCase.clue2.label} ${opt}`, btnX + 57, 293);
       });
     } else if (this.clueStep === 3) {
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 18px "Space Grotesk"';
-      ctx.fillText(this.currentCase.clue3.prompt, 300, 140);
+      ctx.font = 'bold 16px "Space Grotesk"';
+      this.drawWrappedText(ctx, this.currentCase.clue3.prompt, 300, 125, 480, 22);
+
       ctx.fillStyle = '#38bdf8';
-      ctx.font = '14px "Fredoka"';
-      ctx.fillText('Tap the matching decimal footprint to collect physical evidence:', 300, 180);
+      ctx.font = '13px "Space Grotesk"';
+      this.drawWrappedText(ctx, 'Tap the matching decimal footprint to collect physical evidence:', 300, 195, 480, 18);
 
       this.currentCase.clue3.options.forEach((opt, idx) => {
         const btnX = 60 + idx * 130;
         ctx.fillStyle = '#0f172a';
-        ctx.fillRect(btnX, 260, 115, 65);
+        ctx.fillRect(btnX, 255, 115, 65);
         ctx.strokeStyle = '#22c55e';
         ctx.lineWidth = 2;
-        ctx.strokeRect(btnX, 260, 115, 65);
+        ctx.strokeRect(btnX, 255, 115, 65);
 
         ctx.fillStyle = '#ffd500';
         ctx.font = 'bold 18px "Space Grotesk"';
-        ctx.fillText(`👣 ${opt}`, btnX + 57, 298);
+        ctx.fillText(`👣 ${opt}`, btnX + 57, 293);
       });
     } else if (this.clueStep === 4) {
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 16px "Space Grotesk"';
-      ctx.fillText(this.currentCase.clue4.prompt, 300, 120);
+      ctx.font = 'bold 15px "Space Grotesk"';
+      this.drawWrappedText(ctx, this.currentCase.clue4.prompt, 300, 115, 480, 20);
+
       ctx.fillStyle = '#fde047';
-      ctx.font = '13px "Fredoka"';
-      ctx.fillText('Tap the guilty suspect to arrest the culprit and solve the case!', 300, 150);
+      ctx.font = '13px "Space Grotesk"';
+      this.drawWrappedText(ctx, 'Tap the guilty suspect to arrest the culprit and solve the case!', 300, 160, 480, 16);
 
       this.currentCase.clue4.suspects.forEach((s, idx) => {
         const btnX = 60 + idx * 130;
         const isEliminated = this.eliminatedSuspects.has(s.name);
 
         ctx.fillStyle = isEliminated ? '#334155' : '#0f172a';
-        ctx.fillRect(btnX, 230, 115, 110);
+        ctx.fillRect(btnX, 215, 115, 125);
         ctx.strokeStyle = isEliminated ? '#ef4444' : '#eab308';
         ctx.lineWidth = 2;
-        ctx.strokeRect(btnX, 230, 115, 110);
+        ctx.strokeRect(btnX, 215, 115, 125);
 
         ctx.fillStyle = isEliminated ? '#94a3b8' : '#fff';
-        ctx.font = 'bold 16px "Space Grotesk"';
-        ctx.fillText(isEliminated ? `❌ ${s.name}` : `👤 ${s.name}`, btnX + 57, 260);
+        ctx.font = 'bold 15px "Space Grotesk"';
+        ctx.fillText(isEliminated ? `❌ ${s.name}` : `👤 ${s.name}`, btnX + 57, 240);
 
         ctx.fillStyle = '#38bdf8';
-        ctx.font = 'bold 13px "Space Grotesk"';
-        ctx.fillText(`Locker: ${s.locker}`, btnX + 57, 285);
+        ctx.font = 'bold 12px "Space Grotesk"';
+        ctx.fillText(`Locker: ${s.locker}`, btnX + 57, 265);
 
         ctx.fillStyle = '#94a3b8';
-        ctx.font = '10px "Space Grotesk"';
-        ctx.fillText(s.alibi, btnX + 57, 312);
+        ctx.font = '11px "Space Grotesk"';
+        this.drawWrappedText(ctx, s.alibi, btnX + 57, 300, 105, 13);
       });
+    }
+  }
+
+  drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+    if (!text) return;
+    const words = text.split(' ');
+    let line = '';
+    const lines = [];
+
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + (line ? ' ' : '') + words[n];
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && n > 0) {
+        lines.push(line);
+        line = words[n];
+      } else {
+        line = testLine;
+      }
+    }
+    lines.push(line);
+
+    const startY = y - ((lines.length - 1) * lineHeight) / 2;
+    for (let k = 0; k < lines.length; k++) {
+      ctx.fillText(lines[k], x, startY + k * lineHeight);
     }
   }
 
