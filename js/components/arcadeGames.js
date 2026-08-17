@@ -624,11 +624,26 @@ class AsteroidBlasterGame {
     const dist1 = b + (Math.random() > 0.5 ? 2 : -1);
     const dist2 = b + (Math.random() > 0.5 ? 3 : -2);
 
-    this.asteroids = [
-      { x: 100, y: 20, vy: 0.65, val: b, isCorrect: true, r: 28 },
-      { x: 300, y: -20, vy: 0.6, val: Math.max(1, dist1), isCorrect: false, r: 28 },
-      { x: 500, y: 0, vy: 0.75, val: Math.max(1, dist2), isCorrect: false, r: 28 }
-    ];
+    const options = [
+      { val: b, isCorrect: true },
+      { val: Math.max(1, dist1), isCorrect: false },
+      { val: Math.max(1, dist2), isCorrect: false }
+    ].sort(() => Math.random() - 0.5);
+
+    const laneConfigs = [
+      { x: 120, y: 15 + Math.random() * 15, vy: 0.60 + Math.random() * 0.15 },
+      { x: 300, y: -20 + Math.random() * 15, vy: 0.55 + Math.random() * 0.15 },
+      { x: 480, y: 0 + Math.random() * 15, vy: 0.65 + Math.random() * 0.15 }
+    ].sort(() => Math.random() - 0.5);
+
+    this.asteroids = options.map((opt, idx) => ({
+      x: laneConfigs[idx].x,
+      y: laneConfigs[idx].y,
+      vy: laneConfigs[idx].vy,
+      val: opt.val,
+      isCorrect: opt.isCorrect,
+      r: 28
+    }));
   }
 
   handleInput(code) {
@@ -1179,19 +1194,34 @@ class DecimalRacerGame {
   }
 
   generateGates() {
-    const d1 = 0.7;
-    const d2 = 0.68;
-    const d3 = 0.72; // largest
-    const ans = d3;
+    const base = (Math.floor(Math.random() * 8) + 1) / 10; // e.g. 0.1 to 0.8
+    const d1 = parseFloat((base + (Math.floor(Math.random() * 5) - 2) * 0.05).toFixed(2));
+    const d2 = parseFloat((base + (Math.floor(Math.random() * 9) + 1) * 0.01).toFixed(3));
+    const d3 = parseFloat((base + 0.12).toFixed(2));
+    
+    // Ensure all 3 numbers are distinct
+    const numSet = new Set([d1, d2, d3]);
+    while (numSet.size < 3) {
+      numSet.add(parseFloat((base + Math.random() * 0.2).toFixed(2)));
+    }
+    const pool = Array.from(numSet);
+    const largest = Math.max(...pool);
 
-    this.currentQ = { prompt: "DRIVE THROUGH LARGEST NUMBER!", ans: d3 };
+    this.currentQ = { prompt: `DRIVE THROUGH LARGEST NUMBER!`, ans: largest };
     this.hub.setPrompt(`🏎️ ${this.currentQ.prompt}`);
 
-    this.gates = [
-      { lane: 0, x: 160, y: -40, val: d1, isCorrect: false },
-      { lane: 1, x: 300, y: -40, val: d2, isCorrect: false },
-      { lane: 2, x: 440, y: -40, val: d3, isCorrect: true }
-    ];
+    const options = pool.map(val => ({
+      val: val,
+      isCorrect: val === largest
+    })).sort(() => Math.random() - 0.5);
+
+    this.gates = options.map((opt, idx) => ({
+      lane: idx,
+      x: this.lanesX[idx],
+      y: -40,
+      val: opt.val,
+      isCorrect: opt.isCorrect
+    }));
   }
 
   handleInput(code) {
@@ -1381,16 +1411,25 @@ class FroggerMathGame {
   initLogs() {
     const ans = this.currentQ.ans;
     const distractors = [ans + 2, Math.max(1, ans - 1), ans + 4, ans + 1].filter(v => v > 0 && v !== ans);
+    distractors.sort(() => Math.random() - 0.5);
 
     const speedBase = 1.3 + (this.stage * 0.15);
 
+    // Randomize whether left or right log has correct answer per lane
+    const lane1Order = Math.random() > 0.5;
+    const lane2Order = Math.random() > 0.5;
+    const lane3Order = Math.random() > 0.5;
+
     this.logs = [
-      { lane: 1, y: 275, x: 60, speed: speedBase, val: ans, isCorrect: true, width: 110 },
-      { lane: 1, y: 275, x: 380, speed: speedBase, val: distractors[0] || ans + 3, isCorrect: false, width: 110 },
-      { lane: 2, y: 195, x: 140, speed: -speedBase * 1.2, val: distractors[1] || ans + 5, isCorrect: false, width: 110 },
-      { lane: 2, y: 195, x: 440, speed: -speedBase * 1.2, val: ans, isCorrect: true, width: 110 },
-      { lane: 3, y: 115, x: 80, speed: speedBase * 1.4, val: ans, isCorrect: true, width: 110 },
-      { lane: 3, y: 115, x: 400, speed: speedBase * 1.4, val: distractors[2] || ans + 1, isCorrect: false, width: 110 }
+      // Lane 1
+      { lane: 1, y: 275, x: 60, speed: speedBase, val: lane1Order ? ans : (distractors[0] || ans + 3), isCorrect: lane1Order, width: 110 },
+      { lane: 1, y: 275, x: 380, speed: speedBase, val: lane1Order ? (distractors[0] || ans + 3) : ans, isCorrect: !lane1Order, width: 110 },
+      // Lane 2
+      { lane: 2, y: 195, x: 140, speed: -speedBase * 1.2, val: lane2Order ? ans : (distractors[1] || ans + 5), isCorrect: lane2Order, width: 110 },
+      { lane: 2, y: 195, x: 440, speed: -speedBase * 1.2, val: lane2Order ? (distractors[1] || ans + 5) : ans, isCorrect: !lane2Order, width: 110 },
+      // Lane 3
+      { lane: 3, y: 115, x: 80, speed: speedBase * 1.4, val: lane3Order ? ans : (distractors[2] || ans + 1), isCorrect: lane3Order, width: 110 },
+      { lane: 3, y: 115, x: 400, speed: speedBase * 1.4, val: lane3Order ? (distractors[2] || ans + 1) : ans, isCorrect: !lane3Order, width: 110 }
     ];
   }
 
