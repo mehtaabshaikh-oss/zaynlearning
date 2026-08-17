@@ -1,88 +1,80 @@
 /**
  * /api/chat.js - Vercel Serverless AI Study Buddy Proxy
- * Powered by Google Gemini API with clean output sanitization.
+ * Powered by Google Gemini API with thought part filtering.
  * Locked strictly to authorized tokens (Zayn: 8662 and Parent: 6250).
  */
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_KEY || "").trim();
 
-const SYSTEM_PROMPT = "You are Nova, an enthusiastic AI science and math tutor for an 8-year-old named Zayn. Explain things in 2 fun, exciting paragraphs using simple analogies (like LEGOs, Minecraft, pizza, rockets) and emojis.";
+const SYSTEM_PROMPT = "You are Nova, an enthusiastic and friendly AI study buddy for Zayn, an 8-year-old kid in 3rd grade. Answer him directly in 2 short, fun paragraphs using simple analogies (like LEGOs, Minecraft, pizza, rockets) and emojis. Never output your internal thinking.";
 
-function sanitizeNovaReply(raw) {
-  if (!raw) return "";
-  let text = raw.trim();
+function extractRealAnswer(parts) {
+  if (!Array.isArray(parts) || parts.length === 0) return "";
 
-  // Strip common outline labels
-  text = text.replace(/Drafting\s*(Paragraph\s*\d+:?\*?|:?\*?)/gi, '');
-  text = text.replace(/Paragraph\s*\d+:?\s*(\"?[^\"]*\"?\s*concept\.?\*?)?/gi, '');
-  text = text.replace(/Minecraft\/LEGO\s*idea:\*?/gi, '');
-  text = text.replace(/The\s*\"[^\"]+\"\s*concept\.?\*?/gi, '');
+  // 1. Filter out parts explicitly marked as 'thought' by Gemini
+  const nonThoughtParts = parts.filter(p => !p.thought);
+  if (nonThoughtParts.length > 0) {
+    return nonThoughtParts.map(p => p.text || "").join("\n\n").trim();
+  }
 
-  const lines = text.split('\n');
-  const clean = [];
-  let foundStart = false;
+  // 2. Fallback to the last part in the array (final generation)
+  const lastPart = parts[parts.length - 1];
+  return (lastPart && lastPart.text) ? lastPart.text.trim() : "";
+}
 
-  for (let line of lines) {
+function cleanFormatting(text) {
+  if (!text) return "";
+  let clean = text.trim();
+
+  // If text contains reasoning tokens, clean them up
+  const lines = clean.split('\n');
+  const filtered = [];
+  let readingBody = false;
+
+  for (const line of lines) {
     const t = line.trim();
-    if (!foundStart) {
-      // Check if line looks like actual conversational speech rather than bullet/meta notes
-      const isMeta =
-        t.startsWith('*') ||
-        t.endsWith('grade).') ||
-        t.endsWith('buddy).') ||
-        t.startsWith('No planning') ||
+    if (!readingBody) {
+      if (
+        t.startsWith('Why did') ||
+        t.startsWith('How do') ||
+        t.startsWith('Zayn (') ||
+        t.startsWith('Nova (') ||
+        t.startsWith('2 fun,') ||
+        t.startsWith('2 short') ||
         t.startsWith('Simple analogies') ||
-        t.startsWith('Use fun emojis') ||
-        t.startsWith('Use emojis') ||
-        t.startsWith('Concept:') ||
-        t.startsWith('Analogy:') ||
-        t.startsWith('Target:') ||
-        t.startsWith('Goal:') ||
-        t.startsWith('Audience:') ||
-        t.startsWith('Persona:') ||
-        t.startsWith('Constraints:') ||
-        t.startsWith('Subject:') ||
-        t.startsWith('2 short, fun paragraphs') ||
-        t.startsWith('2 paragraphs') ||
-        t.startsWith('3 paragraphs') ||
-        t.startsWith('How do airplanes') ||
-        t.startsWith('Why does') ||
-        t.startsWith('Why do') ||
-        t.startsWith('What is');
-
-      if (!isMeta && t.length > 15) {
-        foundStart = true;
-        clean.push(line);
+        t.startsWith('Emojis.') ||
+        t.startsWith('Concept:*') ||
+        t.startsWith('Analogy:*') ||
+        t.startsWith('Goal:*') ||
+        t.startsWith('Target:*') ||
+        t.startsWith('Constraints:*') ||
+        t.startsWith('Audience:*')
+      ) {
+        continue;
+      }
+      if (t.length > 0) {
+        readingBody = true;
+        filtered.push(line);
       }
     } else {
-      // Stop before trailing verification checklists
       if (
-        t.startsWith('* Simple analogies?') ||
-        t.startsWith('* Fun emojis?') ||
-        t.startsWith('* Direct answer?') ||
         t.startsWith('* 2 paragraphs') ||
-        t.startsWith('* 2 short') ||
-        t.startsWith('* No planning') ||
-        t.startsWith('* No meta')
+        t.startsWith('* Simple analogies') ||
+        t.startsWith('* Emojis?') ||
+        t.startsWith('* Direct answer?') ||
+        t.startsWith('* Enthusiastic') ||
+        t.startsWith('* Target age') ||
+        t.startsWith('Concept:*') ||
+        t.startsWith('Analogy:*')
       ) {
-        break;
+        continue;
       }
-      clean.push(line);
+      filtered.push(line);
     }
   }
 
-  let result = clean.join('\n').trim();
-  if (!result) {
-    // Fallback: strip lines starting with *
-    result = lines.filter(l => !l.trim().startsWith('*')).join('\n').trim();
-  }
-
-  // Strip wrapping quotes if any
-  if (result.startsWith('"') && result.endsWith('"')) {
-    result = result.slice(1, -1).trim();
-  }
-
-  return result || raw.trim();
+  const result = filtered.join('\n').trim();
+  return result || clean;
 }
 
 module.exports = async function handler(req, res) {
@@ -195,8 +187,10 @@ module.exports = async function handler(req, res) {
         if (response.ok) {
           const data = await response.json();
           const candidate = data.candidates && data.candidates[0];
-          replyText = candidate?.content?.parts?.[0]?.text;
-          if (replyText) break;
+          if (candidate?.content?.parts) {
+            replyText = extractRealAnswer(candidate.content.parts);
+            if (replyText) break;
+          }
         } else {
           const errData = await response.json().catch(() => ({}));
           lastError = `${fullModelName}: ${errData?.error?.message || `HTTP ${response.status}`}`;
@@ -207,8 +201,8 @@ module.exports = async function handler(req, res) {
     }
 
     if (replyText) {
-      const cleaned = sanitizeNovaReply(replyText);
-      return res.status(200).json({ success: true, reply: cleaned });
+      const finalClean = cleanFormatting(replyText);
+      return res.status(200).json({ success: true, reply: finalClean });
     }
 
     return res.status(200).json({
