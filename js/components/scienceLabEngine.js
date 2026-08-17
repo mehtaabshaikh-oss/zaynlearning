@@ -1654,21 +1654,21 @@ class ScienceLabEngine {
         topic: "🎈 PARTY BALLOONS",
         question: "Which light, non-flammable gas is used to make party balloons float high in the air?",
         options: ["Helium (He)", "Nitrogen (N)", "Carbon (C)", "Iron (Fe)"],
-        correct: 0,
+        correctAnswer: "Helium (He)",
         fact: "Helium is much lighter than regular air, so it lifts balloons up effortlessly and never catches fire!"
       },
       {
         topic: "🎆 FIREWORKS SPARKS",
         question: "Which metallic element is added to fireworks and flares to create an intense, blinding white spark?",
         options: ["Magnesium (Mg)", "Helium (He)", "Gold (Au)", "Fluorine (F)"],
-        correct: 0,
+        correctAnswer: "Magnesium (Mg)",
         fact: "Magnesium burns at over 3,000°C producing brilliant white light seen across city fireworks shows!"
       },
       {
         topic: "🏬 STOREFRONT LIGHTS",
         question: "Which noble gas is used in bright glowing signs outside stores and restaurants to shine reddish-orange?",
         options: ["Neon (Ne)", "Calcium (Ca)", "Sodium (Na)", "Aluminum (Al)"],
-        correct: 0,
+        correctAnswer: "Neon (Ne)",
         fact: "When electrical current passes through Neon gas in a glass tube, its electrons get excited and glow bright reddish-orange!"
       },
       {
@@ -1680,48 +1680,217 @@ class ScienceLabEngine {
           "Gold metal melted in volcano lava",
           "Silicon sand baked under sunlight"
         ],
-        correct: 0,
+        correctAnswer: "Carbon atoms compressed under extreme heat and pressure",
         fact: "Both soft black pencil graphite and super-hard sparkling diamonds are made of pure Carbon atoms arranged differently!"
       },
       {
         topic: "👑 PRECIOUS METALS",
         question: "Which highly valuable precious metal never rusts or tarnishes, even after thousands of years buried underwater?",
         options: ["Gold (Au)", "Iron (Fe)", "Sodium (Na)", "Potassium (K)"],
-        correct: 0,
+        correctAnswer: "Gold (Au)",
         fact: "Gold is chemically unreactive, which is why ancient Egyptian gold treasures still shine like brand new today!"
       },
       {
         topic: "💻 COMPUTER CHIPS",
         question: "Which metalloid element found in beach sand is purified to manufacture computer processors, iPads, and smartphones?",
         options: ["Silicon (Si)", "Calcium (Ca)", "Chlorine (Cl)", "Hydrogen (H)"],
-        correct: 0,
+        correctAnswer: "Silicon (Si)",
         fact: "Silicon is a semiconductor that controls electrical logic gates inside every computer and smartphone chip!"
       },
       {
         topic: "🧂 KITCHEN SCIENCE",
         question: "When soft reactive Sodium metal (Na) bonds with poisonous Chlorine gas (Cl), what everyday kitchen food item is made?",
         options: ["Table Salt (NaCl)", "White Sugar", "Baking Soda", "Black Pepper"],
-        correct: 0,
+        correctAnswer: "Table Salt (NaCl)",
         fact: "Two dangerous raw elements chemically bond into delicious, essential table salt (Sodium Chloride)!"
       },
       {
         topic: "🦴 STRONG BONES & TEETH",
         question: "Which essential mineral element makes up 99% of human bones and teeth?",
         options: ["Calcium (Ca)", "Copper (Cu)", "Helium (He)", "Sulfur (S)"],
-        correct: 0,
+        correctAnswer: "Calcium (Ca)",
         fact: "Calcium forms the strong mineral scaffolding of your skeleton, keeping bones tough and teeth resilient!"
       },
       {
         topic: "🔋 RECHARGEABLE BATTERIES",
         question: "Which ultra-lightweight metal powers the rechargeable batteries inside iPhones, iPads, and Tesla electric cars?",
         options: ["Lithium (Li)", "Lead (Pb)", "Silver (Ag)", "Boron (B)"],
-        correct: 0,
+        correctAnswer: "Lithium (Li)",
         fact: "Lithium is so light it floats on water, and easily transports electrons back and forth during charging!"
+      },
+      {
+        topic: "🚀 SPACE ROCKETS & JETS",
+        question: "Which ultra-strong, lightweight metal that is resistant to extreme heat is used in fighter jets, space capsules, and prosthetic bones?",
+        options: ["Titanium (Ti)", "Lead (Pb)", "Sodium (Na)", "Argon (Ar)"],
+        correctAnswer: "Titanium (Ti)",
+        fact: "Titanium is as strong as steel but 45% lighter, and it never corrodes even in salt water or rocket exhaust!"
+      },
+      {
+        topic: "🫁 OXYGEN & BREATHING",
+        question: "What percentage of the Earth's atmosphere is made of Oxygen (O) that humans and animals breathe?",
+        options: ["About 21%", "About 90%", "About 5%", "About 50%"],
+        correctAnswer: "About 21%",
+        fact: "Our air is approximately 78% Nitrogen and 21% Oxygen — the exact perfect balance for living organisms to thrive!"
+      },
+      {
+        topic: "🩸 RED BLOOD CELLS",
+        question: "Which metal element sits at the center of hemoglobin in your red blood cells to carry oxygen throughout your body?",
+        options: ["Iron (Fe)", "Gold (Au)", "Mercury (Hg)", "Neon (Ne)"],
+        correctAnswer: "Iron (Fe)",
+        fact: "Iron in your hemoglobin binds with oxygen in your lungs and gives human blood its distinct deep red color!"
+      },
+      {
+        topic: "🗽 STATUE OF LIBERTY",
+        question: "The Statue of Liberty was originally shiny reddish-brown when built in 1886. What metal is it made of that oxidized and turned green?",
+        options: ["Copper (Cu)", "Silver (Ag)", "Aluminum (Al)", "Tin (Sn)"],
+        correctAnswer: "Copper (Cu)",
+        fact: "Copper reacts with oxygen and moisture in the air to create a protective green layer called patina (copper carbonate)!"
+      },
+      {
+        topic: "🌡️ LIQUID METALS",
+        question: "Which heavy, silvery element is the only metal that is completely liquid at room temperature?",
+        options: ["Mercury (Hg)", "Lead (Pb)", "Iron (Fe)", "Zinc (Zn)"],
+        correctAnswer: "Mercury (Hg)",
+        fact: "Mercury (also called quicksilver) is so dense that heavy iron cannonballs will actually float right on top of liquid mercury!"
+      },
+      {
+        topic: "🏊 CLEAN SWIMMING POOLS",
+        question: "Which greenish-yellow halogen gas element is added to swimming pools and municipal tap water to kill germs and bacteria?",
+        options: ["Chlorine (Cl)", "Krypton (Kr)", "Carbon (C)", "Magnesium (Mg)"],
+        correctAnswer: "Chlorine (Cl)",
+        fact: "Chlorine is a powerful disinfectant that breaks down the cell walls of harmful microbes within seconds!"
+      },
+      {
+        topic: "⚡ BEST ELECTRICAL CONDUCTOR",
+        question: "Which precious metal is the single best conductor of electricity and heat on the entire Periodic Table?",
+        options: ["Silver (Ag)", "Iron (Fe)", "Nickel (Ni)", "Lead (Pb)"],
+        correctAnswer: "Silver (Ag)",
+        fact: "Silver conducts electricity even better than copper and gold, and is also used to coat the backs of crystal-clear mirrors!"
+      },
+      {
+        topic: "🌌 STARS & THE UNIVERSE",
+        question: "Which element is the simplest, lightest, and by far the most abundant element in the entire Universe?",
+        options: ["Hydrogen (H)", "Oxygen (O)", "Iron (Fe)", "Uranium (U)"],
+        correctAnswer: "Hydrogen (H)",
+        fact: "Hydrogen makes up about 75% of all normal matter in the cosmos and fuels the nuclear fusion fires inside our Sun!"
+      },
+      {
+        topic: "✈️ SODA CANS & AIRPLANES",
+        question: "Which lightweight, abundant metal is 100% infinitely recyclable and used to build soda cans, airplane wings, and bike frames?",
+        options: ["Aluminum (Al)", "Lead (Pb)", "Gold (Au)", "Mercury (Hg)"],
+        correctAnswer: "Aluminum (Al)",
+        fact: "Recycling an aluminum can takes 95% less energy than making a new one from raw bauxite ore!"
+      },
+      {
+        topic: "❄️ FREEZING NITROGEN",
+        question: "Which element makes up the vast majority (78%) of Earth's atmosphere and becomes a boiling cold liquid at -196°C (-320°F)?",
+        options: ["Nitrogen (N)", "Hydrogen (H)", "Chlorine (Cl)", "Fluorine (F)"],
+        correctAnswer: "Nitrogen (N)",
+        fact: "Liquid nitrogen instantly freezes flowers and racquetballs so brittle they shatter like delicate glass!"
+      },
+      {
+        topic: "☢️ NUCLEAR ENERGY",
+        question: "Which dense, radioactive heavy element with 92 protons is used as fuel inside clean nuclear power generating stations?",
+        options: ["Uranium (U)", "Lithium (Li)", "Silicon (Si)", "Helium (He)"],
+        correctAnswer: "Uranium (U)",
+        fact: "A single uranium fuel pellet the size of a fingertip produces as much energy as one ton of coal!"
+      },
+      {
+        topic: "🛡️ X-RAY RADIATION SHIELDS",
+        question: "When getting an X-ray at the dentist, why is the heavy protective apron you wear lined with Lead (Pb)?",
+        options: [
+          "Lead is extremely dense and blocks high-energy X-ray radiation",
+          "Lead cools your body temperature down",
+          "Lead makes you invisible to cameras",
+          "Lead is magnetic and attracts the rays"
+        ],
+        correctAnswer: "Lead is extremely dense and blocks high-energy X-ray radiation",
+        fact: "Lead's tightly packed atoms and high atomic number make it the ultimate shield against harmful radiation!"
+      },
+      {
+        topic: "🔥 MATCHSTICK HEADS",
+        question: "Which reactive non-metal element is used on the friction strips of safety matches to ignite a flame when struck?",
+        options: ["Phosphorus (P)", "Helium (He)", "Argon (Ar)", "Gold (Au)"],
+        correctAnswer: "Phosphorus (P)",
+        fact: "Red phosphorus on the matchbox strike strip turns into a tiny burst of white phosphorus friction vapor that sparks the match head!"
+      },
+      {
+        topic: "💡 VINTAGE LIGHTBULB FILAMENTS",
+        question: "Which metal has the highest melting point of all elements (3,422°C / 6,192°F), allowing it to glow white-hot without melting in bulbs?",
+        options: ["Tungsten (W)", "Aluminum (Al)", "Copper (Cu)", "Silver (Ag)"],
+        correctAnswer: "Tungsten (W)",
+        fact: "Tungsten stays solid at temperatures hotter than the surface of some stars!"
+      },
+      {
+        topic: "🍌 BANANAS & MUSCLES",
+        question: "Bananas are famous for being rich in which alkali metal that helps human muscles contract and prevents cramps?",
+        options: ["Potassium (K)", "Iron (Fe)", "Gold (Au)", "Cobalt (Co)"],
+        correctAnswer: "Potassium (K)",
+        fact: "Potassium and sodium work together like a bio-electrical pump to fire nerve impulses across every muscle in your body!"
+      },
+      {
+        topic: "🩹 ANTISEPTIC HEALING",
+        question: "Which dark purple halogen element is applied to cuts and scrapes to kill infections and added to table salt to prevent goiter?",
+        options: ["Iodine (I)", "Lithium (Li)", "Barium (Ba)", "Helium (He)"],
+        correctAnswer: "Iodine (I)",
+        fact: "Iodine is an essential micronutrient for the thyroid gland and creates purple stains that sanitize skin during surgeries!"
+      },
+      {
+        topic: "🧴 SUNSCREEN & RUSTPROOFING",
+        question: "Which metal compound (Zinc Oxide) sits on the surface of your skin to reflect harmful UV sunlight rays like a mirror?",
+        options: ["Zinc (Zn)", "Lead (Pb)", "Arsenic (As)", "Radon (Rn)"],
+        correctAnswer: "Zinc (Zn)",
+        fact: "Zinc forms a physical mineral barrier against sunburn and is also coated onto steel nails (galvanizing) so they never rust!"
+      },
+      {
+        topic: "🌋 VOLCANIC CRYSTALS",
+        question: "Which bright yellow non-metal element is found around volcanic craters and hot springs with a distinctive smell?",
+        options: ["Sulfur (S)", "Carbon (C)", "Calcium (Ca)", "Platinum (Pt)"],
+        correctAnswer: "Sulfur (S)",
+        fact: "Sulfur burns with a mysterious eerie blue flame in volcanic calderas and forms pure bright yellow crystals!"
+      },
+      {
+        topic: "🪥 TOOTH ENAMEL DEFENSE",
+        question: "Which halogen element is added in tiny safe amounts to toothpaste and tap water to strengthen tooth enamel against cavities?",
+        options: ["Fluorine (F / Fluoride)", "Lead (Pb)", "Mercury (Hg)", "Neon (Ne)"],
+        correctAnswer: "Fluorine (F / Fluoride)",
+        fact: "Fluoride bonds with calcium in tooth enamel to form fluorapatite, a super-hard crystalline layer that resists acid!"
+      },
+      {
+        topic: "💍 PLATINUM LUXURY",
+        question: "Which extremely dense, hypoallergenic silvery-white precious metal is even rarer than gold and cleans car exhaust fumes?",
+        options: ["Platinum (Pt)", "Tin (Sn)", "Copper (Cu)", "Zinc (Zn)"],
+        correctAnswer: "Platinum (Pt)",
+        fact: "All the platinum ever mined in human history would fit into an average family living room!"
       }
     ];
 
-    // Pick 5 random questions
-    const selected = quizQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
+    // Fisher-Yates robust array shuffle
+    const shuffleArray = (arr) => {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    };
+
+    // Pick 5 unique random questions from the master question bank of 30+ items
+    const selectedRaw = shuffleArray(quizQuestions).slice(0, 5);
+
+    // For every selected question, shuffle the options and locate the new correct index
+    const selected = selectedRaw.map(q => {
+      const shuffledOptions = shuffleArray(q.options);
+      const correctIdx = shuffledOptions.indexOf(q.correctAnswer);
+      return {
+        topic: q.topic,
+        question: q.question,
+        options: shuffledOptions,
+        correct: correctIdx,
+        fact: q.fact
+      };
+    });
+
     let currentQIdx = 0;
     let score = 0;
     let answered = false;
