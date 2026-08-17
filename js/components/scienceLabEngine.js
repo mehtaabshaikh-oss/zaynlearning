@@ -455,7 +455,7 @@ class ScienceLabEngine {
         <div class="science-workbench-header">
           <div class="science-workbench-title-box">
             <h2 class="science-workbench-title">🦴 Skeleton Builder Lab</h2>
-            <p class="science-workbench-subtitle">Assemble the human skeletal system and discover how bones and joints function!</p>
+            <p class="science-workbench-subtitle">Assemble the human skeletal system and discover how authentic bones and joints function!</p>
           </div>
           <div style="display:flex; gap:0.8rem; align-items:center;">
             <div class="science-stat-badge">🦴 ${placedCount} / ${bones.length} Bones Assembled</div>
@@ -472,13 +472,14 @@ class ScienceLabEngine {
           <!-- Bone Inventory Tray -->
           <div class="skeleton-inventory-panel">
             <h4 style="font-family:var(--font-mono); font-size:0.9rem; color:#fde047; margin:0;">BONE INVENTORY TRAY</h4>
-            <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Tap a bone below, then tap its target on the silhouette!</p>
+            <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Tap a bone flashcard, then tap its target on the x-ray silhouette!</p>
 
             <div class="skeleton-bones-grid" id="skeleton-bones-grid">
               ${bones.map(b => `
                 <button class="bone-token-btn ${this.skeletonState.placedBones.has(b.id) ? 'placed' : ''} ${this.skeletonState.selectedBoneId === b.id ? 'selected' : ''}" data-bone="${b.id}">
-                  <span class="bone-token-icon">${b.icon}</span>
-                  <span class="bone-token-name">${b.name.split('(')[0]}</span>
+                  <div class="bone-token-svg-wrap">${this.getBoneTokenSVG(b.boneType, b.side)}</div>
+                  <span class="bone-token-name">${b.name}</span>
+                  <span class="bone-token-joint">${b.joint.split('(')[0]}</span>
                 </button>
               `).join('')}
             </div>
@@ -518,6 +519,80 @@ class ScienceLabEngine {
     this.renderSkeletonCanvas();
   }
 
+  getBoneTokenSVG(boneType, side) {
+    const fill = "#f1f5f9";
+    const stroke = "#cbd5e1";
+
+    if (boneType === "skull") {
+      return `
+        <svg viewBox="0 0 40 40" class="bone-mini-svg">
+          <ellipse cx="20" cy="18" rx="13" ry="14" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+          <path d="M 12 25 L 14 34 L 26 34 L 28 25 Z" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+          <ellipse cx="16" cy="18" rx="3.5" ry="4" fill="#0f172a"/>
+          <ellipse cx="24" cy="18" rx="3.5" ry="4" fill="#0f172a"/>
+          <polygon points="20,22 18,26 22,26" fill="#0f172a"/>
+          <line x1="16" y1="30" x2="24" y2="30" stroke="#0f172a" stroke-width="1"/>
+        </svg>
+      `;
+    }
+
+    if (boneType === "spine") {
+      return `
+        <svg viewBox="0 0 24 40" class="bone-mini-svg">
+          <rect x="9" y="3" width="6" height="34" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+          <line x1="5" y1="8" x2="19" y2="8" stroke="${fill}" stroke-width="2" stroke-linecap="round"/>
+          <line x1="5" y1="16" x2="19" y2="16" stroke="${fill}" stroke-width="2" stroke-linecap="round"/>
+          <line x1="5" y1="24" x2="19" y2="24" stroke="${fill}" stroke-width="2" stroke-linecap="round"/>
+          <line x1="5" y1="32" x2="19" y2="32" stroke="${fill}" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    if (boneType === "ribs") {
+      return `
+        <svg viewBox="0 0 40 40" class="bone-mini-svg">
+          <rect x="18" y="5" width="4" height="28" rx="2" fill="${fill}"/>
+          <path d="M 8 10 Q 20 6 32 10" fill="none" stroke="${fill}" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 6 16 Q 20 12 34 16" fill="none" stroke="${fill}" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 6 22 Q 20 18 34 22" fill="none" stroke="${fill}" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 8 28 Q 20 25 32 28" fill="none" stroke="${fill}" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    if (boneType === "pelvis") {
+      return `
+        <svg viewBox="0 0 40 32" class="bone-mini-svg">
+          <path d="M 5 6 C 5 20, 14 26, 20 26 C 26 26, 35 20, 35 6 C 30 10, 26 8, 20 12 C 14 8, 10 10, 5 6 Z" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+          <ellipse cx="13" cy="18" rx="4" ry="5" fill="#0f172a"/>
+          <ellipse cx="27" cy="18" rx="4" ry="5" fill="#0f172a"/>
+        </svg>
+      `;
+    }
+
+    if (boneType === "humerus" || boneType === "femur") {
+      return `
+        <svg viewBox="0 0 24 40" class="bone-mini-svg">
+          <circle cx="8" cy="7" r="4" fill="${fill}"/>
+          <circle cx="16" cy="7" r="4" fill="${fill}"/>
+          <rect x="9" y="8" width="6" height="24" rx="2" fill="${fill}"/>
+          <circle cx="8" cy="33" r="4" fill="${fill}"/>
+          <circle cx="16" cy="33" r="4" fill="${fill}"/>
+        </svg>
+      `;
+    }
+
+    // Forearm & Tibia (paired long bones)
+    return `
+      <svg viewBox="0 0 24 40" class="bone-mini-svg">
+        <line x1="8" y1="5" x2="8" y2="35" stroke="${fill}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="16" y1="8" x2="16" y2="32" stroke="${fill}" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="8" cy="5" r="3.5" fill="${fill}"/>
+        <circle cx="8" cy="35" r="3.5" fill="${fill}"/>
+      </svg>
+    `;
+  }
+
   selectBone(boneId) {
     this.skeletonState.selectedBoneId = boneId;
     const b = (window.SKELETON_BONES || []).find(x => x.id === boneId);
@@ -525,10 +600,10 @@ class ScienceLabEngine {
 
     if (b && infoBox) {
       infoBox.innerHTML = `
-        <strong style="color:#fde047;">${b.name}</strong><br>
-        <span style="color:#38bdf8; font-size:0.8rem;">Joint Type: ${b.joint}</span><br>
-        <span style="font-size:0.85rem; line-height:1.4;">${b.desc}</span><br>
-        <em style="color:#cbd5e1; font-size:0.8rem; display:block; margin-top:0.3rem;">✨ ${b.fact}</em>
+        <strong style="color:#fde047; font-size:1rem;">${b.name}</strong><br>
+        <span style="color:#38bdf8; font-size:0.8rem; font-weight:700;">Joint Type: ${b.joint}</span><br>
+        <span style="font-size:0.85rem; line-height:1.4; color:#f8fafc; display:block; margin:0.3rem 0;">${b.desc}</span>
+        <em style="color:#cbd5e1; font-size:0.8rem; display:block;">✨ ${b.fact}</em>
       `;
     }
 
@@ -573,20 +648,33 @@ class ScienceLabEngine {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = '#090d16';
+    // Deep X-Ray Lab Background
+    ctx.fillStyle = '#060913';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Human Body Silhouette Outline
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
+    // Subtle Medical X-Ray Grid
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+    ctx.lineWidth = 1;
+    for (let x = 20; x < canvas.width; x += 30) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 20; y < canvas.height; y += 30) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+
+    // Human Body Silhouette Outline (Subtle Cyan Glow)
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(200, 45, 28, 0, Math.PI * 2); // Head
-    ctx.moveTo(200, 75); ctx.lineTo(200, 200); // Torso line
-    ctx.moveTo(140, 100); ctx.lineTo(260, 100); // Shoulders
-    ctx.moveTo(140, 100); ctx.lineTo(130, 220); // Left Arm
-    ctx.moveTo(260, 100); ctx.lineTo(270, 220); // Right Arm
-    ctx.moveTo(175, 200); ctx.lineTo(170, 380); // Left Leg
-    ctx.moveTo(225, 200); ctx.lineTo(230, 380); // Right Leg
+    // Head & Neck
+    ctx.arc(200, 50, 32, 0, Math.PI * 2);
+    // Torso & Shoulders
+    ctx.moveTo(135, 100); ctx.lineTo(265, 100); // Shoulders
+    ctx.moveTo(140, 100); ctx.lineTo(120, 230); // Left Arm Contour
+    ctx.moveTo(260, 100); ctx.lineTo(280, 230); // Right Arm Contour
+    ctx.moveTo(150, 195); ctx.lineTo(250, 195); // Waist
+    ctx.moveTo(175, 200); ctx.lineTo(165, 395); // Left Leg Contour
+    ctx.moveTo(225, 200); ctx.lineTo(235, 395); // Right Leg Contour
     ctx.stroke();
 
     const bones = window.SKELETON_BONES || [];
@@ -595,33 +683,238 @@ class ScienceLabEngine {
       const isSelected = this.skeletonState.selectedBoneId === b.id;
 
       if (isPlaced) {
-        // Placed bone graphic
-        ctx.fillStyle = '#e2e8f0';
-        ctx.beginPath();
-        ctx.roundRect(b.targetX - b.width / 2, b.targetY - b.height / 2, b.width, b.height, 8);
-        ctx.fill();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.font = '18px serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(b.icon, b.targetX, b.targetY);
+        this.drawAnatomicalBone(ctx, b);
       } else {
-        // Target Snapping Socket
-        ctx.strokeStyle = isSelected ? '#fde047' : 'rgba(255, 255, 255, 0.2)';
+        // Glowing X-Ray Target Snapping Socket
+        ctx.save();
+        ctx.strokeStyle = isSelected ? '#fde047' : 'rgba(56, 189, 248, 0.4)';
         ctx.setLineDash([4, 4]);
-        ctx.lineWidth = isSelected ? 2 : 1;
-        ctx.strokeRect(b.targetX - b.width / 2, b.targetY - b.height / 2, b.width, b.height);
+        ctx.lineWidth = isSelected ? 2.5 : 1.5;
+        
+        ctx.beginPath();
+        ctx.roundRect(b.targetX - b.width / 2, b.targetY - b.height / 2, b.width, b.height, 10);
+        ctx.stroke();
         ctx.setLineDash([]);
 
         if (isSelected) {
           ctx.fillStyle = 'rgba(253, 224, 71, 0.15)';
-          ctx.fillRect(b.targetX - b.width / 2, b.targetY - b.height / 2, b.width, b.height);
+          ctx.fill();
         }
+
+        // Draw bone blueprint ghost outline inside socket
+        this.drawAnatomicalBoneBlueprint(ctx, b, isSelected);
+        ctx.restore();
       }
     });
+  }
+
+  drawAnatomicalBone(ctx, b) {
+    ctx.save();
+    const x = b.targetX;
+    const y = b.targetY;
+
+    // Bone Ivory Gradient Fill
+    const boneGrad = ctx.createLinearGradient(x - 20, y - 20, x + 20, y + 20);
+    boneGrad.addColorStop(0, '#ffffff');
+    boneGrad.addColorStop(0.7, '#e2e8f0');
+    boneGrad.addColorStop(1, '#cbd5e1');
+
+    ctx.fillStyle = boneGrad;
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1.5;
+
+    if (b.boneType === 'skull') {
+      // Cranium dome
+      ctx.beginPath();
+      ctx.ellipse(x, y - 5, 24, 25, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Facial / Jaw structure
+      ctx.beginPath();
+      ctx.moveTo(x - 14, y + 10);
+      ctx.lineTo(x - 10, y + 22);
+      ctx.lineTo(x + 10, y + 22);
+      ctx.lineTo(x + 14, y + 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Eye Sockets (Orbits)
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath(); ctx.ellipse(x - 8, y - 2, 5, 6, -0.1, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(x + 8, y - 2, 5, 6, 0.1, 0, Math.PI * 2); ctx.fill();
+
+      // Nasal Cavity
+      ctx.beginPath();
+      ctx.moveTo(x, y + 4); ctx.lineTo(x - 2.5, y + 10); ctx.lineTo(x + 2.5, y + 10);
+      ctx.closePath(); ctx.fill();
+
+      // Teeth row
+      ctx.strokeStyle = '#64748b';
+      ctx.beginPath();
+      ctx.moveTo(x - 8, y + 17); ctx.lineTo(x + 8, y + 17);
+      ctx.moveTo(x - 4, y + 14); ctx.lineTo(x - 4, y + 20);
+      ctx.moveTo(x, y + 14); ctx.lineTo(x, y + 20);
+      ctx.moveTo(x + 4, y + 14); ctx.lineTo(x + 4, y + 20);
+      ctx.stroke();
+    } else if (b.boneType === 'spine') {
+      // Vertebral Column Segments
+      for (let i = -35; i <= 35; i += 10) {
+        ctx.beginPath();
+        ctx.roundRect(x - 7, y + i - 3, 14, 7, 3);
+        ctx.fill(); ctx.stroke();
+        // Transverse processes (side wings)
+        ctx.beginPath();
+        ctx.moveTo(x - 11, y + i); ctx.lineTo(x - 7, y + i);
+        ctx.moveTo(x + 7, y + i); ctx.lineTo(x + 11, y + i);
+        ctx.stroke();
+      }
+    } else if (b.boneType === 'ribs') {
+      // Sternum Center Plate
+      ctx.beginPath();
+      ctx.roundRect(x - 4, y - 25, 8, 48, 3);
+      ctx.fill(); ctx.stroke();
+
+      // Curved Bilateral Rib Arches
+      ctx.lineWidth = 2.5;
+      const ribOffsets = [-18, -9, 0, 9, 18];
+      ribOffsets.forEach((ro, idx) => {
+        const spread = 28 - idx * 2;
+        ctx.beginPath();
+        ctx.arc(x - 4, y + ro, spread, -Math.PI * 0.1, Math.PI * 0.45, false);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(x + 4, y + ro, spread, Math.PI * 1.1, Math.PI * 0.55, true);
+        ctx.stroke();
+      });
+
+      // Clavicles (Collarbones)
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x - 30, y - 28); ctx.quadraticCurveTo(x - 15, y - 32, x - 4, y - 26);
+      ctx.moveTo(x + 30, y - 28); ctx.quadraticCurveTo(x + 15, y - 32, x + 4, y - 26);
+      ctx.stroke();
+    } else if (b.boneType === 'pelvis') {
+      // Flared Iliac Wings & Pelvic Basin
+      ctx.beginPath();
+      ctx.moveTo(x - 35, y - 18);
+      ctx.bezierCurveTo(x - 38, y + 8, x - 18, y + 20, x, y + 16);
+      ctx.bezierCurveTo(x + 18, y + 20, x + 38, y + 8, x + 35, y - 18);
+      ctx.quadraticCurveTo(x, y - 8, x - 35, y - 18);
+      ctx.fill(); ctx.stroke();
+
+      // Obturator Foramen Cavities
+      ctx.fillStyle = '#060913';
+      ctx.beginPath(); ctx.ellipse(x - 14, y + 8, 7, 6, 0.2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(x + 14, y + 8, 7, 6, -0.2, 0, Math.PI * 2); ctx.fill();
+
+      // Sacrum Center
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.moveTo(x - 7, y - 14); ctx.lineTo(x + 7, y - 14); ctx.lineTo(x, y + 2);
+      ctx.closePath(); ctx.fill();
+    } else if (b.boneType === 'humerus') {
+      // Upper arm bone
+      const isLeft = b.side === 'left';
+      const angle = isLeft ? -0.15 : 0.15;
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      // Spherical Ball Joint (Head)
+      ctx.beginPath(); ctx.arc(0, -22, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      // Shaft
+      ctx.beginPath(); ctx.roundRect(-4, -18, 8, 36, 3); ctx.fill(); ctx.stroke();
+      // Distal Condyles (Elbow)
+      ctx.beginPath(); ctx.arc(-4, 20, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(4, 20, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    } else if (b.boneType === 'forearm') {
+      // Radius & Ulna paired bones + Skeletal Hand
+      const isLeft = b.side === 'left';
+      ctx.translate(x, y);
+      ctx.rotate(isLeft ? -0.1 : 0.1);
+
+      // Radius Bone (lateral)
+      ctx.beginPath(); ctx.roundRect(-7, -22, 4.5, 38, 2); ctx.fill(); ctx.stroke();
+      // Ulna Bone (medial)
+      ctx.beginPath(); ctx.roundRect(2, -22, 4.5, 38, 2); ctx.fill(); ctx.stroke();
+
+      // Skeletal Hand (Carpals & Phalanges)
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath(); ctx.ellipse(0, 20, 5, 3, 0, 0, Math.PI * 2); ctx.fill(); // Carpals wrist
+      // 5 Finger Rays
+      ctx.lineWidth = 1.2;
+      for (let f = -4; f <= 4; f += 2) {
+        ctx.beginPath();
+        ctx.moveTo(f, 22); ctx.lineTo(f * 1.5, 29);
+        ctx.stroke();
+      }
+    } else if (b.boneType === 'femur') {
+      // Thigh Bone
+      const isLeft = b.side === 'left';
+      ctx.translate(x, y);
+      ctx.rotate(isLeft ? 0.05 : -0.05);
+
+      // Femoral Head (Ball Socket)
+      ctx.beginPath(); ctx.arc(isLeft ? 6 : -6, -28, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      // Strong Femoral Shaft
+      ctx.beginPath(); ctx.roundRect(-5, -24, 10, 48, 4); ctx.fill(); ctx.stroke();
+      // Knee Condyles
+      ctx.beginPath(); ctx.arc(-5, 26, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(5, 26, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    } else if (b.boneType === 'tibia') {
+      // Lower Leg: Thick Tibia + Slender Fibula + Skeletal Foot
+      const isLeft = b.side === 'left';
+      ctx.translate(x, y);
+
+      // Broad Tibial Plateau (Knee base)
+      ctx.beginPath(); ctx.roundRect(-4, -28, 9, 50, 3); ctx.fill(); ctx.stroke();
+      // Slender Fibula Strut
+      ctx.beginPath(); ctx.roundRect(isLeft ? -9 : 6, -24, 3, 44, 1.5); ctx.fill(); ctx.stroke();
+
+      // Skeletal Foot (Tarsals, Metatarsals, Phalanges)
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath(); ctx.ellipse(0, 26, 6, 4, 0, 0, Math.PI * 2); ctx.fill(); // Heel
+      // 5 Toe Rays
+      ctx.lineWidth = 1.2;
+      for (let t = -4; t <= 4; t += 2) {
+        ctx.beginPath();
+        ctx.moveTo(t, 28); ctx.lineTo(t * 1.6 + (isLeft ? -2 : 2), 34);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  drawAnatomicalBoneBlueprint(ctx, b, isSelected) {
+    ctx.save();
+    ctx.strokeStyle = isSelected ? '#fde047' : 'rgba(56, 189, 248, 0.35)';
+    ctx.fillStyle = isSelected ? 'rgba(253, 224, 71, 0.1)' : 'rgba(56, 189, 248, 0.05)';
+    ctx.lineWidth = 1;
+
+    const x = b.targetX;
+    const y = b.targetY;
+
+    if (b.boneType === 'skull') {
+      ctx.beginPath(); ctx.ellipse(x, y - 5, 20, 20, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x - 7, y - 2, 4, 5, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x + 7, y - 2, 4, 5, 0, 0, Math.PI * 2); ctx.stroke();
+    } else if (b.boneType === 'spine') {
+      ctx.beginPath(); ctx.roundRect(x - 5, y - 35, 10, 70, 4); ctx.fill(); ctx.stroke();
+    } else if (b.boneType === 'ribs') {
+      ctx.beginPath(); ctx.roundRect(x - 3, y - 20, 6, 40, 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x - 4, y - 5, 22, -0.3, 0.7, false); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x + 4, y - 5, 22, Math.PI * 1.3, Math.PI * 0.3, true); ctx.stroke();
+    } else if (b.boneType === 'pelvis') {
+      ctx.beginPath(); ctx.arc(x, y, 22, Math.PI * 0.8, Math.PI * 0.2, true); ctx.stroke();
+    } else {
+      // Long bone silhouette
+      ctx.beginPath(); ctx.roundRect(x - 4, y - 22, 8, 44, 3); ctx.fill(); ctx.stroke();
+    }
+
+    ctx.restore();
   }
 
   // ==========================================================================
