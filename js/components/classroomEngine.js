@@ -640,14 +640,14 @@ class ClassroomEngine {
     if (stepInd) stepInd.textContent = `📚 TODAY'S SCHOOL WORD`;
 
     body.innerHTML = `
-      <div style="text-align:center; padding:10px 0;">
-        <span style="font-size:11px; font-weight:800; color:#a5b4fc; letter-spacing:1px; text-transform:uppercase;">${w.category} VOCABULARY</span>
-        <h2 style="font-size:32px; font-weight:900; font-family:'Space Grotesk', sans-serif; color:#fde047; margin:8px 0;">${w.term}</h2>
-        <div style="background:#131d38; border:1px solid #1e293b; border-radius:14px; padding:20px; text-align:left; margin-bottom:16px;">
-          <div style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:4px;">Definition</div>
-          <div style="font-size:16px; font-weight:700; color:#f8fafc; margin-bottom:12px; line-height:1.4;">${w.definition}</div>
-          <div style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:4px;">Example in Action</div>
-          <div style="font-size:14px; color:#cbd5e1; line-height:1.4;">${w.example}</div>
+      <div style="text-align:center; padding:10px 0; font-family:'Space Grotesk', -apple-system, sans-serif;">
+        <span style="font-size:11px; font-weight:700; color:#a5b4fc; letter-spacing:1px; text-transform:uppercase;">${w.category} VOCABULARY</span>
+        <h2 style="font-size:32px; font-weight:800; font-family:'Space Grotesk', sans-serif; color:#fde047; margin:8px 0; letter-spacing:-0.5px;">${w.term}</h2>
+        <div style="background:#131d38; border:1px solid #1e293b; border-radius:14px; padding:22px; text-align:left; margin-bottom:16px;">
+          <div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Definition</div>
+          <div style="font-size:17px; font-weight:500; color:#ffffff; margin-bottom:16px; line-height:1.55; letter-spacing:-0.1px;">${w.definition}</div>
+          <div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Example in Action</div>
+          <div style="font-size:14px; font-weight:400; color:#cbd5e1; line-height:1.5;">${w.example}</div>
         </div>
       </div>
     `;
