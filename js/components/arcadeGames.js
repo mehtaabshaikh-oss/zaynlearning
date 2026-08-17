@@ -6500,18 +6500,18 @@ class DidYouKnowTriviaGame {
     if (!item) return;
 
     // 1. Top Header Category Bar
-    ctx.fillStyle = '#1e1b4b';
+    ctx.fillStyle = '#111a2e';
     ctx.beginPath(); ctx.roundRect(36, 14, 528, 36, 10); ctx.fill();
-    ctx.strokeStyle = '#4338ca'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 1.5; ctx.stroke();
 
-    ctx.fillStyle = '#fde047';
-    ctx.font = 'bold 14px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = '700 13px "Space Grotesk", sans-serif';
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText(`💡 DID YOU KNOW? • ${item.category.toUpperCase()}`, 52, 32);
 
     ctx.fillStyle = '#38bdf8';
     ctx.textAlign = 'right';
-    ctx.font = 'bold 13px "Space Grotesk", sans-serif';
+    ctx.font = '700 12px "Space Grotesk", sans-serif';
     ctx.fillText(`FACT ${this.currentIdx + 1} / ${this.facts.length}`, 548, 32);
 
     // 2. Center Hero Visual Badge (Glowing Circle with Pulse)
@@ -6523,11 +6523,11 @@ class DidYouKnowTriviaGame {
     ctx.scale(pulseScale, pulseScale);
 
     // Outer Glow Ring
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.18)';
     ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
 
     // Badge Inner
-    ctx.fillStyle = '#131d38';
+    ctx.fillStyle = '#172033';
     ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.stroke();
 
@@ -6538,53 +6538,53 @@ class DidYouKnowTriviaGame {
 
     ctx.restore();
 
-    // 3. Single Large Centered Fact Card
-    ctx.fillStyle = '#0f172a';
+    // 3. Single Large Centered Fact Card (1% Club Style Typography)
+    ctx.fillStyle = '#111a2e';
     ctx.beginPath(); ctx.roundRect(36, 142, 528, 192, 16); ctx.fill();
-    ctx.strokeStyle = '#334155'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = '#243147'; ctx.lineWidth = 2; ctx.stroke();
 
-    // Subtle Accent Top Border Line on Card
+    // Luminous Top Accent Line on Card
     ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(56, 142); ctx.lineTo(544, 142); ctx.stroke();
 
-    // Large, Beautiful Fact Headline / Body Text
-    ctx.fillStyle = '#f8fafc';
-    ctx.font = '600 18px "Fredoka", "Space Grotesk", sans-serif';
+    // 1% Club Space Grotesk Bold Typography
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 19px "Space Grotesk", -apple-system, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    this.wrapTextCentered(ctx, `"${item.fact}"`, 300, 168, 480, 28);
+    this.wrapTextCentered(ctx, `"${item.fact}"`, 300, 166, 480, 29);
 
     // 4. Bottom Control Buttons Bar
     // PREV Button
-    ctx.fillStyle = '#1e293b';
+    ctx.fillStyle = '#172033';
     ctx.beginPath(); ctx.roundRect(40, 348, 120, 46, 10); ctx.fill();
-    ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = '#334460'; ctx.lineWidth = 1.5; ctx.stroke();
 
     ctx.fillStyle = '#94a3b8';
-    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.font = '700 13px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('⬅ PREV', 100, 371);
 
     // SHUFFLE Button
-    ctx.fillStyle = '#1e293b';
+    ctx.fillStyle = '#172033';
     ctx.beginPath(); ctx.roundRect(175, 348, 150, 46, 10); ctx.fill();
     ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 1.5; ctx.stroke();
 
-    ctx.fillStyle = '#c7d2fe';
-    ctx.font = 'bold 13px "Space Grotesk"';
+    ctx.fillStyle = '#a5b4fc';
+    ctx.font = '700 13px "Space Grotesk", sans-serif';
     ctx.fillText('🎲 SHUFFLE DECK', 250, 371);
 
     // NEXT FACT Button (Primary High-Contrast Luminous Blue)
-    ctx.fillStyle = '#0284c7';
+    ctx.fillStyle = '#2563eb';
     ctx.beginPath(); ctx.roundRect(340, 348, 224, 46, 10); ctx.fill();
     ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.stroke();
 
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px "Space Grotesk"';
+    ctx.font = '700 14px "Space Grotesk", sans-serif';
     ctx.fillText('NEXT FACT ➔ (+25 XP)', 452, 371);
 
     // Hint Text
     ctx.fillStyle = '#64748b';
-    ctx.font = '11px "Space Grotesk"';
+    ctx.font = '600 11px "Space Grotesk", sans-serif';
     ctx.fillText('Tip: Press Spacebar or Arrow Keys on keyboard to flip cards', 300, 408);
   }
 

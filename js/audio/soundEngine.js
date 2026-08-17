@@ -9,7 +9,7 @@ class SoundEngine {
     this.masterGain = null;
     this.musicGain = null;
     this.sfxGain = null;
-    this.currentMode = 'phonk'; // 'phonk', 'lofi', 'chiptune', 'mute'
+    this.currentMode = 'sfx_only'; // Background music disabled, SFX active
     this.isMuted = false;
     this.musicInterval = null;
     this.tempo = 125; // BPM
@@ -26,12 +26,8 @@ class SoundEngine {
         this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
         this.masterGain.connect(this.ctx.destination);
 
-        this.musicGain = this.ctx.createGain();
-        this.musicGain.gain.setValueAtTime(0.35, this.ctx.currentTime);
-        this.musicGain.connect(this.masterGain);
-
         this.sfxGain = this.ctx.createGain();
-        this.sfxGain.gain.setValueAtTime(0.65, this.ctx.currentTime);
+        this.sfxGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
         this.sfxGain.connect(this.masterGain);
       }
     } catch (e) {
@@ -55,9 +51,6 @@ class SoundEngine {
   setMode(mode) {
     this.currentMode = mode;
     this.stopMusic();
-    if (mode !== 'mute') {
-      this.startMusic();
-    }
   }
 
   // ==========================================
@@ -207,24 +200,7 @@ class SoundEngine {
 
   startMusic() {
     this.stopMusic();
-    if (!this.ctx || this.currentMode === 'mute') return;
-
-    let step = 0;
-    const intervalTime = (60 / this.tempo / 4) * 1000; // 16th note steps
-
-    this.musicInterval = setInterval(() => {
-      if (!this.ctx || this.currentMode === 'mute') return;
-      this.resume();
-
-      if (this.currentMode === 'phonk') {
-        this.stepPhonk(step);
-      } else if (this.currentMode === 'lofi') {
-        this.stepLofi(step);
-      } else if (this.currentMode === 'chiptune') {
-        this.stepChiptune(step);
-      }
-      step = (step + 1) % 32;
-    }, intervalTime);
+    // Continuous background music disabled per user preference. SFX remains active.
   }
 
   stopMusic() {
