@@ -63,6 +63,9 @@ module.exports = async function handler(req, res) {
     // Format conversation history for Gemini API
     const contents = [];
 
+    // Prepend system prompt to the first user turn if systemInstruction fails
+    const fullPrompt = `${SYSTEM_INSTRUCTION}\n\nUser Question: ${message.trim()}`;
+
     if (Array.isArray(history)) {
       history.slice(-6).forEach(h => {
         if (h.role && h.text) {
@@ -76,13 +79,10 @@ module.exports = async function handler(req, res) {
 
     contents.push({
       role: 'user',
-      parts: [{ text: message.trim() }]
+      parts: [{ text: fullPrompt }]
     });
 
     const geminiPayload = {
-      systemInstruction: {
-        parts: [{ text: SYSTEM_INSTRUCTION }]
-      },
       contents: contents,
       generationConfig: {
         temperature: 0.7,
@@ -91,42 +91,54 @@ module.exports = async function handler(req, res) {
       }
     };
 
-    // Try candidate models in order of speed and capability
-    const candidateModels = [
-      "gemini-1.5-flash-latest",
-      "gemini-1.5-flash",
-      "gemini-2.0-flash",
-      "gemini-1.5-pro"
-    ];
+    // First try dynamic list of available models for this specific API key
+    let targetModels = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro", "gemini-2.0-flash"];
+
+    try {
+      const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(GEMINI_API_KEY)}`);
+      if (listRes.ok) {
+        const listData = await listRes.json();
+        if (listData.models && Array.isArray(listData.models)) {
+          const supported = listData.models
+            .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+            .map(m => m.name.replace('models/', ''));
+          if (supported.length > 0) {
+            targetModels = supported;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Could not list models, using fallback list:", e);
+    }
 
     let replyText = null;
     let lastError = null;
 
-    for (const model of candidateModels) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": GEMINI_API_KEY
-          },
-          body: JSON.stringify(geminiPayload)
-        });
+    for (const model of targetModels) {
+      // Try v1beta then v1
+      for (const apiVer of ["v1beta", "v1"]) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/${apiVer}/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(geminiPayload)
+          });
 
-        if (response.ok) {
-          const data = await response.json();
-          const candidate = data.candidates && data.candidates[0];
-          replyText = candidate?.content?.parts?.[0]?.text;
-          if (replyText) break;
-        } else {
-          const errData = await response.json().catch(() => ({}));
-          lastError = errData?.error?.message || `HTTP ${response.status}`;
-          console.error(`Gemini ${model} Error:`, lastError);
+          if (response.ok) {
+            const data = await response.json();
+            const candidate = data.candidates && data.candidates[0];
+            replyText = candidate?.content?.parts?.[0]?.text;
+            if (replyText) break;
+          } else {
+            const errData = await response.json().catch(() => ({}));
+            lastError = errData?.error?.message || `HTTP ${response.status}`;
+          }
+        } catch (err) {
+          lastError = err.message;
         }
-      } catch (err) {
-        lastError = err.message;
       }
+      if (replyText) break;
     }
 
     if (replyText) {
