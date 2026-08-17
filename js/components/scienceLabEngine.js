@@ -1944,7 +1944,10 @@ class ScienceLabEngine {
         <div class="element-quiz-card">
           <div class="element-quiz-header">
             <span class="element-quiz-topic-badge">${q.topic}</span>
-            <span class="element-quiz-counter">Question ${currentQIdx + 1} of ${selected.length}</span>
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span class="element-quiz-counter">Question ${currentQIdx + 1} of ${selected.length}</span>
+              <button class="element-quiz-close-btn" id="close-element-quiz-btn" title="Exit Quiz (Esc)">✕</button>
+            </div>
           </div>
 
           <div class="element-quiz-question-box">
@@ -1965,6 +1968,32 @@ class ScienceLabEngine {
 
       modal.classList.remove('hidden');
       if (window.soundEngine) window.soundEngine.playTap();
+
+      // Close / Exit Button
+      const closeBtn = modal.querySelector('#close-element-quiz-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          modal.classList.add('hidden');
+          if (window.soundEngine) window.soundEngine.playTap();
+        });
+      }
+
+      // Click outside card to dismiss
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+          if (window.soundEngine) window.soundEngine.playTap();
+        }
+      };
+
+      // Escape key to dismiss
+      const handleEscape = (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+          window.removeEventListener('keydown', handleEscape);
+        }
+      };
+      window.addEventListener('keydown', handleEscape);
 
       const optBtns = modal.querySelectorAll('.element-quiz-opt-btn');
       optBtns.forEach(btn => {
