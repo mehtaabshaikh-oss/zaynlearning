@@ -6,69 +6,64 @@
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_KEY || "").trim();
 
-const SYSTEM_PROMPT = "You are Nova, an enthusiastic and friendly AI study buddy for Zayn, an 8-year-old kid in 3rd grade. Answer him directly in 2 short, fun paragraphs using simple analogies (like LEGOs, pizza slices, rocket thrusters, Minecraft) and fun emojis. Never write planning notes or outlines—only output your direct answer.";
+const SYSTEM_PROMPT = "You are Nova, an enthusiastic AI science and math tutor for an 8-year-old named Zayn. Explain things in 2 fun, exciting paragraphs using simple analogies (like LEGOs, Minecraft, pizza, rockets) and emojis.";
 
 function sanitizeNovaReply(raw) {
   if (!raw) return "";
   let text = raw.trim();
 
-  // If the model outputted drafting markers, slice straight to the actual response
-  if (/Drafting/i.test(text)) {
-    const draftIndex = text.search(/Drafting/i);
-    if (draftIndex !== -1) {
-      text = text.substring(draftIndex);
-      text = text.replace(/Drafting\s*(Paragraph\s*\d+:?\*?|:?\*?)/gi, '');
-    }
-  }
-
-  // Remove trailing verification checklists
-  text = text.replace(/\*\s*\d+\s*short\s*paragraphs[\s\S]*$/i, '');
-  text = text.replace(/\*\s*Direct\s*answer[\s\S]*$/i, '');
-  text = text.replace(/\*\s*No\s*meta[\s\S]*$/i, '');
-  text = text.replace(/\*\s*Constraint\s*Check[\s\S]*$/i, '');
+  // Strip common outline labels
+  text = text.replace(/Drafting\s*(Paragraph\s*\d+:?\*?|:?\*?)/gi, '');
+  text = text.replace(/Paragraph\s*\d+:?\s*(\"?[^\"]*\"?\s*concept\.?\*?)?/gi, '');
+  text = text.replace(/Minecraft\/LEGO\s*idea:\*?/gi, '');
+  text = text.replace(/The\s*\"[^\"]+\"\s*concept\.?\*?/gi, '');
 
   const lines = text.split('\n');
   const clean = [];
-  let startedActualText = false;
+  let foundStart = false;
 
   for (let line of lines) {
-    const trimmed = line.trim();
-    if (!startedActualText) {
-      // Skip meta-commentary, persona rules, and planning lines at the top
-      if (
-        trimmed.startsWith('*') ||
-        trimmed.endsWith('grade).') ||
-        trimmed.endsWith('buddy).') ||
-        trimmed.startsWith('No planning') ||
-        trimmed.startsWith('Simple analogies') ||
-        trimmed.startsWith('Use emojis') ||
-        trimmed.startsWith('Concept:') ||
-        trimmed.startsWith('Analogy:') ||
-        trimmed.startsWith('Target:') ||
-        trimmed.startsWith('Goal:') ||
-        trimmed.startsWith('Audience:') ||
-        trimmed.startsWith('Persona:') ||
-        trimmed.startsWith('Constraints:') ||
-        trimmed.startsWith('Subject:') ||
-        trimmed.startsWith('2 short, fun paragraphs') ||
-        trimmed.startsWith('2 paragraphs') ||
-        trimmed.startsWith('3 paragraphs')
-      ) {
-        continue;
+    const t = line.trim();
+    if (!foundStart) {
+      // Check if line looks like actual conversational speech rather than bullet/meta notes
+      const isMeta =
+        t.startsWith('*') ||
+        t.endsWith('grade).') ||
+        t.endsWith('buddy).') ||
+        t.startsWith('No planning') ||
+        t.startsWith('Simple analogies') ||
+        t.startsWith('Use fun emojis') ||
+        t.startsWith('Use emojis') ||
+        t.startsWith('Concept:') ||
+        t.startsWith('Analogy:') ||
+        t.startsWith('Target:') ||
+        t.startsWith('Goal:') ||
+        t.startsWith('Audience:') ||
+        t.startsWith('Persona:') ||
+        t.startsWith('Constraints:') ||
+        t.startsWith('Subject:') ||
+        t.startsWith('2 short, fun paragraphs') ||
+        t.startsWith('2 paragraphs') ||
+        t.startsWith('3 paragraphs') ||
+        t.startsWith('How do airplanes') ||
+        t.startsWith('Why does') ||
+        t.startsWith('Why do') ||
+        t.startsWith('What is');
+
+      if (!isMeta && t.length > 15) {
+        foundStart = true;
+        clean.push(line);
       }
-      if (trimmed.length > 0) {
-        startedActualText = true;
-      }
-    }
-    if (startedActualText) {
-      // Stop if we hit a trailing checklist
+    } else {
+      // Stop before trailing verification checklists
       if (
-        trimmed.startsWith('* Simple analogies?') ||
-        trimmed.startsWith('* Fun emojis?') ||
-        trimmed.startsWith('* Direct answer?') ||
-        trimmed.startsWith('* 2 paragraphs') ||
-        trimmed.startsWith('* 2 short') ||
-        trimmed.startsWith('* No planning')
+        t.startsWith('* Simple analogies?') ||
+        t.startsWith('* Fun emojis?') ||
+        t.startsWith('* Direct answer?') ||
+        t.startsWith('* 2 paragraphs') ||
+        t.startsWith('* 2 short') ||
+        t.startsWith('* No planning') ||
+        t.startsWith('* No meta')
       ) {
         break;
       }
@@ -77,6 +72,10 @@ function sanitizeNovaReply(raw) {
   }
 
   let result = clean.join('\n').trim();
+  if (!result) {
+    // Fallback: strip lines starting with *
+    result = lines.filter(l => !l.trim().startsWith('*')).join('\n').trim();
+  }
 
   // Strip wrapping quotes if any
   if (result.startsWith('"') && result.endsWith('"')) {
@@ -155,12 +154,9 @@ module.exports = async function handler(req, res) {
       },
       contents: contents,
       generationConfig: {
-        temperature: 0.7,
+        temperature: 0.3,
         maxOutputTokens: 1000,
-        topP: 0.95,
-        thinkingConfig: {
-          thinkingBudget: 0
-        }
+        topP: 0.95
       }
     };
 
@@ -202,23 +198,6 @@ module.exports = async function handler(req, res) {
           replyText = candidate?.content?.parts?.[0]?.text;
           if (replyText) break;
         } else {
-          // If thinkingConfig wasn't supported by this model, retry without it
-          const retryPayload = { ...geminiPayload };
-          delete retryPayload.generationConfig.thinkingConfig;
-
-          const retryRes = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(retryPayload)
-          });
-
-          if (retryRes.ok) {
-            const data = await retryRes.json();
-            const candidate = data.candidates && data.candidates[0];
-            replyText = candidate?.content?.parts?.[0]?.text;
-            if (replyText) break;
-          }
-
           const errData = await response.json().catch(() => ({}));
           lastError = `${fullModelName}: ${errData?.error?.message || `HTTP ${response.status}`}`;
         }
