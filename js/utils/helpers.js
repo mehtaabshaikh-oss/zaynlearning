@@ -47,14 +47,25 @@ class Helpers {
     const clientX = x !== undefined ? x : window.innerWidth / 2;
     const clientY = y !== undefined ? y : window.innerHeight / 2;
 
+    let displayText = text;
+    if (!isPositive) {
+      if (!displayText.includes('Aura') && !displayText.includes('-')) {
+        displayText = `${displayText} (-25 Aura 📉)`;
+      }
+      // Deduct -25 Aura when wrong answer occurs
+      if (window.gameState && window.gameState.deductAura) {
+        window.gameState.deductAura(25);
+      }
+    }
+
     this.floatingTexts.push({
-      text: text,
+      text: displayText,
       x: clientX,
       y: clientY,
-      vy: -2.5,
+      vy: isPositive ? -2.5 : 1.8,
       opacity: 1,
-      color: isPositive ? '#ffd500' : '#ef4444',
-      fontSize: 26,
+      color: isPositive ? '#ffd500' : '#f87171',
+      fontSize: 24,
       life: 1
     });
 

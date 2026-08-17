@@ -136,11 +136,33 @@ class GameState {
   addAura(amount) {
     this.data.aura = Math.max(0, this.data.aura + amount);
     this.save();
+    if (window.app && window.app.updateTopBarHUD) {
+      window.app.updateTopBarHUD();
+    }
+  }
+
+  deductAura(amount = 25) {
+    this.data.aura = Math.max(0, (this.data.aura || 0) - amount);
+    this.save();
+    if (window.app && window.app.updateTopBarHUD) {
+      window.app.updateTopBarHUD();
+    }
+  }
+
+  penalizeMistake(reason = "Incorrect Answer", x, y) {
+    const penalty = 25;
+    this.deductAura(penalty);
+    if (window.helpers) {
+      window.helpers.spawnAuraFloatingText(`-25 Aura 📉`, x, y, false);
+    }
   }
 
   addGems(amount) {
     this.data.gems += amount;
     this.save();
+    if (window.app && window.app.updateTopBarHUD) {
+      window.app.updateTopBarHUD();
+    }
   }
 
   completeNode(nodeId, stars = 3) {

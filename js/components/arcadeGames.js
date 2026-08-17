@@ -708,6 +708,9 @@ class AsteroidBlasterGame {
             this.missedFacts.push(this.currentQ.prompt);
 
             if (window.soundEngine) window.soundEngine.playWrong();
+            if (window.helpers) {
+              window.helpers.spawnAuraFloatingText(`Wrong Asteroid (${ast.val})! -25 Aura 📉`, ast.x, ast.y, false);
+            }
             ast.y = -50;
             window.adaptiveEngine.recordAttempt(this.currentQ.skillKey, false, false, 2500);
           }
