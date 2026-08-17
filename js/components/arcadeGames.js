@@ -2997,6 +2997,14 @@ class MathDefenseGame {
     });
   }
 
+  getDistancePoints(enemyX) {
+    if (enemyX >= 430) return { pts: 150, label: "🎯 LONG-RANGE SNIPE!" };
+    if (enemyX >= 330) return { pts: 120, label: "💥 MID-RANGE HIT!" };
+    if (enemyX >= 230) return { pts: 100, label: "💥 DIRECT HIT!" };
+    if (enemyX >= 150) return { pts: 80, label: "⚡ CLOSE CALL DEFENSE!" };
+    return { pts: 50, label: "🛡️ POINT BLANK DEFENSE!" };
+  }
+
   update() {
     this.enemies.forEach(en => {
       en.x -= en.speed;
@@ -3028,13 +3036,16 @@ class MathDefenseGame {
           this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
           this.combo = Math.min(6, 1 + Math.floor(this.currentStreak / 3));
 
-          const pts = 150 * this.combo;
-          this.score += pts;
+          const distReward = this.getDistancePoints(en.x);
+          const totalPts = distReward.pts * this.combo;
+          this.score += totalPts;
           this.hub.scoreEl.textContent = this.score;
           this.hub.comboTag.textContent = `${this.combo}x COMBO`;
 
           if (window.soundEngine) window.soundEngine.playBossHit();
-          if (window.helpers) window.helpers.spawnAuraFloatingText(`DIRECT HIT! +${pts} Aura 💥`, undefined, undefined, true);
+          if (window.helpers) {
+            window.helpers.spawnAuraFloatingText(`${distReward.label} +${totalPts} Aura!`, en.x, en.y - 20, true);
+          }
 
           if (this.waveProgress >= this.waveTarget) {
             // Wave cleared!
@@ -3063,6 +3074,7 @@ class MathDefenseGame {
           this.combo = 1;
           this.hub.comboTag.textContent = '1x COMBO';
           if (window.soundEngine) window.soundEngine.playWrong();
+          if (window.helpers) window.helpers.spawnAuraFloatingText("Wrong target! Castle exposed!", en.x, en.y, false);
         }
       }
     }
@@ -3085,6 +3097,22 @@ class MathDefenseGame {
   render(ctx) {
     ctx.fillStyle = '#064e3b';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // Distance Range Zone Guidelines on Battlefield
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 6]);
+    [430, 330, 230, 150].forEach(zx => {
+      ctx.beginPath(); ctx.moveTo(zx, 50); ctx.lineTo(zx, 370); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    // Range Zone Labels at bottom of battlefield
+    ctx.font = 'bold 10px "Space Grotesk"';
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.6)'; ctx.fillText('150 PTS (FAR)', 470, 395);
+    ctx.fillStyle = 'rgba(253, 224, 71, 0.6)'; ctx.fillText('120 PTS', 380, 395);
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.6)'; ctx.fillText('100 PTS', 280, 395);
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.6)'; ctx.fillText('50-80 PTS (CLOSE)', 180, 395);
 
     // Castle Tower
     ctx.fillStyle = '#334155';
@@ -3125,6 +3153,7 @@ class MathDefenseGame {
 
     // Enemies
     this.enemies.forEach(en => {
+      // Enemy Circle
       ctx.fillStyle = '#1e293b';
       ctx.beginPath();
       ctx.arc(en.x, en.y, en.r, 0, Math.PI * 2);
@@ -3134,11 +3163,29 @@ class MathDefenseGame {
       ctx.lineWidth = 2.5;
       ctx.stroke();
 
+      // Enemy Math Value
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 15px "Space Grotesk"';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(en.val, en.x, en.y);
+
+      // Live Distance Points Badge above enemy
+      const reward = this.getDistancePoints(en.x);
+      const pillColor = en.x >= 430 ? '#38bdf8' : (en.x >= 330 ? '#fde047' : (en.x >= 230 ? '#f59e0b' : '#ef4444'));
+      
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.beginPath();
+      ctx.roundRect(en.x - 22, en.y - en.r - 16, 44, 14, 4);
+      ctx.fill();
+      ctx.strokeStyle = pillColor;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = pillColor;
+      ctx.font = 'bold 9px "Space Grotesk"';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`+${reward.pts}`, en.x, en.y - en.r - 9);
     });
   }
 }
