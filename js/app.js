@@ -11,6 +11,7 @@ class App {
   }
 
   initComponents() {
+    window.syncManager = new SyncManager();
     window.mapRenderer = new MapRenderer();
     window.lessonEngine = new LessonEngine();
     window.phonkArena = new PhonkDriftArena();
