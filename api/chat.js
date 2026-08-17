@@ -1,6 +1,6 @@
 /**
  * /api/chat.js - Vercel Serverless AI Study Buddy Proxy
- * Powered by Google Gemini API with few-shot direct conversational framing.
+ * Powered by Google Gemini API with dynamic model discovery.
  * Locked strictly to authorized tokens (Zayn: 8662 and Parent: 6250).
  */
 
@@ -59,7 +59,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // 3. Construct Few-Shot Conversation Frame (forces direct speech, eliminates reasoning leaks)
+    // 3. Construct Few-Shot Conversation Frame
     const contents = [
       {
         role: "user",
@@ -71,7 +71,6 @@ module.exports = async function handler(req, res) {
       }
     ];
 
-    // Add recent conversational history
     if (Array.isArray(history)) {
       history.slice(-4).forEach(h => {
         if (h.role && h.text) {
@@ -83,7 +82,6 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Add current user prompt
     contents.push({
       role: 'user',
       parts: [{ text: message.trim() }]
@@ -98,15 +96,33 @@ module.exports = async function handler(req, res) {
       }
     };
 
-    // Candidate models to query
-    const targetModels = ["gemini-2.5-flash", "gemini-2.5-flash-latest", "gemini-2.5-pro", "gemini-1.5-flash"];
+    // 4. Query Google ListModels directly to get exact supported model resource names
+    let availableModels = [];
+    try {
+      const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(GEMINI_API_KEY)}`);
+      if (listRes.ok) {
+        const listData = await listRes.json();
+        if (listData.models && Array.isArray(listData.models)) {
+          availableModels = listData.models
+            .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+            .map(m => m.name); // e.g. "models/gemini-2.5-flash"
+        }
+      }
+    } catch (e) {
+      console.warn("ListModels error:", e);
+    }
+
+    // Fallback list if ListModels was empty
+    if (availableModels.length === 0) {
+      availableModels = ["models/gemini-2.5-flash", "models/gemini-1.5-flash-8b", "models/gemini-1.5-flash", "models/gemini-pro"];
+    }
 
     let replyText = null;
     let lastError = null;
 
-    for (const model of targetModels) {
+    for (const fullModelName of availableModels) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/${fullModelName}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
         const response = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -120,7 +136,7 @@ module.exports = async function handler(req, res) {
           if (replyText) break;
         } else {
           const errData = await response.json().catch(() => ({}));
-          lastError = errData?.error?.message || `HTTP ${response.status}`;
+          lastError = `${fullModelName}: ${errData?.error?.message || `HTTP ${response.status}`}`;
         }
       } catch (err) {
         lastError = err.message;
@@ -128,7 +144,6 @@ module.exports = async function handler(req, res) {
     }
 
     if (replyText) {
-      // Clean up any accidental residual draft markers if any
       let cleaned = replyText.trim();
       if (cleaned.includes('Drafting:*')) {
         cleaned = cleaned.split('Drafting:*').pop().trim();
@@ -139,7 +154,7 @@ module.exports = async function handler(req, res) {
     }
 
     return res.status(200).json({
-      reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini reported: "${lastError || 'Service temporarily unreachable'}". Please verify your key at aistudio.google.com!`
+      reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini reported: "${lastError || 'Service temporarily unreachable'}". Available models found: [${availableModels.join(', ')}]. Please check your API key!`
     });
   } catch (err) {
     console.error("AI Chat Handler Error:", err);
