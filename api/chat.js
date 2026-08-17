@@ -1,6 +1,6 @@
 /**
  * /api/chat.js - Vercel Serverless AI Study Buddy Proxy
- * Powered by Google Gemini 2.5 Flash with strict educational guardrails for 3rd/4th grade.
+ * Powered by Google Gemini API with strict educational guardrails for 3rd/4th grade.
  * Locked strictly to authorized tokens (Zayn: 8662 and Parent: 6250).
  */
 
@@ -54,7 +54,6 @@ module.exports = async function handler(req, res) {
   }
 
   if (!GEMINI_API_KEY) {
-    // Graceful helpful fallback if environment variable is not yet saved on Vercel
     return res.status(200).json({
       reply: `🚀 **Hi ${session.name || 'Zayn'}! I'm Nova, your AI study buddy!**\n\nTo activate my live neural engine, please add \`GEMINI_API_KEY\` to your Vercel Project Settings under Environment Variables! Once saved, I can answer all your mind-blowing science and math questions! 🪐✨`
     });
@@ -80,7 +79,8 @@ module.exports = async function handler(req, res) {
       parts: [{ text: message.trim() }]
     });
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    // Use Gemini 1.5 Flash (stable, fast, standard)
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const geminiPayload = {
       systemInstruction: {
@@ -89,7 +89,7 @@ module.exports = async function handler(req, res) {
       contents: contents,
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 500,
+        maxOutputTokens: 600,
         topP: 0.95
       }
     };
@@ -102,13 +102,33 @@ module.exports = async function handler(req, res) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Gemini API Error:", errorText);
-      return res.status(502).json({ error: "AI service temporarily unavailable. Please try again." });
+      console.error("Gemini API Error:", response.status, errorText);
+
+      // Attempt fallback to gemini-1.5-pro or gemini-2.0-flash
+      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+      const fallbackRes = await fetch(fallbackUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(geminiPayload)
+      });
+
+      if (fallbackRes.ok) {
+        const fbData = await fallbackRes.json();
+        const candidate = fbData.candidates && fbData.candidates[0];
+        const replyText = candidate?.content?.parts?.[0]?.text;
+        if (replyText) {
+          return res.status(200).json({ success: true, reply: replyText });
+        }
+      }
+
+      return res.status(200).json({
+        reply: `🚀 **Nova Communication Beacon:**\n\nGoogle Gemini returned a ${response.status} response. Please verify in Google AI Studio that your API key is enabled and has no billing/project restrictions!`
+      });
     }
 
     const data = await response.json();
     const candidate = data.candidates && data.candidates[0];
-    const replyText = candidate?.content?.parts?.[0]?.text || "I was pondering that question! Could you ask me one more time? 🚀";
+    const replyText = candidate?.content?.parts?.[0]?.text || "I was pondering that mystery! Ask me one more time! 🚀";
 
     return res.status(200).json({
       success: true,
