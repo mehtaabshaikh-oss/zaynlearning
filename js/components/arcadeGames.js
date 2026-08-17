@@ -1537,11 +1537,103 @@ class DecimalRacerGame {
       ctx.fillText(g.val, g.x, g.y + 6);
     });
 
-    // Racer Car
+    // Vector Supercar (Facing straight UP 0° along lanes)
     const carX = this.lanesX[this.carLane];
-    ctx.font = '36px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('🏎️', carX, 360);
+    this.drawRaceCar(ctx, carX, 360, '#38bdf8', '#ffffff');
+  }
+
+  drawRaceCar(ctx, x, y, primaryColor = '#38bdf8', secondaryColor = '#ffffff') {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. Dual Nitro Exhaust Flames
+    const flameH = 6 + Math.random() * 6;
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(-6, 24, 4, flameH);
+    ctx.fillRect(2, 24, 4, flameH);
+    ctx.fillStyle = '#22d3ee';
+    ctx.fillRect(-5, 24, 2, flameH * 0.6);
+    ctx.fillRect(3, 24, 2, flameH * 0.6);
+
+    // 2. 4 Wide Racing Tires
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    // Front tires
+    ctx.roundRect(-16, -20, 6, 12, 2);
+    ctx.roundRect(10, -20, 6, 12, 2);
+    // Rear tires (wider track)
+    ctx.roundRect(-18, 10, 7, 14, 2);
+    ctx.roundRect(11, 10, 7, 14, 2);
+    ctx.fill();
+
+    // Rims
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(-14, -16, 2, 4);
+    ctx.fillRect(12, -16, 2, 4);
+    ctx.fillRect(-16, 15, 3, 4);
+    ctx.fillRect(13, 15, 3, 4);
+
+    // 3. Front Wing / Aero Splitter
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-17, -24, 34, 5, 2);
+    ctx.fill();
+    ctx.fillStyle = primaryColor;
+    ctx.fillRect(-13, -23, 26, 3);
+
+    // 4. Main Aerodynamic Chassis
+    ctx.fillStyle = primaryColor;
+    ctx.beginPath();
+    ctx.moveTo(0, -26);  // Pointed nose tip
+    ctx.lineTo(8, -12);  // Front right taper
+    ctx.lineTo(12, 4);   // Right sidepod intake
+    ctx.lineTo(11, 24);  // Rear right body
+    ctx.lineTo(-11, 24); // Rear left body
+    ctx.lineTo(-12, 4);  // Left sidepod intake
+    ctx.lineTo(-8, -12); // Front left taper
+    ctx.closePath();
+    ctx.fill();
+
+    // Chassis 3D specular highlight
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 5. Center Racing Stripes
+    ctx.fillStyle = secondaryColor;
+    ctx.fillRect(-2, -22, 4, 44);
+
+    // 6. Cockpit & Driver Helmet
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 5, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Helmet & Visor
+    ctx.fillStyle = '#fde047';
+    ctx.beginPath();
+    ctx.arc(0, 1, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0284c7';
+    ctx.beginPath();
+    ctx.arc(0, -1, 3, Math.PI, 0);
+    ctx.fill();
+
+    // 7. Engine Air Scoop (above helmet)
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(-3, 6, 6, 6, 2);
+    ctx.fill();
+
+    // 8. Rear Aerodynamic Wing / Spoiler
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-18, 21, 36, 5, 2);
+    ctx.fill();
+    ctx.fillStyle = primaryColor;
+    ctx.fillRect(-15, 22, 30, 3);
+
+    ctx.restore();
   }
 
   endGame() {
@@ -3799,11 +3891,103 @@ class MathKartGame {
       ctx.fillText(g.val, g.x, g.y + 6);
     });
 
-    // Kart
+    // Vector Grand Prix F1 Racer (Facing straight UP 0° along lanes)
     const kartX = 160 + this.kartLane * 140;
-    ctx.font = '36px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('🏎️', kartX, 360);
+    this.drawRaceCar(ctx, kartX, 360, '#ef4444', '#fde047');
+  }
+
+  drawRaceCar(ctx, x, y, primaryColor = '#ef4444', secondaryColor = '#fde047') {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. Dual Exhaust Nitro Trail
+    const flameH = 6 + Math.random() * 6;
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(-6, 24, 4, flameH);
+    ctx.fillRect(2, 24, 4, flameH);
+    ctx.fillStyle = '#fde047';
+    ctx.fillRect(-5, 24, 2, flameH * 0.6);
+    ctx.fillRect(3, 24, 2, flameH * 0.6);
+
+    // 2. 4 Wide Black Rubber Tires
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    // Front tires
+    ctx.roundRect(-16, -20, 6, 12, 2);
+    ctx.roundRect(10, -20, 6, 12, 2);
+    // Rear tires (wider)
+    ctx.roundRect(-18, 10, 7, 14, 2);
+    ctx.roundRect(11, 10, 7, 14, 2);
+    ctx.fill();
+
+    // Rims
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(-14, -16, 2, 4);
+    ctx.fillRect(12, -16, 2, 4);
+    ctx.fillRect(-16, 15, 3, 4);
+    ctx.fillRect(13, 15, 3, 4);
+
+    // 3. Front Wing / Aerodynamic Splitter
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-17, -24, 34, 5, 2);
+    ctx.fill();
+    ctx.fillStyle = primaryColor;
+    ctx.fillRect(-13, -23, 26, 3);
+
+    // 4. Main Aerodynamic Chassis
+    ctx.fillStyle = primaryColor;
+    ctx.beginPath();
+    ctx.moveTo(0, -26);  // Pointed nose
+    ctx.lineTo(8, -12);  // Front right taper
+    ctx.lineTo(12, 4);   // Right sidepod intake
+    ctx.lineTo(11, 24);  // Rear right body
+    ctx.lineTo(-11, 24); // Rear left body
+    ctx.lineTo(-12, 4);  // Left sidepod intake
+    ctx.lineTo(-8, -12); // Front left taper
+    ctx.closePath();
+    ctx.fill();
+
+    // Chassis specular highlight
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 5. Center Golden Racing Stripes
+    ctx.fillStyle = secondaryColor;
+    ctx.fillRect(-2, -22, 4, 44);
+
+    // 6. Cockpit & Driver Helmet
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 5, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Helmet & Visor
+    ctx.fillStyle = '#38bdf8';
+    ctx.beginPath();
+    ctx.arc(0, 1, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.arc(0, -1, 3, Math.PI, 0);
+    ctx.fill();
+
+    // 7. Engine Air Scoop (above helmet)
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(-3, 6, 6, 6, 2);
+    ctx.fill();
+
+    // 8. Rear Spoiler / Downforce Wing
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.roundRect(-18, 21, 36, 5, 2);
+    ctx.fill();
+    ctx.fillStyle = primaryColor;
+    ctx.fillRect(-15, 22, 30, 3);
+
+    ctx.restore();
   }
 
   endGame() {
