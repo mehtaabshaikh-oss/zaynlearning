@@ -158,6 +158,7 @@ class AIChatBuddy {
           ${!isUser ? `
             <div class="ai-msg-actions">
               <button class="ai-listen-btn" onclick="window.aiChatBuddy.speakText(${idx})">🔊 Listen</button>
+              <button class="ai-listen-btn" id="copy-btn-${idx}" onclick="window.aiChatBuddy.copyMessageText(${idx})">📋 Copy</button>
             </div>
           ` : ''}
         </div>
@@ -263,6 +264,24 @@ class AIChatBuddy {
     utterance.rate = 1.0;
     utterance.pitch = 1.1; // Friendly slightly higher pitch for kid persona
     window.speechSynthesis.speak(utterance);
+  }
+
+  async copyMessageText(msgIdx) {
+    const msg = this.messages[msgIdx];
+    if (!msg) return;
+
+    const btn = document.getElementById(`copy-btn-${msgIdx}`);
+    const cleanText = msg.text.replace(/[*_#`]/g, '');
+
+    try {
+      await navigator.clipboard.writeText(cleanText);
+      if (btn) {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { if (btn) btn.textContent = '📋 Copy'; }, 2000);
+      }
+    } catch (e) {
+      if (btn) btn.textContent = '📋 Copied!';
+    }
   }
 
   clearHistory() {
