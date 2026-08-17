@@ -4,7 +4,7 @@
  * Locked strictly to authorized tokens (Zayn: 8662 and Parent: 6250).
  */
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_KEY || "").trim();
 
 const SYSTEM_INSTRUCTION = `You are "Nova", a friendly, enthusiastic, and brilliant AI study buddy and co-pilot for Zayn, an 8-year-old in 3rd/4th grade.
 
