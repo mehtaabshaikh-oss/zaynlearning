@@ -18,37 +18,48 @@ class AvatarBuilder {
 
     // Head / Hair Layer
     let headDecoration = `
-      <!-- Default Brown Anime Hair -->
-      <path d="M 32 38 Q 60 12 88 38 Q 78 28 60 26 Q 42 28 32 38 Z" fill="#451a03" />
+      <!-- Default Stylish Gamer Hair -->
+      <path d="M 32 36 Q 60 10 88 36 Q 80 24 60 22 Q 40 24 32 36 Z" fill="#451a03" />
+      <path d="M 32 36 L 36 48 L 42 38 Z" fill="#451a03" />
+      <path d="M 88 36 L 84 48 L 78 38 Z" fill="#451a03" />
     `;
 
     if (headId === "head_diamond") {
       headDecoration = `
-        <!-- Diamond Minecraft Helmet -->
-        <rect x="30" y="16" width="60" height="34" rx="4" fill="#4dedf4" stroke="#0891b2" stroke-width="3" />
-        <rect x="36" y="22" width="12" height="12" fill="#a5f3fc" />
+        <!-- Authentic Minecraft Diamond Helmet (Open face with cheek guards) -->
+        <!-- Helmet Crown -->
+        <path d="M 32 36 L 32 16 Q 60 10 88 16 L 88 36 L 80 36 L 80 22 L 40 22 L 40 36 Z" fill="#4dedf4" stroke="#0891b2" stroke-width="2.5" />
+        <!-- Nose Bridge Guard -->
+        <rect x="56" y="22" width="8" height="14" fill="#4dedf4" stroke="#0891b2" stroke-width="1.5" />
+        <!-- Left & Right Cheek Flaps -->
+        <rect x="32" y="34" width="8" height="24" rx="2" fill="#4dedf4" stroke="#0891b2" stroke-width="2" />
+        <rect x="80" y="34" width="8" height="24" rx="2" fill="#4dedf4" stroke="#0891b2" stroke-width="2" />
+        <!-- Diamond Shading Highlights -->
+        <rect x="42" y="16" width="10" height="4" fill="#cffafe" />
+        <rect x="34" y="36" width="4" height="12" fill="#cffafe" />
       `;
     } else if (headId === "head_lego_cap") {
       headDecoration = `
         <!-- Red Lego Snapback -->
-        <path d="M 30 32 Q 60 14 90 32 L 104 36 L 90 40 L 30 40 Z" fill="#e3000b" />
+        <path d="M 32 30 Q 60 12 88 30 L 102 34 L 88 38 L 32 38 Z" fill="#e3000b" />
         <circle cx="60" cy="18" r="4" fill="#ffd500" />
+        <path d="M 72 32 L 102 34 L 86 38 Z" fill="#b91c1c" />
       `;
     } else if (headId === "head_crown") {
       headDecoration = `
         <!-- 1% Grandmaster Gold Crown -->
-        <polygon points="32,36 40,14 52,26 60,8 68,26 80,14 88,36" fill="#ffd500" stroke="#b45309" stroke-width="2" />
-        <circle cx="60" cy="8" r="3" fill="#ef4444" />
-        <circle cx="40" cy="14" r="2.5" fill="#38bdf8" />
-        <circle cx="80" cy="14" r="2.5" fill="#38bdf8" />
+        <polygon points="32,34 40,12 50,24 60,6 70,24 80,12 88,34" fill="#ffd500" stroke="#b45309" stroke-width="2" />
+        <circle cx="60" cy="6" r="3" fill="#ef4444" />
+        <circle cx="40" cy="12" r="2.5" fill="#38bdf8" />
+        <circle cx="80" cy="12" r="2.5" fill="#38bdf8" />
       `;
     } else if (headId === "head_creeper") {
       headDecoration = `
-        <!-- Creeper Mask -->
-        <rect x="32" y="16" width="56" height="54" rx="4" fill="#5b8731" stroke="#2e5016" stroke-width="3" />
-        <rect x="42" y="28" width="10" height="10" fill="#1e293b" />
-        <rect x="68" y="28" width="10" height="10" fill="#1e293b" />
-        <polygon points="56,38 64,38 64,52 68,52 68,60 52,60 52,52 56,52" fill="#1e293b" />
+        <!-- Creeper Mask (Framed around head) -->
+        <rect x="32" y="14" width="56" height="54" rx="4" fill="#5b8731" stroke="#2e5016" stroke-width="2.5" />
+        <rect x="42" y="24" width="10" height="10" fill="#1e293b" />
+        <rect x="68" y="24" width="10" height="10" fill="#1e293b" />
+        <polygon points="56,34 64,34 64,48 68,48 68,56 52,56 52,48 56,48" fill="#1e293b" />
       `;
     }
 

@@ -94,8 +94,8 @@ class LockerModal {
             this.updatePreview();
             this.renderItems();
           } else {
-            if (window.soundEngine) window.soundEngine.playWrong();
-            if (window.helpers) window.helpers.spawnAuraFloatingText("Need more gems! 💎", undefined, undefined, false);
+            if (window.soundEngine) window.soundEngine.playTap();
+            if (window.helpers) window.helpers.spawnAuraFloatingText("Need more gems! 💎", undefined, undefined, true);
           }
         }
       });
