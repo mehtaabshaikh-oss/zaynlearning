@@ -1,6 +1,7 @@
 /**
  * Global Odyssey Scenario Quests Data
  * Multi-disciplinary adventures combining Geography, Science, Math, History, and World Culture.
+ * Note: Option strings are kept clean and challenging without giveaways or parenthetical hints.
  */
 
 const GLOBAL_ODYSSEY_QUESTS = [
@@ -45,7 +46,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "The re-booking agent hands Zayn a standby ticket on a flight to Tokyo! After an 11-hour flight over Eurasia, Zayn lands at Haneda Airport. He is hungry and wants to buy a rice ball from the vending machine.",
         dilemma: "Zayn needs to insert the correct local currency into the ticket and vending machines.",
         question: "What is the official currency used in Japan?",
-        options: ["Japanese Yen (¥)", "Euro (€)", "Chinese Yuan (¥)", "Korean Won (₩)"],
+        options: ["Yen", "Euro", "Yuan", "Won"],
         answer: 0,
         explanation: "The official currency of Japan is the Japanese Yen (JPY / ¥)!",
         itemAwarded: "🎫 Japan Rail & Vending Pass"
@@ -58,9 +59,9 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "A friendly train conductor bows politely and asks: 'Kore wa doko e ikimasu ka? Otasuke shimashou ka?' (これ は どこ へ 行きます か？). Zayn tries to decipher the language to use his translation device.",
         dilemma: "Zayn needs to set his digital translation communicator to the correct native language.",
         question: "What is the official language spoken natively in Japan?",
-        options: ["Japanese (Nihongo)", "Mandarin", "Tagalog", "Korean"],
+        options: ["Japanese", "Mandarin", "Tagalog", "Korean"],
         answer: 0,
-        explanation: "Japanese (Nihongo) is the primary language spoken across the Japanese archipelago!",
+        explanation: "Japanese (Nihongo) is the primary language spoken across Japan!",
         itemAwarded: "📱 Polyglot Translator Device"
       },
       {
@@ -71,7 +72,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Zayn meets Captain Hiroshi, a cargo pilot preparing a direct charter flight home to India! The Captain smiles: 'I can fly you straight home right now, but my navigation computer is locked behind 5 security checkpoints! Let's solve them together!'",
         dilemma: "Checkpoint 1: Pilot displays a national flag on the flight screen featuring a green background, a yellow rhombus, and a starry blue globe.",
         question: "Which South American nation has this green, yellow, and starry blue flag?",
-        options: ["Brazil 🇧🇷", "Argentina 🇦🇷", "Colombia 🇨🇴", "Mexico 🇲🇽"],
+        options: ["Brazil", "Argentina", "Colombia", "Mexico"],
         answer: 0,
         explanation: "Brazil's flag features a green field with a yellow rhombus and 27 stars representing its states!",
         itemAwarded: "🔑 Navigation Key 1: Brazil Coordinates"
@@ -84,7 +85,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Captain Hiroshi punches in the Brazil coordinates. The cockpit warning buzzer sounds: 'Engine coolant requires pure atomic element with Periodic Table symbol Ag!'",
         dilemma: "Checkpoint 2: Identify the chemical element with the chemical symbol 'Ag'.",
         question: "Which shiny metallic element is represented by the symbol 'Ag' on the Periodic Table?",
-        options: ["Silver (from Latin Argentum)", "Gold (Au)", "Aluminum (Al)", "Argon (Ar)"],
+        options: ["Silver", "Gold", "Aluminum", "Argon"],
         answer: 0,
         explanation: "Ag comes from the Latin word 'Argentum', which means Silver!",
         itemAwarded: "🔑 Navigation Key 2: Silver Coolant Capsule"
@@ -159,7 +160,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Zayn lands in Cairo to investigate ancient architectural secrets. At the bustling market near Al-Azhar, he needs to exchange money for a riverboat ticket up the Nile.",
         dilemma: "Zayn needs to identify the official currency of Egypt.",
         question: "What is the official currency of Egypt?",
-        options: ["Egyptian Pound (EGP)", "Euro (€)", "Egyptian Dinar", "Rial"],
+        options: ["Egyptian Pound", "Euro", "Egyptian Dinar", "Rial"],
         answer: 0,
         explanation: "Egypt uses the Egyptian Pound (EGP / £E) as its national currency!",
         itemAwarded: "🏺 Ancient Papyrus Map"
@@ -185,7 +186,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Zayn arrives at the foot of the Great Pyramid of Khufu. The stone entrance archway reveals a measurement inscription.",
         dilemma: "Decode how long the Great Pyramid remained the tallest building on Earth.",
         question: "For how many years was the Great Pyramid of Giza the tallest human-made structure in the world?",
-        options: ["Over 3,800 years (until 1311 AD)", "Only 50 years", "200 years", "10,000 years"],
+        options: ["Over 3,800 years", "Only 50 years", "200 years", "10,000 years"],
         answer: 0,
         explanation: "Built around 2560 BC, the Great Pyramid remained the tallest building until Lincoln Cathedral was built in 1311 AD!",
         itemAwarded: "🔑 Scarab Stone Key"
@@ -197,10 +198,10 @@ const GLOBAL_ODYSSEY_QUESTS = [
         bgIcon: "⚗️",
         narrative: "Inside the chamber, an ancient inscription shows bronze tools made of copper mixed with tin. The copper vessel is marked with atomic symbol 'Cu'.",
         dilemma: "Identify the element represented by chemical symbol 'Cu'.",
-        question: "What chemical element has the atomic symbol 'Cu' (from Latin Cuprum)?",
+        question: "What chemical element has the atomic symbol 'Cu' on the Periodic Table?",
         options: ["Copper", "Cobalt", "Calcium", "Curium"],
         answer: 0,
-        explanation: "Cu stands for Copper, one of the earliest metals smelted and used by human civilizations!",
+        explanation: "Cu stands for Copper (from Latin Cuprum), one of the earliest metals smelted and used by human civilizations!",
         itemAwarded: "✨ Pure Copper Chisel"
       },
       {
@@ -245,9 +246,9 @@ const GLOBAL_ODYSSEY_QUESTS = [
         countryBadge: "🇧🇷 BRAZIL",
         bgIcon: "🚢",
         narrative: "Zayn lands in Manaus, the floating city in the heart of the Amazon basin. He buys fresh tropical açaí and supplies for an expedition into the jungle.",
-        dilemma: "Identify the official language and currency of Brazil.",
+        dilemma: "Identify the official currency of Brazil.",
         question: "What is the official currency used in Brazil?",
-        options: ["Brazilian Real (R$)", "Peso", "Euro", "Dollar"],
+        options: ["Real", "Peso", "Euro", "Dollar"],
         answer: 0,
         explanation: "Brazil uses the Brazilian Real (BRL / R$) and its national language is Portuguese!",
         itemAwarded: "🥥 Fresh Amazon Coconut"
@@ -260,9 +261,9 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Zayn witnesses the dark Rio Negro and sandy Amazon River flow side-by-side without mixing for 4 miles due to differences in temperature and speed!",
         dilemma: "Recall how much of Earth's river water the Amazon River carries.",
         question: "Approximately what percentage of all river water entering Earth's oceans comes from the Amazon River?",
-        options: ["About 20% (One-Fifth of all river water on Earth!)", "Less than 1%", "50%", "5%"],
+        options: ["About 20%", "Less than 1%", "About 50%", "About 5%"],
         answer: 0,
-        explanation: "The mighty Amazon discharges over 200,000 cubic meters of water per second—20% of global river discharge!",
+        explanation: "The mighty Amazon discharges over 200,000 cubic meters of water per second—roughly 20% of global river discharge!",
         itemAwarded: "🧭 Solar River Tracker"
       },
       {
@@ -348,7 +349,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Zayn boards an icebreaker ship in Tromsø, Norway bound for Longyearbyen in the Svalbard archipelago—the northernmost permanent settlement in the world!",
         dilemma: "Identify the official currency of Norway.",
         question: "What currency is used in Norway?",
-        options: ["Norwegian Krone (NOK)", "Euro (€)", "Swedish Krona", "Pound"],
+        options: ["Krone", "Euro", "Krona", "Pound"],
         answer: 0,
         explanation: "Norway uses the Norwegian Krone (NOK / kr)!",
         itemAwarded: "🧤 Thermal Arctic Parka"
@@ -361,7 +362,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Night falls under the polar sky, and the heavens ignite with dancing ribbons of neon green and purple light: the Aurora Borealis!",
         dilemma: "Explain the physical cause of the Northern Lights.",
         question: "What causes the colorful glowing lights of the Aurora Borealis?",
-        options: ["Charged particles from the solar wind colliding with Earth's magnetic field and atmospheric gases", "Sunlight reflecting off polar glaciers", "Space fireworks", "City lights bouncing off clouds"],
+        options: ["Solar wind particles colliding with Earth's magnetic field and atmosphere", "Sunlight reflecting off polar glaciers", "Space fireworks", "City lights bouncing off clouds"],
         answer: 0,
         explanation: "Solar energetic protons and electrons collide with oxygen (green/red) and nitrogen (blue/purple) atoms in the upper atmosphere!",
         itemAwarded: "🔭 Aurora Spectrometer"
@@ -374,7 +375,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Deep inside Platåberget mountain, the Svalbard Global Seed Vault protects over 1.2 million crop seed varieties at a natural sub-zero -18°C (-0.4°F).",
         dilemma: "Identify the main purpose of the Svalbard Global Seed Vault.",
         question: "Why is the Svalbard Seed Vault nicknamed the 'Doomsday Vault'?",
-        options: ["It stores backup duplicates of the world's crop seeds to safeguard global food supply against disasters", "It stores gold bars", "It is a missile base", "It grows indoor vegetables"],
+        options: ["It stores backup duplicates of the world's crop seeds against disasters", "It stores gold bars", "It is an underground missile base", "It grows indoor vegetables"],
         answer: 0,
         explanation: "The vault provides a secure backup of Earth's plant biodiversity in case of disease, climate change, or catastrophe!",
         itemAwarded: "🌾 Preserved Arctic Wheat Sample"
@@ -387,7 +388,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "The reinforced airlock door is forged from an ultra-lightweight, corrosion-resistant transition metal with atomic number 22 and symbol 'Ti'.",
         dilemma: "Identify the element with symbol 'Ti'.",
         question: "Which strong, lightweight element has the chemical symbol 'Ti' on the Periodic Table?",
-        options: ["Titanium", "Tin (Sn)", "Thallium", "Tungsten (W)"],
+        options: ["Titanium", "Tin", "Thallium", "Tungsten"],
         answer: 0,
         explanation: "Titanium (Ti) is as strong as steel but 45% lighter and immune to seawater and freeze corrosion!",
         itemAwarded: "🔑 Titanium Airlock Key"
@@ -449,7 +450,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Zayn lands in Sydney and prepares for a trans-continental expedition from the coast to the Great Barrier Reef and the red desert outback.",
         dilemma: "Identify the official currency of Australia.",
         question: "What is the official currency of Australia?",
-        options: ["Australian Dollar (AUD / A$)", "British Pound (£)", "Euro (€)", "New Zealand Dollar"],
+        options: ["Australian Dollar", "British Pound", "Euro", "New Zealand Dollar"],
         answer: 0,
         explanation: "Australia uses the Australian Dollar (AUD / A$) with its famous colorful waterproof polymer banknotes!",
         itemAwarded: "🪃 Wooden Outback Boomerang"
@@ -462,7 +463,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Snorkeling along the outer edge of the Great Barrier Reef, Zayn observes thousands of colorful coral heads providing shelter for clownfish and sea turtles.",
         dilemma: "Identify what biological organisms actually build coral reefs.",
         question: "What are corals biologically classified as?",
-        options: ["Colonial marine animals (polyps) that build limestone skeletons", "Underwater plants", "Colorful ocean rocks", "Fungus"],
+        options: ["Colonial marine animals that build limestone skeletons", "Underwater plants", "Colorful ocean rocks", "Fungus"],
         answer: 0,
         explanation: "Corals are tiny invertebrates related to jellyfish that secrete calcium carbonate limestone to build massive reefs!",
         itemAwarded: "🐚 Living Reef Sensor"
@@ -474,8 +475,8 @@ const GLOBAL_ODYSSEY_QUESTS = [
         bgIcon: "🏜️",
         narrative: "Flying inland to the desert outback, Zayn sees the majestic sandstone monolith of Uluru glowing deep fiery red in the afternoon sun.",
         dilemma: "Explain why the sandstone of Uluru appears bright red-orange.",
-        question: "Why is the rock and sand of Uluru (Ayers Rock) bright red in color?",
-        options: ["Iron minerals in the sandstone oxidized (rusted) when exposed to oxygen and water", "It is made of red volcanic lava", "Red moss covers the rock", "Ancient paint"],
+        question: "Why is the rock and sand of Uluru bright red in color?",
+        options: ["Iron minerals in the rock oxidized (rusted) over time", "It is made of red volcanic lava", "Red moss covers the rock", "Ancient red paint"],
         answer: 0,
         explanation: "Iron content in arkose sandstone chemically oxidizes (rusts) to form red-brown iron oxide on the surface!",
         itemAwarded: "🏺 Red Ochre Stone"
@@ -485,10 +486,10 @@ const GLOBAL_ODYSSEY_QUESTS = [
         location: "Kalgoorlie Gold Mine Gate",
         countryBadge: "🧪 CHEMISTRY & ELEMENTS",
         bgIcon: "⛏️",
-        narrative: "Australia is one of the world's largest producers of Gold. The entrance vault is stamped with the Latin symbol 'Au'.",
+        narrative: "Australia is one of the world's largest producers of Gold. The entrance vault is stamped with its Latin atomic symbol.",
         dilemma: "Identify the chemical symbol for Gold on the Periodic Table.",
-        question: "What is the chemical symbol for the element Gold (from Latin Aurum)?",
-        options: ["Au", "Ag (Silver)", "Gd", "Fe (Iron)"],
+        question: "What is the chemical symbol for the element Gold on the Periodic Table?",
+        options: ["Au", "Ag", "Gd", "Fe"],
         answer: 0,
         explanation: "Au comes from the Latin word 'Aurum', meaning 'shining dawn' or Gold!",
         itemAwarded: "✨ Pure Gold Nugget"
@@ -535,7 +536,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         countryBadge: "🇳🇵 NEPAL",
         bgIcon: "🛕",
         narrative: "Zayn lands in the historic capital of Nepal surrounded by terraced foothills, preparing for a high-altitude trek toward the Himalayas.",
-        dilemma: "Identify the capital city and national currency of Nepal.",
+        dilemma: "Identify the capital city of Nepal.",
         question: "What is the capital city of Nepal?",
         options: ["Kathmandu", "Thimphu", "Dhaka", "Colombo"],
         answer: 0,
@@ -550,7 +551,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Hiking up the glacial valley, Zayn looks up at Mount Everest (8,848 meters / 29,032 feet). The mountain is actually still growing taller by ~4 millimeters every single year!",
         dilemma: "Explain how the Himalayan mountain range was created.",
         question: "What geological force formed Mount Everest and the Himalayan mountain range?",
-        options: ["The collision of the Indian tectonic plate into the Eurasian tectonic plate", "A giant volcanic eruption", "Glaciers carving out flat ground", "An asteroid impact"],
+        options: ["The collision of the Indian and Eurasian tectonic plates", "A giant volcanic eruption", "Glaciers carving out flat ground", "An asteroid impact"],
         answer: 0,
         explanation: "The collision of the Indian and Eurasian tectonic plates began 50 million years ago and continues to push the mountains upward today!",
         itemAwarded: "⛏️ High-Altitude Ice Axe"
@@ -563,7 +564,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "At 18,000 feet elevation, every breath feels thinner. Zayn checks his pulse oximeter and atmospheric barometer.",
         dilemma: "Explain why it is harder to breathe at high altitudes on mountains.",
         question: "Why is oxygen harder to absorb at high altitudes on Mount Everest?",
-        options: ["Air pressure is lower, meaning air molecules are spread out with fewer oxygen molecules per breath", "There is no oxygen on mountains", "Cold air destroys oxygen", "Wind blows all air away"],
+        options: ["Air pressure is lower, so air molecules are spread thinner per breath", "There is no oxygen on mountains", "Cold air destroys oxygen molecules", "Wind blows all air away"],
         answer: 0,
         explanation: "The percentage of oxygen is still 21%, but lower atmospheric pressure spreads air molecules much thinner.",
         itemAwarded: "🫁 Supplemental Oxygen Regulator"
@@ -576,7 +577,7 @@ const GLOBAL_ODYSSEY_QUESTS = [
         narrative: "Above the cloud line in the crisp mountain night, the telescope focuses on the Red Planet: Mars. Zayn spots Olympus Mons, the largest volcano in the solar system.",
         dilemma: "Recall how Olympus Mons on Mars compares in height to Mount Everest.",
         question: "How tall is Olympus Mons on Mars compared to Mount Everest?",
-        options: ["Nearly 3 times taller than Everest (13.6 miles / 22 km high!)", "Half the size of Everest", "Exactly the same height", "Smaller than a house"],
+        options: ["Nearly 3 times taller than Everest", "Half the size of Everest", "Exactly the same height", "Smaller than a house"],
         answer: 0,
         explanation: "Olympus Mons towers 22 kilometers (72,000 ft) high—nearly triple the height of Mount Everest!",
         itemAwarded: "🌟 Martian Star Chart"

@@ -101,10 +101,19 @@ class GlobalOdysseyEngine {
       stepBadge.textContent = `CHAPTER ${this.currentCardIdx + 1} / ${totalCards} • ${card.countryBadge}`;
     }
 
-    const optionsHTML = card.options.map((opt, idx) => `
+    // Dynamic Option Shuffling (so the correct answer is randomized across positions 1-4)
+    const indexedOpts = card.options.map((opt, idx) => ({ text: opt, isCorrect: idx === card.answer }));
+    for (let i = indexedOpts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indexedOpts[i], indexedOpts[j]] = [indexedOpts[j], indexedOpts[i]];
+    }
+    this.currentShuffledOpts = indexedOpts;
+    this.currentCorrectIdx = indexedOpts.findIndex(o => o.isCorrect);
+
+    const optionsHTML = indexedOpts.map((optObj, idx) => `
       <button class="odyssey-opt-btn" onclick="window.globalOdysseyEngine.handleChoice(${idx})">
         <span style="color:#94a3b8; font-weight:700; width:18px;">${idx + 1}.</span>
-        <span>${opt}</span>
+        <span>${optObj.text}</span>
       </button>
     `).join('');
 
@@ -149,7 +158,7 @@ class GlobalOdysseyEngine {
     const opts = document.querySelectorAll('.odyssey-opt-btn');
     opts.forEach(b => b.disabled = true);
 
-    const isCorrect = (choiceIdx === card.answer);
+    const isCorrect = (choiceIdx === this.currentCorrectIdx);
     if (isCorrect) {
       opts[choiceIdx].classList.add('correct');
       if (card.itemAwarded && !this.inventory.includes(card.itemAwarded)) {
@@ -159,7 +168,7 @@ class GlobalOdysseyEngine {
       if (window.helpers) window.helpers.spawnAuraFloatingText("+50 Aura 🌟", undefined, undefined, true);
     } else {
       opts[choiceIdx].classList.add('wrong');
-      opts[card.answer].classList.add('correct');
+      opts[this.currentCorrectIdx].classList.add('correct');
       if (window.soundEngine) window.soundEngine.playWrong();
     }
 
