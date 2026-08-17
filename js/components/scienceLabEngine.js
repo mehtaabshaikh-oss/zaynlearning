@@ -934,7 +934,10 @@ class ScienceLabEngine {
             <h2 class="science-workbench-title">⚛️ Element Lab & Atom Viewer</h2>
             <p class="science-workbench-subtitle">Explore the elements of the universe! Inspect protons, neutrons, and orbital electron shells.</p>
           </div>
-          <button class="science-back-btn" id="science-back-to-hub-btn">◀ Science Lab</button>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="science-quiz-launch-btn" id="element-quiz-header-btn">🧪 Take Pop Quiz (+100 Aura)</button>
+            <button class="science-back-btn" id="science-back-to-hub-btn">◀ Science Lab</button>
+          </div>
         </div>
 
         <div class="element-lab-layout">
@@ -987,11 +990,27 @@ class ScienceLabEngine {
               </div>
             </div>
           </div>
+
+          <!-- Bottom Quiz CTA Banner -->
+          <div class="element-quiz-cta-banner">
+            <div>
+              <h4>🎯 Test Your Real-World Element Knowledge!</h4>
+              <p>Ready for a quick 5-question pop quiz on balloons, fireworks, store lights, diamonds & metals?</p>
+            </div>
+            <button class="science-quiz-launch-btn" id="element-quiz-bottom-btn">Start Element Quiz ➔</button>
+          </div>
         </div>
       </div>
     `;
 
     document.getElementById('science-back-to-hub-btn').addEventListener('click', () => this.renderLabHub());
+
+    // Bind Quiz Launch Buttons
+    const startQuiz = () => this.openElementQuizModal();
+    const qHeaderBtn = document.getElementById('element-quiz-header-btn');
+    if (qHeaderBtn) qHeaderBtn.addEventListener('click', startQuiz);
+    const qBottomBtn = document.getElementById('element-quiz-bottom-btn');
+    if (qBottomBtn) qBottomBtn.addEventListener('click', startQuiz);
 
     // Filter Buttons
     const filterBtns = container.querySelectorAll('.elem-cat-btn');
@@ -1023,6 +1042,210 @@ class ScienceLabEngine {
     });
 
     this.startAtomViewer();
+  }
+
+  // ==========================================================================
+  // REAL-WORLD ELEMENT POP QUIZ ENGINE
+  // ==========================================================================
+  openElementQuizModal() {
+    let modal = document.getElementById('element-quiz-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'element-quiz-modal';
+      modal.className = 'element-quiz-modal';
+      document.body.appendChild(modal);
+    }
+
+    const quizQuestions = [
+      {
+        topic: "🎈 PARTY BALLOONS",
+        question: "Which light, non-flammable gas is used to make party balloons float high in the air?",
+        options: ["Helium (He)", "Nitrogen (N)", "Carbon (C)", "Iron (Fe)"],
+        correct: 0,
+        fact: "Helium is much lighter than regular air, so it lifts balloons up effortlessly and never catches fire!"
+      },
+      {
+        topic: "🎆 FIREWORKS SPARKS",
+        question: "Which metallic element is added to fireworks and flares to create an intense, blinding white spark?",
+        options: ["Magnesium (Mg)", "Helium (He)", "Gold (Au)", "Fluorine (F)"],
+        correct: 0,
+        fact: "Magnesium burns at over 3,000°C producing brilliant white light seen across city fireworks shows!"
+      },
+      {
+        topic: "🏬 STOREFRONT LIGHTS",
+        question: "Which noble gas is used in bright glowing signs outside stores and restaurants to shine reddish-orange?",
+        options: ["Neon (Ne)", "Calcium (Ca)", "Sodium (Na)", "Aluminum (Al)"],
+        correct: 0,
+        fact: "When electrical current passes through Neon gas in a glass tube, its electrons get excited and glow bright reddish-orange!"
+      },
+      {
+        topic: "💎 DIAMONDS & GEMS",
+        question: "How are sparkling diamonds formed deep under the Earth?",
+        options: [
+          "Carbon atoms compressed under extreme heat and pressure",
+          "Helium gas frozen into ice crystals",
+          "Gold metal melted in volcano lava",
+          "Silicon sand baked under sunlight"
+        ],
+        correct: 0,
+        fact: "Both soft black pencil graphite and super-hard sparkling diamonds are made of pure Carbon atoms arranged differently!"
+      },
+      {
+        topic: "👑 PRECIOUS METALS",
+        question: "Which highly valuable precious metal never rusts or tarnishes, even after thousands of years buried underwater?",
+        options: ["Gold (Au)", "Iron (Fe)", "Sodium (Na)", "Potassium (K)"],
+        correct: 0,
+        fact: "Gold is chemically unreactive, which is why ancient Egyptian gold treasures still shine like brand new today!"
+      },
+      {
+        topic: "💻 COMPUTER CHIPS",
+        question: "Which metalloid element found in beach sand is purified to manufacture computer processors, iPads, and smartphones?",
+        options: ["Silicon (Si)", "Calcium (Ca)", "Chlorine (Cl)", "Hydrogen (H)"],
+        correct: 0,
+        fact: "Silicon is a semiconductor that controls electrical logic gates inside every computer and smartphone chip!"
+      },
+      {
+        topic: "🧂 KITCHEN SCIENCE",
+        question: "When soft reactive Sodium metal (Na) bonds with poisonous Chlorine gas (Cl), what everyday kitchen food item is made?",
+        options: ["Table Salt (NaCl)", "White Sugar", "Baking Soda", "Black Pepper"],
+        correct: 0,
+        fact: "Two dangerous raw elements chemically bond into delicious, essential table salt (Sodium Chloride)!"
+      },
+      {
+        topic: "🦴 STRONG BONES & TEETH",
+        question: "Which essential mineral element makes up 99% of human bones and teeth?",
+        options: ["Calcium (Ca)", "Copper (Cu)", "Helium (He)", "Sulfur (S)"],
+        correct: 0,
+        fact: "Calcium forms the strong mineral scaffolding of your skeleton, keeping bones tough and teeth resilient!"
+      },
+      {
+        topic: "🔋 RECHARGEABLE BATTERIES",
+        question: "Which ultra-lightweight metal powers the rechargeable batteries inside iPhones, iPads, and Tesla electric cars?",
+        options: ["Lithium (Li)", "Lead (Pb)", "Silver (Ag)", "Boron (B)"],
+        correct: 0,
+        fact: "Lithium is so light it floats on water, and easily transports electrons back and forth during charging!"
+      }
+    ];
+
+    // Pick 5 random questions
+    const selected = quizQuestions.sort(() => Math.random() - 0.5).slice(0, 5);
+    let currentQIdx = 0;
+    let score = 0;
+    let answered = false;
+
+    const renderCurrentQuestion = () => {
+      if (currentQIdx >= selected.length) {
+        // Quiz Complete Screen
+        if (window.soundEngine) window.soundEngine.playLevelUp();
+        if (window.helpers) {
+          window.helpers.spawnConfetti(80);
+          window.helpers.spawnAuraFloatingText("🎉 QUIZ COMPLETED! +100 Aura • +50 XP", undefined, undefined, true);
+        }
+        if (window.gameState) {
+          window.gameState.addAura(100);
+          window.gameState.addXP(50);
+          window.gameState.addGems(15);
+        }
+
+        modal.innerHTML = `
+          <div class="element-quiz-card">
+            <div class="element-quiz-summary">
+              <div class="element-quiz-summary-trophy">🏆✨</div>
+              <h3 class="element-quiz-summary-title">Element Quiz Complete!</h3>
+              <p class="element-quiz-summary-score">You scored <strong>${score} / ${selected.length}</strong> correct!</p>
+              
+              <div class="element-quiz-rewards-row">
+                <span class="element-quiz-reward-pill">✨ +100 Aura</span>
+                <span class="element-quiz-reward-pill">⭐ +50 XP</span>
+                <span class="element-quiz-reward-pill">💎 +15 Gems</span>
+              </div>
+
+              <div style="display:flex; gap:0.75rem; justify-content:center;">
+                <button class="element-quiz-next-btn" id="quiz-retry-btn" style="background:#1e293b; border:1px solid #475569; max-width:200px;">🔄 Try Again</button>
+                <button class="element-quiz-next-btn" id="quiz-close-btn" style="max-width:220px;">⚛️ Back to Element Lab</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('quiz-retry-btn').addEventListener('click', () => this.openElementQuizModal());
+        document.getElementById('quiz-close-btn').addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+        return;
+      }
+
+      const q = selected[currentQIdx];
+      answered = false;
+
+      modal.innerHTML = `
+        <div class="element-quiz-card">
+          <div class="element-quiz-header">
+            <span class="element-quiz-topic-badge">${q.topic}</span>
+            <span class="element-quiz-counter">Question ${currentQIdx + 1} of ${selected.length}</span>
+          </div>
+
+          <div class="element-quiz-question-box">
+            <h3 class="element-quiz-question">${q.question}</h3>
+          </div>
+
+          <div class="element-quiz-options-grid" id="quiz-options-grid">
+            ${q.options.map((opt, optIdx) => `
+              <button class="element-quiz-opt-btn" data-opt="${optIdx}">
+                <span>${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div id="quiz-feedback-slot"></div>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      if (window.soundEngine) window.soundEngine.playTap();
+
+      const optBtns = modal.querySelectorAll('.element-quiz-opt-btn');
+      optBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (answered) return;
+          answered = true;
+          const chosenIdx = parseInt(btn.dataset.opt, 10);
+          const isCorrect = chosenIdx === q.correct;
+
+          optBtns.forEach((b, idx) => {
+            b.disabled = true;
+            if (idx === q.correct) b.classList.add('correct');
+            else if (idx === chosenIdx) b.classList.add('wrong');
+          });
+
+          if (isCorrect) {
+            score++;
+            if (window.soundEngine) window.soundEngine.playLevelUp();
+            if (window.helpers) window.helpers.spawnConfetti(30);
+          } else {
+            if (window.soundEngine) window.soundEngine.playWrong();
+          }
+
+          const slot = document.getElementById('quiz-feedback-slot');
+          slot.innerHTML = `
+            <div class="element-quiz-feedback ${isCorrect ? 'correct' : 'wrong'}">
+              <div class="element-quiz-feedback-title">${isCorrect ? '✅ Spot On! That\'s Right!' : '💡 Scientific Fact:'}</div>
+              <div class="element-quiz-feedback-text">${q.fact}</div>
+            </div>
+            <button class="element-quiz-next-btn" id="quiz-next-btn">
+              ${currentQIdx + 1 < selected.length ? 'NEXT QUESTION ➔' : 'SEE FINAL RESULTS 🏆'}
+            </button>
+          `;
+
+          document.getElementById('quiz-next-btn').addEventListener('click', () => {
+            currentQIdx++;
+            renderCurrentQuestion();
+          });
+        });
+      });
+    };
+
+    renderCurrentQuestion();
   }
 
   startAtomViewer() {
