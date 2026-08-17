@@ -816,24 +816,27 @@ class PizzaFractionRushGame {
     this.toppedSlices.clear();
 
     const day1Pool = [
-      { req: 4, text: "Make me 1/2 (4/8) of a Pepperoni Pizza! 🍕" },
-      { req: 2, text: "Make me 1/4 (2/8) of a Pepperoni Pizza! 🍕" },
-      { req: 6, text: "Make me 3/4 (6/8) of a Pepperoni Pizza! 🍕" },
-      { req: 8, text: "Make me 1 Whole (8/8) Pepperoni Pizza! 🍕" }
+      { req: 4, text: "Customer Order: Make me 1/2 of a Pepperoni Pizza! 🍕" },
+      { req: 2, text: "Customer Order: Make me 1/4 of a Pepperoni Pizza! 🍕" },
+      { req: 6, text: "Customer Order: Make me 3/4 of a Pepperoni Pizza! 🍕" },
+      { req: 8, text: "Customer Order: Make me 1 Whole Pepperoni Pizza! 🍕" }
     ];
 
     const day2Pool = [
-      { req: 3, text: "Customer Order: Exactly 3/8 of a Pizza! 🍕" },
-      { req: 5, text: "Customer Order: Exactly 5/8 of a Pizza! 🍕" },
-      { req: 4, text: "Customer Order: 2/4 (Equivalent to 4/8) Pizza! 🍕" },
-      { req: 7, text: "Customer Order: Exactly 7/8 of a Pizza! 🍕" }
+      { req: 3, text: "Customer Order: Top exactly 3/8 of the pizza! 🍕" },
+      { req: 5, text: "Customer Order: Top exactly 5/8 of the pizza! 🍕" },
+      { req: 4, text: "Customer Order: Top exactly 2/4 of the pizza! 🍕" },
+      { req: 7, text: "Customer Order: Top exactly 7/8 of the pizza! 🍕" },
+      { req: 1, text: "Customer Order: Top exactly 1/8 of the pizza! 🍕" }
     ];
 
     const day3Pool = [
-      { req: 6, text: "⚡ RUSH HOUR: 3/4 (6/8) Pepperoni Pizza! 🍕" },
-      { req: 2, text: "⚡ RUSH HOUR: 1/4 (2/8) Pepperoni Pizza! 🍕" },
-      { req: 5, text: "⚡ RUSH HOUR: 5/8 Pepperoni Pizza! 🍕" },
-      { req: 4, text: "⚡ RUSH HOUR: 4/8 (1/2) Pepperoni Pizza! 🍕" }
+      { req: 6, text: "⚡ RUSH HOUR: Chef needs 3/4 of a Pepperoni Pizza! 🍕" },
+      { req: 2, text: "⚡ RUSH HOUR: Chef needs 1/4 of a Pepperoni Pizza! 🍕" },
+      { req: 5, text: "⚡ RUSH HOUR: Chef needs 5/8 of a Pepperoni Pizza! 🍕" },
+      { req: 4, text: "⚡ RUSH HOUR: Chef needs 2/4 of a Pepperoni Pizza! 🍕" },
+      { req: 6, text: "⚡ RUSH HOUR: Chef needs 6/8 of a Pepperoni Pizza! 🍕" },
+      { req: 4, text: "⚡ RUSH HOUR: Chef needs 1/2 of a Pepperoni Pizza! 🍕" }
     ];
 
     let pool = day1Pool;
@@ -874,7 +877,7 @@ class PizzaFractionRushGame {
     }
 
     // Click Bake / Serve Button (Bottom Area)
-    if (x >= 220 && x <= 380 && y >= 360 && y <= 405) {
+    if (x >= 190 && x <= 410 && y >= 360 && y <= 405) {
       this.servePizza();
     }
   }
@@ -984,12 +987,14 @@ class PizzaFractionRushGame {
     }
 
     // Serve Button
-    ctx.fillStyle = '#58cc02';
-    ctx.fillRect(220, 360, 160, 44);
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath();
+    ctx.roundRect(190, 360, 220, 44, 10);
+    ctx.fill();
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 16px "Space Grotesk"';
+    ctx.font = 'bold 15px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`SERVE PIZZA (${this.toppedSlices.size}/8)`, 300, 388);
+    ctx.fillText(`SERVE PIZZA 🍕 (${this.toppedSlices.size} Topped)`, 300, 387);
   }
 
   endGame() {
