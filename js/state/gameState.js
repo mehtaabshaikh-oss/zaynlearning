@@ -57,6 +57,10 @@ class GameState {
       classroomProgress: {
         concepts: {},
         parentPriorities: {}
+      },
+      odysseyProgress: {
+        completedQuests: [],
+        passportStamps: []
       }
     };
   }

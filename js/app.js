@@ -23,6 +23,7 @@ class App {
     window.stemDetectiveEngine = new STEMDetectiveEngine();
     window.scienceLabEngine = new ScienceLabEngine();
     window.classroomEngine = new ClassroomEngine();
+    window.globalOdysseyEngine = new GlobalOdysseyEngine();
     window.quickSyncModal = new QuickSyncModal();
 
     this.showView('view-arcade-hub');
@@ -64,6 +65,9 @@ class App {
     }
     if (viewId === 'view-classroom-hub' && window.classroomEngine) {
       window.classroomEngine.renderHub();
+    }
+    if (viewId === 'view-odyssey-hub' && window.globalOdysseyEngine) {
+      window.globalOdysseyEngine.renderHub();
     }
   }
 

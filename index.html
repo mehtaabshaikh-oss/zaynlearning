@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="css/scienceLab.css">
   <link rel="stylesheet" href="css/logicClub.css">
   <link rel="stylesheet" href="css/classroom.css">
+  <link rel="stylesheet" href="css/globalOdyssey.css">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -83,22 +84,27 @@
           <span>🕹️ ARCADE</span>
         </button>
 
-        <!-- 2. Classroom Power-Ups (School Reinforcement) -->
+        <!-- 2. Global Odyssey (Scenario Adventures) -->
+        <button id="quick-odyssey-btn" class="action-pill-btn" style="background:#0284c7; border-color:#38bdf8;" title="Global Odyssey Scenario Quests">
+          <span>🌍 ODYSSEY</span>
+        </button>
+
+        <!-- 3. Classroom Power-Ups (School Reinforcement) -->
         <button id="quick-classroom-btn" class="action-pill-btn" style="background:#4338ca; border-color:#6366f1;" title="Classroom Power-Ups & School Curriculum">
           <span>🎒 CLASSROOM</span>
         </button>
 
-        <!-- 3. Science Lab -->
+        <!-- 4. Science Lab -->
         <button id="quick-science-btn" class="action-pill-btn" title="Zayn Science Lab">
           <span>🔬 SCIENCE LAB</span>
         </button>
 
-        <!-- 4. Speed Math & Drift Arena -->
+        <!-- 5. Speed Math & Drift Arena -->
         <button id="quick-drift-btn" class="action-pill-btn" title="Star Speed Math & Phonk Drift Arena">
           <span>⚡ SPEED MATH</span>
         </button>
 
-        <!-- 5. 1% Club -->
+        <!-- 6. 1% Club -->
         <button id="quick-logic-btn" class="action-pill-btn" title="The 1% Club Logic Vault">
           <span>🧠 1% CLUB</span>
         </button>
@@ -665,6 +671,19 @@
           <!-- Dynamically populated via ClassroomEngine -->
         </div>
       </section>
+
+      <!-- 11. 🌍 GLOBAL ODYSSEY: SCENARIO ADVENTURES VIEW -->
+      <section id="view-odyssey-hub" class="view-panel hidden">
+        <div class="odyssey-header">
+          <h1 class="odyssey-hub-title"><span>🌍</span> ZAYN'S GLOBAL ODYSSEY</h1>
+          <p class="odyssey-hub-sub">Story-driven scenario adventures! Navigate real-world dilemma cards combining geography, science, math, history, and secret clues to find your way home!</p>
+        </div>
+
+        <!-- Quests Grid -->
+        <div class="odyssey-quests-grid" id="odyssey-quests-container">
+          <!-- Dynamically populated via GlobalOdysseyEngine -->
+        </div>
+      </section>
     </main>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile Screens <= 768px) -->
@@ -672,6 +691,10 @@
       <button class="mobile-nav-item active" data-view="view-arcade-hub" id="mob-nav-arcade">
         <span class="mob-nav-icon">🕹️</span>
         <span class="mob-nav-label">Arcade</span>
+      </button>
+      <button class="mobile-nav-item" data-view="view-odyssey-hub" id="mob-nav-odyssey">
+        <span class="mob-nav-icon">🌍</span>
+        <span class="mob-nav-label">Odyssey</span>
       </button>
       <button class="mobile-nav-item" data-view="view-classroom-hub" id="mob-nav-classroom">
         <span class="mob-nav-icon">🎒</span>
@@ -690,6 +713,22 @@
         <span class="mob-nav-label">1% Club</span>
       </button>
     </nav>
+
+    <!-- GLOBAL ODYSSEY SCENARIO ADVENTURE MODAL -->
+    <div id="odyssey-adventure-modal" class="odyssey-modal-overlay hidden">
+      <div class="odyssey-modal-box">
+        <div class="odyssey-modal-header">
+          <div class="odyssey-step-badge" id="odyssey-step-badge">CHAPTER 1 / 8 • 🇩🇪 GERMANY</div>
+          <button class="odyssey-close-btn" onclick="window.globalOdysseyEngine.closeModal()">✕</button>
+        </div>
+        <div class="odyssey-modal-body" id="odyssey-modal-content">
+          <!-- Dynamically rendered scenario card -->
+        </div>
+        <div class="odyssey-modal-footer" id="odyssey-modal-footer">
+          <!-- Dynamic navigation buttons -->
+        </div>
+      </div>
+    </div>
 
     <!-- CLASSROOM INTERACTIVE LESSON MODAL (LEARN -> SEE -> TRY -> QUIZ -> MASTER) -->
     <div id="classroom-lesson-modal" class="modal-overlay hidden">
@@ -1011,6 +1050,7 @@
   <script src="js/data/logicClubData.js"></script>
   <script src="js/data/classroomCurriculum.js"></script>
   <script src="js/data/triviaFactsData.js"></script>
+  <script src="js/data/globalOdysseyData.js"></script>
   <script src="js/state/gameState.js"></script>
   <script src="js/state/syncManager.js"></script>
   <script src="js/state/adaptiveEngine.js"></script>
@@ -1026,6 +1066,7 @@
   <script src="js/components/stemDetectiveEngine.js"></script>
   <script src="js/components/scienceLabEngine.js"></script>
   <script src="js/components/classroomEngine.js"></script>
+  <script src="js/components/globalOdysseyEngine.js"></script>
   <script src="js/components/lockerModal.js"></script>
   <script src="js/components/quickSyncModal.js"></script>
   <script src="js/utils/helpers.js"></script>
