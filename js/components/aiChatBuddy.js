@@ -6,6 +6,7 @@
 class AIChatBuddy {
   constructor() {
     this.isOpen = false;
+    this.isFullscreen = false;
     this.messages = [];
     this.isTyping = false;
     this.init();
@@ -64,6 +65,7 @@ class AIChatBuddy {
           </div>
         </div>
         <div class="ai-header-actions">
+          <button class="ai-header-btn" id="ai-expand-btn" title="Toggle Full Window" onclick="window.aiChatBuddy.toggleFullscreen()">⛶</button>
           <button class="ai-header-btn" title="Clear Chat" onclick="window.aiChatBuddy.clearHistory()">🗑️</button>
           <button class="ai-header-btn" title="Close" onclick="window.aiChatBuddy.toggleChat()">✕</button>
         </div>
@@ -122,6 +124,22 @@ class AIChatBuddy {
       const input = document.getElementById('ai-input-box');
       if (input) setTimeout(() => input.focus(), 150);
     }
+  }
+
+  toggleFullscreen() {
+    const modal = document.getElementById('ai-chat-modal');
+    const expandBtn = document.getElementById('ai-expand-btn');
+    if (!modal) return;
+
+    this.isFullscreen = !this.isFullscreen;
+    modal.classList.toggle('fullscreen', this.isFullscreen);
+
+    if (expandBtn) {
+      expandBtn.textContent = this.isFullscreen ? '🗗' : '⛶';
+      expandBtn.title = this.isFullscreen ? 'Restore Window' : 'Expand to Full Window';
+    }
+
+    if (window.soundEngine) window.soundEngine.playTap();
   }
 
   renderMessages() {

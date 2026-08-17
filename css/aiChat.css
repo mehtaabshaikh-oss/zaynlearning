@@ -67,7 +67,33 @@
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.3);
   font-family: 'Space Grotesk', -apple-system, sans-serif;
   overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
   animation: aiModalOpen 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Fullscreen Mode */
+.ai-chat-modal.fullscreen {
+  top: 16px;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  width: calc(100vw - 32px);
+  max-width: 920px;
+  height: calc(100vh - 32px);
+  max-height: calc(100vh - 32px);
+  margin: auto;
+  border-radius: 20px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 45px rgba(59, 130, 246, 0.45);
+}
+
+.ai-chat-modal.fullscreen .ai-msg-row {
+  max-width: 76%;
+}
+
+.ai-chat-modal.fullscreen .ai-msg-bubble {
+  font-size: 15.5px;
+  line-height: 1.65;
+  padding: 14px 20px;
 }
 
 @keyframes aiModalOpen {
