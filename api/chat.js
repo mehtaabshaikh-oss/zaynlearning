@@ -1,12 +1,89 @@
 /**
  * /api/chat.js - Vercel Serverless AI Study Buddy Proxy
- * Powered by Google Gemini API with thought part filtering.
+ * Powered by Google Gemini API with smart response cleaning.
  * Locked strictly to authorized tokens (Zayn: 8662 and Parent: 6250).
  */
 
 const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GEMINI_KEY || "").trim();
 
-const SYSTEM_PROMPT = "You are Nova, an enthusiastic and friendly AI study buddy for Zayn, an 8-year-old kid in 3rd grade. Answer him directly in 2 short, fun paragraphs using simple analogies (like LEGOs, Minecraft, pizza, rockets) and emojis. Never output your internal thinking.";
+const SYSTEM_PROMPT = "You are Nova, a friendly science and math tutor for 8-year-old Zayn. Explain things simply, warmly, and enthusiastically in 2 short paragraphs with fun analogies (like LEGOs, Minecraft, pizza, rockets) and emojis.";
+
+function cleanNovaOutput(raw) {
+  if (!raw) return "";
+  let text = raw.trim();
+
+  // 1. If 'Final Polish:' or 'Final Answer:' or 'Response:' exists, take everything after it
+  const finalMarkers = ['Final Polish:', 'Final Answer:', 'Final Response:', 'Final Draft:'];
+  for (const marker of finalMarkers) {
+    const idx = text.lastIndexOf(marker);
+    if (idx !== -1) {
+      text = text.substring(idx + marker.length).trim();
+      break;
+    }
+  }
+
+  // 2. If 'Revised Para 1:' or 'Drafting' exists and we didn't find Final Polish
+  if (text.includes('Revised Para 1:')) {
+    text = text.split(/Revised Para \d+:?\*?/i).join('\n\n');
+  }
+  if (text.includes('Drafting Paragraph')) {
+    text = text.split(/Drafting Paragraph \d+:?\*?/i).join('\n\n');
+  }
+
+  // 3. Line-by-line filter for meta-commentary / outline tokens
+  const lines = text.split('\n');
+  const clean = [];
+
+  for (let line of lines) {
+    const t = line.trim();
+    if (
+      t.startsWith('* User') ||
+      t.startsWith('* Persona') ||
+      t.startsWith('* Format') ||
+      t.startsWith('* Style') ||
+      t.startsWith('* Constraints') ||
+      t.startsWith('* Concept') ||
+      t.startsWith('* Analogy') ||
+      t.startsWith('* Socratic') ||
+      t.startsWith('* Target') ||
+      t.startsWith('* Goal') ||
+      t.startsWith('* Audience') ||
+      t.startsWith('* Subject') ||
+      t.startsWith('* Tone') ||
+      t.startsWith('* Direct address') ||
+      t.startsWith('* 2 short') ||
+      t.startsWith('* 2 paragraphs') ||
+      t.startsWith('* Simple analogies') ||
+      t.startsWith('* Emojis') ||
+      t.startsWith('* Enthusiastic') ||
+      t.startsWith('* Target age') ||
+      t.startsWith('Self-Correction') ||
+      t.startsWith('Wait, let\'s try') ||
+      t.startsWith('Pizza/Food:*') ||
+      t.startsWith('Minecraft/LEGOs:*') ||
+      t.startsWith('Paragraph 1:') ||
+      t.startsWith('Paragraph 2:') ||
+      t.startsWith('How do airplanes') ||
+      t.startsWith('Why did dinosaurs') ||
+      t.startsWith('Zayn (') ||
+      t.startsWith('Nova (') ||
+      t.startsWith('No internal thinking') ||
+      t.startsWith('Direct answer only')
+    ) {
+      continue;
+    }
+    clean.push(line);
+  }
+
+  let result = clean.join('\n').trim();
+
+  // Strip wrapping quotes
+  if (result.startsWith('"') && result.endsWith('"')) {
+    result = result.slice(1, -1).trim();
+  }
+
+  return result || raw.trim();
+}
 
 function extractRealAnswer(parts) {
   if (!Array.isArray(parts) || parts.length === 0) return "";
@@ -20,61 +97,6 @@ function extractRealAnswer(parts) {
   // 2. Fallback to the last part in the array (final generation)
   const lastPart = parts[parts.length - 1];
   return (lastPart && lastPart.text) ? lastPart.text.trim() : "";
-}
-
-function cleanFormatting(text) {
-  if (!text) return "";
-  let clean = text.trim();
-
-  // If text contains reasoning tokens, clean them up
-  const lines = clean.split('\n');
-  const filtered = [];
-  let readingBody = false;
-
-  for (const line of lines) {
-    const t = line.trim();
-    if (!readingBody) {
-      if (
-        t.startsWith('Why did') ||
-        t.startsWith('How do') ||
-        t.startsWith('Zayn (') ||
-        t.startsWith('Nova (') ||
-        t.startsWith('2 fun,') ||
-        t.startsWith('2 short') ||
-        t.startsWith('Simple analogies') ||
-        t.startsWith('Emojis.') ||
-        t.startsWith('Concept:*') ||
-        t.startsWith('Analogy:*') ||
-        t.startsWith('Goal:*') ||
-        t.startsWith('Target:*') ||
-        t.startsWith('Constraints:*') ||
-        t.startsWith('Audience:*')
-      ) {
-        continue;
-      }
-      if (t.length > 0) {
-        readingBody = true;
-        filtered.push(line);
-      }
-    } else {
-      if (
-        t.startsWith('* 2 paragraphs') ||
-        t.startsWith('* Simple analogies') ||
-        t.startsWith('* Emojis?') ||
-        t.startsWith('* Direct answer?') ||
-        t.startsWith('* Enthusiastic') ||
-        t.startsWith('* Target age') ||
-        t.startsWith('Concept:*') ||
-        t.startsWith('Analogy:*')
-      ) {
-        continue;
-      }
-      filtered.push(line);
-    }
-  }
-
-  const result = filtered.join('\n').trim();
-  return result || clean;
 }
 
 module.exports = async function handler(req, res) {
@@ -146,8 +168,8 @@ module.exports = async function handler(req, res) {
       },
       contents: contents,
       generationConfig: {
-        temperature: 0.3,
-        maxOutputTokens: 1000,
+        temperature: 0.7,
+        maxOutputTokens: 800,
         topP: 0.95
       }
     };
@@ -201,7 +223,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (replyText) {
-      const finalClean = cleanFormatting(replyText);
+      const finalClean = cleanNovaOutput(replyText);
       return res.status(200).json({ success: true, reply: finalClean });
     }
 
