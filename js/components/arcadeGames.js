@@ -725,41 +725,205 @@ class AsteroidBlasterGame {
     ctx.fillStyle = '#050212';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    // Space stars
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    for (let i = 0; i < 20; i++) {
-      ctx.fillRect((i * 47) % 600, (i * 31 + Date.now() * 0.05) % 420, 2, 2);
+    // Dynamic Space Stars
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    for (let i = 0; i < 35; i++) {
+      const starX = (i * 47) % 600;
+      const starY = (i * 31 + Date.now() * 0.04) % 420;
+      const size = (i % 3 === 0) ? 2 : 1;
+      ctx.fillRect(starX, starY, size, size);
     }
 
-    // Asteroids
+    // Rocky Asteroids with 3D Crater Shading
     this.asteroids.forEach(ast => {
-      ctx.fillStyle = '#475569';
+      // Asteroid Body
+      const grad = ctx.createRadialGradient(ast.x - 8, ast.y - 8, 4, ast.x, ast.y, ast.r);
+      grad.addColorStop(0, '#64748b');
+      grad.addColorStop(0.7, '#334155');
+      grad.addColorStop(1, '#1e293b');
+      
+      ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(ast.x, ast.y, ast.r, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.strokeStyle = '#94a3b8';
+      // Rocky Rim
+      ctx.strokeStyle = '#475569';
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 16px "Space Grotesk"';
+      // Mini craters
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+      ctx.beginPath();
+      ctx.arc(ast.x - 10, ast.y + 6, 5, 0, Math.PI * 2);
+      ctx.arc(ast.x + 8, ast.y - 8, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Number Value (Crisp High-Contrast Text Badge)
+      ctx.fillStyle = '#22d3ee';
+      ctx.font = 'bold 18px "Space Grotesk", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(34, 211, 238, 0.6)';
+      ctx.shadowBlur = 6;
       ctx.fillText(ast.val, ast.x, ast.y);
+      ctx.shadowBlur = 0;
     });
 
-    // Lasers
-    ctx.fillStyle = this.twinLasers ? '#00f0ff' : '#ff007f';
+    // High-Tech Plasma Lasers
     this.lasers.forEach(l => {
-      ctx.fillRect(l.x - 3, l.y, 6, 16);
+      ctx.fillStyle = this.twinLasers ? '#22d3ee' : '#38bdf8';
+      ctx.shadowColor = this.twinLasers ? '#00f0ff' : '#38bdf8';
+      ctx.shadowBlur = 8;
+      
+      // Laser core beam
+      ctx.fillRect(l.x - 2.5, l.y - 6, 5, 18);
+      
+      // Hot inner bolt
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(l.x - 1, l.y - 4, 2, 14);
+      ctx.shadowBlur = 0;
     });
 
-    // Starship
-    ctx.font = '36px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🚀', this.ship.x, this.ship.y);
+    // Custom Forward-Facing Vector Spaceship (No sideways emoji)
+    this.drawSpaceship(ctx, this.ship.x, this.ship.y);
+  }
+
+  drawSpaceship(ctx, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. Dual Animated Plasma Thruster Flames
+    const flameHeight = 14 + Math.sin(Date.now() * 0.035) * 4 + Math.random() * 3;
+
+    // Thruster exhaust plumes
+    [-8, 8].forEach(thX => {
+      // Outer flame (Orange / Red)
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(thX - 4, 12);
+      ctx.lineTo(thX, 12 + flameHeight);
+      ctx.lineTo(thX + 4, 12);
+      ctx.closePath();
+      ctx.fill();
+
+      // Inner Core Flame (Cyan / White hot)
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.moveTo(thX - 2.5, 12);
+      ctx.lineTo(thX, 12 + flameHeight * 0.65);
+      ctx.lineTo(thX + 2.5, 12);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(thX - 1, 12);
+      ctx.lineTo(thX, 12 + flameHeight * 0.35);
+      ctx.lineTo(thX + 1, 12);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // 2. Wingtip Laser Cannons
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(-20, -6, 3, 20);
+    ctx.fillRect(17, -6, 3, 20);
+
+    // Cannon energy coils
+    ctx.fillStyle = this.twinLasers ? '#22d3ee' : '#38bdf8';
+    ctx.fillRect(-20, -10, 3, 4);
+    ctx.fillRect(17, -10, 3, 4);
+
+    // 3. Delta Wings (Sleek aerodynamic interceptor)
+    ctx.fillStyle = '#1e293b';
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -22); // Nose
+    ctx.lineTo(-24, 10);
+    ctx.lineTo(-14, 12);
+    ctx.lineTo(-8, 8);
+    ctx.lineTo(0, 10);
+    ctx.lineTo(8, 8);
+    ctx.lineTo(14, 12);
+    ctx.lineTo(24, 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Wing accent stripes (Electric Blue)
+    ctx.fillStyle = '#2563eb';
+    ctx.beginPath();
+    ctx.moveTo(-18, 8);
+    ctx.lineTo(-8, -4);
+    ctx.lineTo(-6, 0);
+    ctx.lineTo(-12, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(18, 8);
+    ctx.lineTo(8, -4);
+    ctx.lineTo(6, 0);
+    ctx.lineTo(12, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    // 4. Main Fuselage / Body (Aerodynamic White/Slate Armor)
+    ctx.fillStyle = '#f8fafc';
+    ctx.beginPath();
+    ctx.moveTo(0, -26); // Sharpened forward nose
+    ctx.lineTo(8, 6);
+    ctx.lineTo(7, 12);
+    ctx.lineTo(-7, 12);
+    ctx.lineTo(-8, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    // Shading on left fuselage for 3D metallic volume
+    ctx.fillStyle = '#cbd5e1';
+    ctx.beginPath();
+    ctx.moveTo(0, -26);
+    ctx.lineTo(0, 12);
+    ctx.lineTo(-7, 12);
+    ctx.lineTo(-8, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    // 5. Cockpit Glass Canopy (Forward Cyan Visor)
+    const canopyGlow = ctx.createLinearGradient(0, -18, 0, 0);
+    canopyGlow.addColorStop(0, '#67e8f9');
+    canopyGlow.addColorStop(0.5, '#06b6d4');
+    canopyGlow.addColorStop(1, '#0e7490');
+
+    ctx.fillStyle = canopyGlow;
+    ctx.beginPath();
+    ctx.ellipse(0, -7, 4.5, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#e0f2fe';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Canopy Reflection highlight
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.beginPath();
+    ctx.ellipse(-1.5, -9, 1.2, 3.5, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 6. Power-Up Shield / Twin Laser Aura
+    if (this.twinLasers) {
+      ctx.strokeStyle = 'rgba(34, 211, 238, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(0, 0, 28, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    ctx.restore();
   }
 
   endGame() {
