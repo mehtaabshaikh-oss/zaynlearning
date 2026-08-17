@@ -1,53 +1,58 @@
 :root {
-  /* Color Palette - Vibrant Gaming Themes */
-  --bg-primary: #0e1322;
-  --bg-surface: #171f38;
-  --bg-surface-elevated: #212c4e;
-  --bg-card: rgba(27, 37, 65, 0.85);
+  /* Neutral Color Palette - Refined Slate & Zinc Design System */
+  --bg-primary: #0b0f17;
+  --bg-surface: #131924;
+  --bg-surface-elevated: #1a2332;
+  --bg-card: #161e2b;
+  --bg-card-hover: #1e2839;
   
-  --brand-primary: #58cc02; /* Duolingo energetic green */
-  --brand-primary-hover: #46a302;
-  --brand-primary-shadow: #3b8800;
+  --brand-primary: #10b981; /* Clean emerald */
+  --brand-primary-hover: #059669;
+  --brand-primary-shadow: #047857;
   
-  --lego-red: #e3000b;
-  --lego-yellow: #ffd500;
-  --lego-blue: #0055bf;
-  --lego-green: #00852b;
+  --lego-red: #ef4444;
+  --lego-yellow: #f59e0b;
+  --lego-blue: #3b82f6;
+  --lego-green: #10b981;
   
-  --minecraft-green: #5b8731;
-  --minecraft-brown: #866043;
-  --minecraft-diamond: #4dedf4;
-  --minecraft-nether: #801d1d;
-  --minecraft-gold: #fcee4b;
+  --minecraft-green: #4ade80;
+  --minecraft-brown: #78350f;
+  --minecraft-diamond: #38bdf8;
+  --minecraft-nether: #991b1b;
+  --minecraft-gold: #fbbf24;
   
-  --phonk-purple: #9d4edd;
-  --phonk-pink: #ff007f;
-  --phonk-cyan: #00f0ff;
-  --phonk-neon-glow: 0 0 18px rgba(255, 0, 127, 0.6);
+  --phonk-purple: #6366f1;
+  --phonk-pink: #ec4899;
+  --phonk-cyan: #06b6d4;
+  --phonk-neon-glow: 0 4px 12px rgba(0, 0, 0, 0.4);
   
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
+  --text-subtle: #64748b;
   --text-dark: #0f172a;
   
-  --accent-aura: #fbbf24;
-  --accent-streak: #ff5722;
+  --accent-aura: #f59e0b;
+  --accent-streak: #f97316;
   --accent-gem: #38bdf8;
   --accent-xp: #a855f7;
   
-  --border-subtle: rgba(255, 255, 255, 0.12);
-  --border-glow: rgba(56, 189, 248, 0.35);
+  --border-subtle: #222c3d;
+  --border-strong: #313e52;
+  --border-glow: #38465c;
   
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-pill: 9999px;
   
-  --font-game: 'Fredoka', cursive, sans-serif;
+  --font-game: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'Space Grotesk', monospace;
-  --font-ui: 'Outfit', sans-serif;
+  --font-ui: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
-  --shadow-pressable: 0 5px 0 0 rgba(0, 0, 0, 0.35);
-  --shadow-active: 0 2px 0 0 rgba(0, 0, 0, 0.35);
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-pressable: 0 3px 0 0 rgba(0, 0, 0, 0.35);
+  --shadow-active: 0 1px 0 0 rgba(0, 0, 0, 0.35);
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -62,7 +67,7 @@
 body {
   background-color: var(--bg-primary);
   color: var(--text-main);
-  font-family: var(--font-game);
+  font-family: var(--font-ui);
   overflow-x: hidden;
   min-height: 100vh;
   display: flex;
@@ -90,18 +95,18 @@ body {
 }
 
 /* ==========================================================================
-   TOP NAVIGATION BAR (Duolingo / Gaming HUD style)
+   TOP NAVIGATION BAR (Clean, Modern HUD)
    ========================================================================== */
 .top-nav {
-  height: 72px;
+  height: 68px;
   background: var(--bg-surface);
-  border-bottom: 2px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
 }
 
@@ -116,28 +121,34 @@ body {
   align-items: center;
   gap: 10px;
   background: var(--bg-surface-elevated);
-  border: 2px solid var(--border-subtle);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   padding: 4px 14px 4px 6px;
   cursor: pointer;
   transition: transform var(--transition-fast), border-color var(--transition-fast);
   color: var(--text-main);
-  box-shadow: var(--shadow-pressable);
 }
 
 .avatar-pill:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-gem);
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
 }
 
 .avatar-pill:active {
-  transform: translateY(2px);
-  box-shadow: var(--shadow-active);
+  transform: translateY(1px);
 }
 
 .avatar-icon-wrap {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
+  background: #1e2838;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--accent-aura);
+}
   background: #2a3b68;
   border-radius: 50%;
   overflow: hidden;
@@ -170,7 +181,7 @@ body {
 .nav-stats {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .stat-badge {
@@ -178,60 +189,62 @@ body {
   align-items: center;
   gap: 6px;
   background: var(--bg-surface-elevated);
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: var(--radius-pill);
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 15px;
-  border: 2px solid var(--border-subtle);
+  font-size: 14px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-subtle);
 }
 
 .stat-icon {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .aura-badge {
   color: var(--accent-aura);
-  border-color: rgba(251, 191, 36, 0.4);
+  border-color: rgba(245, 158, 11, 0.25);
 }
 
 .streak-badge {
   color: var(--accent-streak);
-  border-color: rgba(255, 87, 34, 0.4);
+  border-color: rgba(249, 115, 22, 0.25);
 }
 
 .shield-indicator {
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 2px 6px;
-  border-radius: 8px;
-  margin-left: 4px;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 6px;
+  margin-left: 2px;
 }
 
 .gem-badge {
   color: var(--accent-gem);
-  border-color: rgba(56, 189, 248, 0.4);
+  border-color: rgba(56, 189, 248, 0.25);
 }
 
 .level-badge {
   color: var(--accent-xp);
+  border-color: rgba(168, 85, 247, 0.25);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .mini-xp-bar-wrap {
-  width: 60px;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 4px;
+  width: 50px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .mini-xp-fill {
   height: 100%;
   background: var(--accent-xp);
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.3s ease;
 }
 
@@ -239,58 +252,64 @@ body {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   position: relative;
 }
 
 .icon-btn {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: var(--bg-surface-elevated);
-  border: 2px solid var(--border-subtle);
-  color: var(--text-main);
-  font-size: 20px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .icon-btn:hover {
-  transform: scale(1.05);
-  border-color: var(--accent-gem);
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  color: var(--text-main);
 }
 
 .action-pill-btn {
-  padding: 10px 18px;
+  padding: 7px 15px;
   border-radius: var(--radius-pill);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 14px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.01em;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  border: none;
-  box-shadow: var(--shadow-pressable);
-  transition: transform var(--transition-fast);
-  color: #fff;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  box-shadow: var(--shadow-subtle);
+  transition: all var(--transition-fast);
 }
 
 .action-pill-btn:hover {
-  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .action-pill-btn:active {
-  transform: translateY(2px);
-  box-shadow: var(--shadow-active);
+  transform: translateY(1px);
 }
 
-.phonk-glow-btn {
-  background: linear-gradient(135deg, var(--phonk-purple), var(--phonk-pink));
-  box-shadow: 0 4px 14px rgba(255, 0, 127, 0.4), var(--shadow-pressable);
+.action-pill-btn.active {
+  background: #253347;
+  border-color: #3f5473;
+  color: #fff;
 }
 
 .logic-glow-btn {
