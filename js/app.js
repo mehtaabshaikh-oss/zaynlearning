@@ -22,6 +22,7 @@ class App {
     window.arcadeHub = new ArcadeHub();
     window.stemDetectiveEngine = new STEMDetectiveEngine();
     window.scienceLabEngine = new ScienceLabEngine();
+    window.quickSyncModal = new QuickSyncModal();
 
     this.showView('view-arcade-hub');
     this.updateTopBarHUD();
