@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="css/logicClub.css">
   <link rel="stylesheet" href="css/classroom.css">
   <link rel="stylesheet" href="css/globalOdyssey.css">
+  <link rel="stylesheet" href="css/loginModal.css">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -40,10 +41,10 @@
           </div>
         </button>
 
-        <!-- Quick Cross-Device Sync -->
-        <button id="quick-sync-btn" class="sync-pill-btn" title="Sync & Backup Progress Across iPad, Phone, Laptop">
-          <span class="sync-icon">☁️</span>
-          <span class="sync-label">SYNC</span>
+        <!-- 4-Digit Passcode Profile Switcher -->
+        <button id="switch-user-btn" class="sync-pill-btn" title="Switch User Profile / Enter 4-Digit Code" onclick="window.loginModal.showKeypad()">
+          <span class="sync-icon">🔄</span>
+          <span class="sync-label">CODE</span>
         </button>
       </div>
 
@@ -950,96 +951,10 @@
       </div>
     </div>
 
-    <!-- Quick Sync & Cross-Device Backup Modal -->
-    <div id="quick-sync-modal" class="modal-overlay hidden">
-      <div class="modal-card quick-sync-card">
-        <div class="sync-header">
-          <div class="sync-title-group">
-            <div class="sync-hero-icon">☁️</div>
-            <div>
-              <h3 class="sync-title">Zayn's Cross-Device Sync</h3>
-              <p class="sync-subtitle">Keep your streaks, points, and unlocked gear synced across iPad, phone, and laptop!</p>
-            </div>
-          </div>
-          <button class="icon-btn close-modal-btn" id="close-quick-sync-btn">✕</button>
-        </div>
-
-        <!-- Live Snapshot Stats Summary -->
-        <div class="sync-stats-summary">
-          <div class="sync-stat-item">
-            <span class="sync-stat-icon">🔥</span>
-            <div>
-              <div class="sync-stat-val" id="sync-stat-streak">1 Day</div>
-              <div class="sync-stat-lbl">Daily Streak</div>
-            </div>
-          </div>
-          <div class="sync-stat-item">
-            <span class="sync-stat-icon">📈</span>
-            <div>
-              <div class="sync-stat-val" id="sync-stat-aura">0</div>
-              <div class="sync-stat-lbl">Aura Points</div>
-            </div>
-          </div>
-          <div class="sync-stat-item">
-            <span class="sync-stat-icon">💎</span>
-            <div>
-              <div class="sync-stat-val" id="sync-stat-gems">0</div>
-              <div class="sync-stat-lbl">Gems</div>
-            </div>
-          </div>
-          <div class="sync-stat-item">
-            <span class="sync-stat-icon">⭐</span>
-            <div>
-              <div class="sync-stat-val" id="sync-stat-level">Lv 1</div>
-              <div class="sync-stat-lbl">XP Rank</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mode Tabs -->
-        <div class="sync-tabs-row">
-          <button class="sync-tab-btn active" id="tab-export-sync" data-tab="export">📤 Export / Share (From this device)</button>
-          <button class="sync-tab-btn" id="tab-import-sync" data-tab="import">📥 Restore / Load (On new device)</button>
-        </div>
-
-        <!-- Tab 1: Export View -->
-        <div class="sync-tab-panel" id="panel-export-sync">
-          <div class="sync-instruction">
-            Copy your Sync Key or Link below and paste it on your other device to instantly transfer all your progress:
-          </div>
-
-          <div class="sync-code-box">
-            <input type="text" id="sync-code-input" readonly value="Generating...">
-            <button class="sync-action-btn" id="copy-sync-code-btn">📋 COPY CODE</button>
-          </div>
-
-          <div class="sync-actions-row">
-            <button class="sync-secondary-btn" id="copy-sync-link-btn">🔗 Copy 1-Tap Sync Link</button>
-            <button class="sync-secondary-btn" id="download-backup-btn">💾 Download Save File</button>
-          </div>
-
-          <div class="sync-toast hidden" id="sync-toast">✅ Sync Key copied to clipboard!</div>
-        </div>
-
-        <!-- Tab 2: Import View -->
-        <div class="sync-tab-panel hidden" id="panel-import-sync">
-          <div class="sync-instruction">
-            Paste your Zayn Sync Key or upload your backup file to restore all your stats:
-          </div>
-
-          <div class="sync-code-box">
-            <input type="text" id="restore-code-input" placeholder="Paste your ZAYN-V1-... key here">
-            <button class="sync-action-btn load-btn" id="restore-sync-code-btn">⚡ RESTORE</button>
-          </div>
-
-          <div class="sync-file-upload-wrap">
-            <span>Or restore from backup file:</span>
-            <input type="file" id="restore-file-input" accept=".json" style="display:none;">
-            <button class="sync-secondary-btn" id="upload-backup-btn">📂 Choose .JSON Save File</button>
-          </div>
-
-          <div class="sync-status-msg hidden" id="restore-status-msg"></div>
-        </div>
+    <!-- 4-DIGIT CLOUD PASSCODE & PROFILE MODAL -->
+    <div id="login-passcode-modal" class="pin-modal-overlay hidden">
+      <div class="pin-modal-card" id="pin-modal-container">
+        <!-- Dynamically rendered via LoginModal -->
       </div>
     </div>
 
@@ -1056,8 +971,8 @@
   <script src="js/data/classroomCurriculum.js"></script>
   <script src="js/data/triviaFactsData.js"></script>
   <script src="js/data/globalOdysseyData.js"></script>
+  <script src="js/state/cloudAuth.js"></script>
   <script src="js/state/gameState.js"></script>
-  <script src="js/state/syncManager.js"></script>
   <script src="js/state/adaptiveEngine.js"></script>
   <script src="js/components/avatarBuilder.js"></script>
   <script src="js/components/interactiveWidgets.js"></script>
@@ -1073,7 +988,7 @@
   <script src="js/components/classroomEngine.js"></script>
   <script src="js/components/globalOdysseyEngine.js"></script>
   <script src="js/components/lockerModal.js"></script>
-  <script src="js/components/quickSyncModal.js"></script>
+  <script src="js/components/loginModal.js"></script>
   <script src="js/utils/helpers.js"></script>
   <script src="js/app.js"></script>
 </body>

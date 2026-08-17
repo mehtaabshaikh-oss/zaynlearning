@@ -1,0 +1,206 @@
+/* ==========================================================================
+   4-DIGIT CLOUD PASSCODE & PROFILE MODAL STYLESHEET
+   Retro-Arcade Keypad, Tactile Number Buttons, and Profile Switcher
+   ========================================================================== */
+
+.pin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 11, 25, 0.92);
+  backdrop-filter: blur(12px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.pin-modal-card {
+  background: #0f172a;
+  border: 2px solid #2563eb;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(37, 99, 235, 0.25);
+  animation: pinPopIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pinPopIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.pin-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.pin-hero-icon {
+  font-size: 42px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.pin-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.pin-subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* 4 Digit Slots */
+.pin-display-slots {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 28px;
+  justify-content: center;
+}
+
+.pin-slot {
+  width: 54px;
+  height: 64px;
+  background: #172033;
+  border: 2px solid #334460;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #38bdf8;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
+}
+
+.pin-slot.filled {
+  border-color: #38bdf8;
+  background: #1e293b;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+}
+
+.pin-slot.shake {
+  animation: pinShake 0.4s ease-in-out;
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* Keypad Grid (3x4) */
+.pin-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.pin-key-btn {
+  background: #172033;
+  border: 1px solid #334460;
+  border-bottom: 3px solid #1e2a42;
+  border-radius: 16px;
+  color: #f8fafc;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.pin-key-btn:hover {
+  background: #1e2a42;
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+}
+
+.pin-key-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.pin-key-action {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.pin-key-enter {
+  background: #2563eb;
+  border-color: #3b82f6;
+  border-bottom-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.pin-key-enter:hover {
+  background: #1d4ed8;
+}
+
+.pin-error-msg {
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  min-height: 18px;
+  margin-top: 14px;
+}
+
+/* Profile Switcher Header Badge */
+.user-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #172033;
+  border: 1px solid #334460;
+  border-radius: 9999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.user-profile-btn:hover {
+  border-color: #38bdf8;
+  background: #1e2a42;
+}
+
+/* Parent Admin Modal Panel */
+.parent-admin-box {
+  background: #0f172a;
+  border: 2px solid #8b5cf6;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  padding: 24px;
+  color: #ffffff;
+}
+
+.friend-code-pill {
+  background: #1e293b;
+  border: 1px solid #334460;
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}

@@ -77,15 +77,15 @@ class GameState {
     return this.getDefaults();
   }
 
-  save() {
+  save(skipSync = false) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
     } catch (e) {
       console.warn("Could not save to localStorage", e);
     }
     this.notifyListeners();
-    if (window.syncManager && window.syncManager.schedulePush) {
-      window.syncManager.schedulePush();
+    if (!skipSync && window.cloudAuth && window.cloudAuth.triggerAutoSync) {
+      window.cloudAuth.triggerAutoSync();
     }
   }
 

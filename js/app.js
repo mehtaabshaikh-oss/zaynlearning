@@ -11,7 +11,8 @@ class App {
   }
 
   initComponents() {
-    window.syncManager = new SyncManager();
+    window.cloudAuth = new CloudAuth();
+    window.loginModal = new LoginModal();
     window.mapRenderer = new MapRenderer();
     window.lessonEngine = new LessonEngine();
     window.phonkArena = new PhonkDriftArena();
@@ -24,10 +25,19 @@ class App {
     window.scienceLabEngine = new ScienceLabEngine();
     window.classroomEngine = new ClassroomEngine();
     window.globalOdysseyEngine = new GlobalOdysseyEngine();
-    window.quickSyncModal = new QuickSyncModal();
 
     this.showView('view-arcade-hub');
     this.updateTopBarHUD();
+
+    // Check if user is authenticated; if not, show the 4-digit keypad
+    if (!window.cloudAuth.isAuthenticated()) {
+      setTimeout(() => {
+        window.loginModal.showKeypad();
+      }, 200);
+    } else {
+      window.cloudAuth.loadCloudSave();
+      window.cloudAuth.updateUI();
+    }
   }
 
   showView(viewId) {
