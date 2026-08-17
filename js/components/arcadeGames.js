@@ -1199,25 +1199,64 @@ class DecimalRacerGame {
   }
 
   generateGates() {
-    const base = (Math.floor(Math.random() * 8) + 1) / 10; // e.g. 0.1 to 0.8
-    const d1 = parseFloat((base + (Math.floor(Math.random() * 5) - 2) * 0.05).toFixed(2));
-    const d2 = parseFloat((base + (Math.floor(Math.random() * 9) + 1) * 0.01).toFixed(3));
-    const d3 = parseFloat((base + 0.12).toFixed(2));
-    
-    // Ensure all 3 numbers are distinct
-    const numSet = new Set([d1, d2, d3]);
-    while (numSet.size < 3) {
-      numSet.add(parseFloat((base + Math.random() * 0.2).toFixed(2)));
-    }
-    const pool = Array.from(numSet);
-    const largest = Math.max(...pool);
+    this.totalRounds = this.totalRounds || 8;
+    const currentRound = this.correctCount + this.incorrectCount + 1;
+    this.hub.setLevel(`RACER GATE ${Math.min(this.totalRounds, currentRound)}/${this.totalRounds}`);
 
-    this.currentQ = { prompt: `DRIVE THROUGH LARGEST NUMBER!`, ans: largest };
+    const qTypes = ['largest', 'smallest', 'fraction_half', 'fraction_three_fourths', 'place_value', 'largest'];
+    const chosenType = qTypes[Math.floor(Math.random() * qTypes.length)];
+
+    let pool = [];
+    let promptText = "";
+    let correctVal = 0;
+
+    if (chosenType === 'smallest') {
+      const base = (Math.floor(Math.random() * 6) + 1) / 10;
+      const v1 = parseFloat((base + 0.08).toFixed(2));
+      const v2 = parseFloat((base + 0.008).toFixed(3));
+      const v3 = parseFloat((base + 0.18).toFixed(2));
+      pool = [v1, v2, v3];
+      correctVal = Math.min(...pool);
+      promptText = "DRIVE THROUGH SMALLEST NUMBER!";
+    } else if (chosenType === 'fraction_half') {
+      pool = [0.5, 0.05, 0.55];
+      correctVal = 0.5;
+      promptText = "DRIVE THROUGH DECIMAL EQUAL TO 1/2!";
+    } else if (chosenType === 'fraction_three_fourths') {
+      pool = [0.75, 0.705, 0.8];
+      correctVal = 0.75;
+      promptText = "DRIVE THROUGH DECIMAL EQUAL TO 3/4!";
+    } else if (chosenType === 'place_value') {
+      const targetDigit = Math.floor(Math.random() * 7) + 2; // e.g. 7
+      const match = parseFloat(`0.${targetDigit}4`);
+      const wrong1 = parseFloat(`0.0${targetDigit}`);
+      const wrong2 = parseFloat(`0.9${targetDigit}`);
+      pool = [match, wrong1, wrong2];
+      correctVal = match;
+      promptText = `DRIVE THROUGH NUMBER WITH ${targetDigit} IN TENTHS PLACE!`;
+    } else {
+      // General Largest Comparison (Tenths vs Hundredths vs Thousandths)
+      const base = Math.floor(Math.random() * 8) + 1;
+      const v1 = parseFloat((base * 0.1).toFixed(1)); // e.g. 0.7
+      const v2 = parseFloat((base * 0.1 - 0.04).toFixed(2)); // e.g. 0.66
+      const v3 = parseFloat((base * 0.1 + 0.05).toFixed(2)); // e.g. 0.75
+      pool = [v1, v2, v3];
+      correctVal = Math.max(...pool);
+      promptText = "DRIVE THROUGH LARGEST NUMBER!";
+    }
+
+    // Ensure unique 3 options
+    const uniquePool = Array.from(new Set(pool));
+    while (uniquePool.length < 3) {
+      uniquePool.push(parseFloat((Math.random() * 0.9 + 0.1).toFixed(2)));
+    }
+
+    this.currentQ = { prompt: promptText, ans: correctVal };
     this.hub.setPrompt(`🏎️ ${this.currentQ.prompt}`);
 
-    const options = pool.map(val => ({
+    const options = uniquePool.map(val => ({
       val: val,
-      isCorrect: val === largest
+      isCorrect: val === correctVal
     })).sort(() => Math.random() - 0.5);
 
     this.gates = options.map((opt, idx) => ({
@@ -1241,7 +1280,8 @@ class DecimalRacerGame {
 
   update() {
     if (this.gates.length === 0) return;
-    this.gates.forEach(g => { g.y += 1.5; });
+    const speed = 1.6 + (this.nitro > 50 ? 0.8 : 0);
+    this.gates.forEach(g => { g.y += speed; });
 
     const gateY = this.gates[0].y;
     if (gateY >= 340 && gateY <= 365) {
@@ -1253,14 +1293,18 @@ class DecimalRacerGame {
           this.longestStreak = Math.max(this.longestStreak, this.currentStreak);
           this.nitro = Math.min(100, this.nitro + 25);
 
-          const pts = 200;
+          const pts = 200 + (this.nitro > 50 ? 100 : 0);
           this.score += pts;
           this.hub.scoreEl.textContent = this.score;
 
           if (window.soundEngine) window.soundEngine.playLevelUp();
-          if (window.helpers) window.helpers.spawnAuraFloatingText(`NITRO BOOST! +${pts} Aura ⚡`, undefined, undefined, true);
+          if (window.helpers) window.helpers.spawnAuraFloatingText(`PERFECT DRIFT! +${pts} Aura ⚡🏎️`, undefined, undefined, true);
 
-          this.generateGates();
+          if (this.correctCount + this.incorrectCount >= 8 && !this.hub.isPracticeMode) {
+            this.endGame();
+          } else {
+            this.generateGates();
+          }
         } else {
           this.incorrectCount++;
           this.currentStreak = 0;
@@ -1268,17 +1312,23 @@ class DecimalRacerGame {
           this.missedDecimals.push(this.currentQ.prompt);
 
           if (window.soundEngine) window.soundEngine.playWrong();
-          this.generateGates();
+          if (window.helpers) window.helpers.spawnAuraFloatingText(`Missed! Correct: ${this.currentQ.ans}`, undefined, undefined, false);
+
+          if (this.correctCount + this.incorrectCount >= 8 && !this.hub.isPracticeMode) {
+            this.endGame();
+          } else {
+            this.generateGates();
+          }
         }
       }
     } else if (gateY > 430) {
       this.incorrectCount++;
       this.currentStreak = 0;
-      this.generateGates();
-    }
-
-    if (this.correctCount + this.incorrectCount >= 6 && !this.hub.isPracticeMode) {
-      this.endGame();
+      if (this.correctCount + this.incorrectCount >= 8 && !this.hub.isPracticeMode) {
+        this.endGame();
+      } else {
+        this.generateGates();
+      }
     }
   }
 
