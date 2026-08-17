@@ -71,53 +71,22 @@
       </div>
 
       <div class="nav-right">
-        <!-- Audio Mode Selector -->
-        <div class="audio-control-group">
-          <button id="audio-toggle-btn" class="icon-btn" title="Audio Options">
-            <span id="audio-status-icon">🎧</span>
-          </button>
-          <div id="audio-dropdown" class="audio-dropdown hidden">
-            <div class="audio-option-item" data-mode="phonk">
-              <span>🏎️ Drift Phonk Beats</span>
-              <span class="check-icon">✓</span>
-            </div>
-            <div class="audio-option-item" data-mode="lofi">
-              <span>🌲 Minecraft C418 Lo-Fi</span>
-            </div>
-            <div class="audio-option-item" data-mode="chiptune">
-              <span>🕹️ 8-Bit Retro Arcade</span>
-            </div>
-            <div class="audio-option-item" data-mode="mute">
-              <span>🔇 Mute Music & SFX</span>
-            </div>
-            <div class="audio-volume-slider">
-              <label>Vol:</label>
-              <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.7">
-            </div>
-          </div>
-        </div>
-
-        <!-- STEM Detective Agency Quick Button (Temporarily Hidden) -->
-        <button id="quick-detective-btn" class="action-pill-btn detective-glow-btn" style="display: none; background: linear-gradient(135deg, #4338ca, #6366f1); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);" title="STEM Detective Agency">
-          <span>🔎 STEM SLEUTH</span>
-        </button>
-
-        <!-- Science Lab Quick Button -->
-        <button id="quick-science-btn" class="action-pill-btn science-glow-btn" style="background: linear-gradient(135deg, #0284c7, #06b6d4); box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);" title="Zayn Science Lab">
-          <span>🔬 SCIENCE LAB</span>
-        </button>
-
-        <!-- Arcade Hub Quick Button -->
+        <!-- 1. Arcade Hub (Primary Home) -->
         <button id="quick-arcade-btn" class="action-pill-btn arcade-glow-btn" style="background: linear-gradient(135deg, #059669, #10b981); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);" title="Arcade Games Hub">
           <span>🕹️ ARCADE</span>
         </button>
 
-        <!-- Speed Drill Quick Button -->
+        <!-- 2. Science Lab -->
+        <button id="quick-science-btn" class="action-pill-btn science-glow-btn" style="background: linear-gradient(135deg, #0284c7, #06b6d4); box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);" title="Zayn Science Lab">
+          <span>🔬 SCIENCE LAB</span>
+        </button>
+
+        <!-- 3. Speed Drift 60s -->
         <button id="quick-drift-btn" class="action-pill-btn phonk-glow-btn" title="Phonk Drift Speed Arena">
           <span>🏎️ DRIFT 60s</span>
         </button>
 
-        <!-- 1% Club Quick Button -->
+        <!-- 4. 1% Club -->
         <button id="quick-logic-btn" class="action-pill-btn logic-glow-btn" title="The 1% Club Logic Vault">
           <span>🧠 1% CLUB</span>
         </button>
@@ -126,8 +95,8 @@
 
     <!-- Main Dynamic Content Views -->
     <main id="main-content" class="main-viewport">
-      <!-- 1. MAP VIEW (Default) -->
-      <section id="view-map" class="view-panel active">
+      <!-- 1. MAP VIEW (Temporarily Hidden) -->
+      <section id="view-map" class="view-panel hidden" style="display: none;">
         <!-- World Selector Carousel Tabs -->
         <div class="world-tab-bar">
           <button class="world-tab-btn active" data-world="1">
@@ -186,8 +155,8 @@
         </div>
       </section>
 
-      <!-- 2. ARCADE GAMES HUB VIEW (15-Game Catalog) -->
-      <section id="view-arcade-hub" class="view-panel hidden">
+      <!-- 2. ARCADE GAMES HUB VIEW (Main Home Page) -->
+      <section id="view-arcade-hub" class="view-panel active">
         <div class="arcade-hub-header">
           <h1 class="arcade-hub-title">🕹️ RETRO MATH ARCADE</h1>
           <p class="arcade-hub-sub">Genuine action games directly connected to 4th-grade & gifted math skills!</p>
@@ -595,11 +564,7 @@
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile Screens <= 768px) -->
     <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
-      <button class="mobile-nav-item active" data-view="view-map" id="mob-nav-map">
-        <span class="mob-nav-icon">🗺️</span>
-        <span class="mob-nav-label">Quest</span>
-      </button>
-      <button class="mobile-nav-item" data-view="view-arcade-hub" id="mob-nav-arcade">
+      <button class="mobile-nav-item active" data-view="view-arcade-hub" id="mob-nav-arcade">
         <span class="mob-nav-icon">🕹️</span>
         <span class="mob-nav-label">Arcade</span>
       </button>

@@ -23,7 +23,7 @@ class PhonkDriftArena {
   bindEvents() {
     document.getElementById('exit-drift-btn').addEventListener('click', () => {
       this.endGame();
-      window.app.showView('view-map');
+      window.app.showView('view-arcade-hub');
     });
 
     const quickBtn = document.getElementById('quick-drift-btn');
@@ -162,7 +162,7 @@ class PhonkDriftArena {
 
       document.getElementById('claim-reward-btn').onclick = () => {
         rewardModal.classList.add('hidden');
-        window.app.showView('view-map');
+        window.app.showView('view-arcade-hub');
       };
     }
   }

@@ -71,7 +71,7 @@ class LogicClubEngine {
     if (exitBtn) {
       exitBtn.addEventListener('click', () => {
         this.clearTimer();
-        window.app.showView('view-map');
+        window.app.showView('view-arcade-hub');
       });
     }
 
@@ -442,7 +442,7 @@ class LogicClubEngine {
 
     document.getElementById('claim-reward-btn').onclick = () => {
       rewardModal.classList.add('hidden');
-      window.app.showView('view-map');
+      window.app.showView('view-arcade-hub');
     };
   }
 }

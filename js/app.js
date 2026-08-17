@@ -23,7 +23,7 @@ class App {
     window.stemDetectiveEngine = new STEMDetectiveEngine();
     window.scienceLabEngine = new ScienceLabEngine();
 
-    window.mapRenderer.selectWorld(1);
+    this.showView('view-arcade-hub');
     this.updateTopBarHUD();
   }
 
@@ -166,16 +166,18 @@ class App {
     const dropdown = document.getElementById('audio-dropdown');
     const volumeSlider = document.getElementById('volume-slider');
 
-    audioBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dropdown.classList.toggle('hidden');
-    });
+    if (audioBtn && dropdown) {
+      audioBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+      });
 
-    document.addEventListener('click', (e) => {
-      if (!dropdown.contains(e.target) && e.target !== audioBtn) {
-        dropdown.classList.add('hidden');
-      }
-    });
+      document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target) && e.target !== audioBtn) {
+          dropdown.classList.add('hidden');
+        }
+      });
+    }
 
     const modeItems = document.querySelectorAll('.audio-option-item');
     modeItems.forEach(item => {
@@ -194,18 +196,22 @@ class App {
         }
 
         const iconEl = document.getElementById('audio-status-icon');
-        if (mode === 'phonk') iconEl.textContent = '🏎️';
-        else if (mode === 'lofi') iconEl.textContent = '🌲';
-        else if (mode === 'chiptune') iconEl.textContent = '🕹️';
-        else iconEl.textContent = '🔇';
+        if (iconEl) {
+          if (mode === 'phonk') iconEl.textContent = '🏎️';
+          else if (mode === 'lofi') iconEl.textContent = '🌲';
+          else if (mode === 'chiptune') iconEl.textContent = '🕹️';
+          else iconEl.textContent = '🔇';
+        }
       });
     });
 
-    volumeSlider.addEventListener('input', (e) => {
-      if (window.soundEngine) {
-        window.soundEngine.setVolume(parseFloat(e.target.value));
-      }
-    });
+    if (volumeSlider) {
+      volumeSlider.addEventListener('input', (e) => {
+        if (window.soundEngine) {
+          window.soundEngine.setVolume(parseFloat(e.target.value));
+        }
+      });
+    }
   }
 }
 
