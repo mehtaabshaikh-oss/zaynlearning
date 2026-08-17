@@ -202,29 +202,83 @@
 
 .arcade-play-btn {
   width: 100%;
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-subtle);
-  color: #fff;
+  background: #2563eb;
+  border: none;
+  border-bottom: 4px solid #1d4ed8;
+  color: #ffffff;
   font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 13.5px;
-  letter-spacing: 0.02em;
-  padding: 10px 0;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  padding: 11px 0;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  box-shadow: var(--shadow-subtle);
-  transition: all var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: transform 0.1s ease, background 0.15s ease, border-bottom 0.1s ease, box-shadow 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .arcade-play-btn:hover {
-  background: #243246;
-  border-color: var(--border-strong);
+  background: #3b82f6;
+  border-bottom-color: #2563eb;
   transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
 }
 
 .arcade-play-btn:active {
-  transform: translateY(1px);
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  background: #1d4ed8;
+  box-shadow: none;
 }
+
+/* Game-Specific Micro Accents */
+.arcade-game-card[data-game="snake"] .arcade-card-topic { color: #4ade80; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.25); }
+.arcade-game-card[data-game="snake"]:hover { border-color: rgba(74, 222, 128, 0.45); }
+.arcade-game-card[data-game="snake"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.4)); }
+
+.arcade-game-card[data-game="asteroids"] .arcade-card-topic { color: #f87171; background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.25); }
+.arcade-game-card[data-game="asteroids"]:hover { border-color: rgba(248, 113, 113, 0.45); }
+.arcade-game-card[data-game="asteroids"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(248, 113, 113, 0.4)); }
+
+.arcade-game-card[data-game="pizza"] .arcade-card-topic { color: #fbbf24; background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.25); }
+.arcade-game-card[data-game="pizza"]:hover { border-color: rgba(251, 191, 36, 0.45); }
+.arcade-game-card[data-game="pizza"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.4)); }
+
+.arcade-game-card[data-game="ninja"] .arcade-card-topic { color: #2dd4bf; background: rgba(45, 212, 191, 0.12); border: 1px solid rgba(45, 212, 191, 0.25); }
+.arcade-game-card[data-game="ninja"]:hover { border-color: rgba(45, 212, 191, 0.45); }
+.arcade-game-card[data-game="ninja"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(45, 212, 191, 0.4)); }
+
+.arcade-game-card[data-game="racer"] .arcade-card-topic { color: #38bdf8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.25); }
+.arcade-game-card[data-game="racer"]:hover { border-color: rgba(56, 189, 248, 0.45); }
+.arcade-game-card[data-game="racer"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.4)); }
+
+.arcade-game-card[data-game="frogger"] .arcade-card-topic { color: #a3e635; background: rgba(163, 230, 53, 0.12); border: 1px solid rgba(163, 230, 53, 0.25); }
+.arcade-game-card[data-game="frogger"]:hover { border-color: rgba(163, 230, 53, 0.45); }
+.arcade-game-card[data-game="frogger"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(163, 230, 53, 0.4)); }
+
+.arcade-game-card[data-game="defense"] .arcade-card-topic { color: #fb923c; background: rgba(251, 146, 60, 0.12); border: 1px solid rgba(251, 146, 60, 0.25); }
+.arcade-game-card[data-game="defense"]:hover { border-color: rgba(251, 146, 60, 0.45); }
+.arcade-game-card[data-game="defense"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(251, 146, 60, 0.4)); }
+
+.arcade-game-card[data-game="code_breaker"] .arcade-card-topic { color: #22d3ee; background: rgba(34, 211, 238, 0.12); border: 1px solid rgba(34, 211, 238, 0.25); }
+.arcade-game-card[data-game="code_breaker"]:hover { border-color: rgba(34, 211, 238, 0.45); }
+.arcade-game-card[data-game="code_breaker"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(34, 211, 238, 0.4)); }
+
+.arcade-game-card[data-game="jigsaw"] .arcade-card-topic { color: #34d399; background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.25); }
+.arcade-game-card[data-game="jigsaw"]:hover { border-color: rgba(52, 211, 153, 0.45); }
+.arcade-game-card[data-game="jigsaw"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(52, 211, 153, 0.4)); }
+
+.arcade-game-card[data-game="angle_cannon"] .arcade-card-topic { color: #f43f5e; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.25); }
+.arcade-game-card[data-game="angle_cannon"]:hover { border-color: rgba(244, 63, 94, 0.45); }
+.arcade-game-card[data-game="angle_cannon"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(244, 63, 94, 0.4)); }
+
+.arcade-game-card[data-game="rover_rescue"] .arcade-card-topic { color: #f59e0b; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); }
+.arcade-game-card[data-game="rover_rescue"]:hover { border-color: rgba(245, 158, 11, 0.45); }
+.arcade-game-card[data-game="rover_rescue"]:hover .arcade-card-icon { filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.4)); }
 
 /* ==========================================================================
    ACTIVE ARCADE GAME ARENA (Canvas & Overlays)

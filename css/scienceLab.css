@@ -197,23 +197,37 @@
 }
 
 .science-enter-btn {
-  background: var(--bg-surface-elevated);
-  border: 1px solid #38bdf8;
+  background: #2563eb;
+  border: none;
+  border-bottom: 4px solid #1d4ed8;
   color: #fff;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.7rem;
-  border-radius: 12px;
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   text-align: center;
   transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.science-world-card:hover .science-enter-btn {
-  background: #0284c7;
-  border-color: #38bdf8;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+.science-world-card:hover .science-enter-btn,
+.science-enter-btn:hover {
+  background: #3b82f6;
+  border-bottom-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+}
+
+.science-enter-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  background: #1d4ed8;
 }
 
 /* ==========================================================================
