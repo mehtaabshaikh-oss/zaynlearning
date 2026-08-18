@@ -100,6 +100,13 @@
         <button id="quick-logic-btn" class="action-pill-btn" data-view="view-logic-club" title="The 1% Club Logic Vault">
           <span>🧠 1% CLUB</span>
         </button>
+
+        <!-- 5. Nova AI Co-Pilot (Master 8662 / Admin 6250) -->
+        <button id="quick-nova-btn" class="action-pill-btn nova-pill-btn" title="Ask Nova - AI Science & Math Co-Pilot" onclick="window.aiChatBuddy.toggleChat()">
+          <span class="nova-pill-icon">🤖</span>
+          <span>NOVA</span>
+          <span class="ai-orb-badge"></span>
+        </button>
       </div>
     </header>
 
@@ -718,6 +725,10 @@
       <button class="mobile-nav-item" data-view="view-logic-club" id="mob-nav-logic">
         <span class="mob-nav-icon">🧠</span>
         <span class="mob-nav-label">1% Club</span>
+      </button>
+      <button class="mobile-nav-item" id="mob-nav-nova" onclick="window.aiChatBuddy.toggleChat()">
+        <span class="mob-nav-icon">🤖</span>
+        <span class="mob-nav-label">Nova</span>
       </button>
     </nav>
 

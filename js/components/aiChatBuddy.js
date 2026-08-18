@@ -21,11 +21,19 @@ class AIChatBuddy {
 
   updateVisibility() {
     const trigger = document.getElementById('ai-floating-trigger');
+    const topBtn = document.getElementById('quick-nova-btn');
+    const mobBtn = document.getElementById('mob-nav-nova');
     const modal = document.getElementById('ai-chat-modal');
     const hasAccess = window.cloudAuth && (window.cloudAuth.isMasterZayn() || window.cloudAuth.isParentAdmin());
 
     if (trigger) {
       trigger.style.display = hasAccess ? 'flex' : 'none';
+    }
+    if (topBtn) {
+      topBtn.style.display = hasAccess ? 'inline-flex' : 'none';
+    }
+    if (mobBtn) {
+      mobBtn.style.display = hasAccess ? 'flex' : 'none';
     }
     if (!hasAccess && modal) {
       modal.classList.add('hidden');
