@@ -30,6 +30,10 @@
   <link rel="stylesheet" href="css/cosmicGridlock.css">
   <link rel="stylesheet" href="css/wordOdyssey.css">
   <link rel="stylesheet" href="css/multiplier2048.css">
+  <link rel="stylesheet" href="css/elementFusion.css">
+  <link rel="stylesheet" href="css/geoExplorer.css">
+  <link rel="stylesheet" href="css/logicGate.css">
+  <link rel="stylesheet" href="css/calcudoku.css">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -251,6 +255,16 @@
             <p class="arcade-card-desc">Swipe and merge matching times-table tiles to build up to the legendary 1024× Multiplier Tile!</p>
             <div class="arcade-card-stats" id="stats-card-m2048">Best: 0 • Max: 0</div>
             <button class="arcade-play-btn" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color:#0f172a; font-weight:800;">PLAY 2048 ➔</button>
+          </div>
+
+          <!-- Game: 🔢 Calcudoku (Math Cross-Grid) -->
+          <div class="arcade-game-card" data-game="calcudoku" data-cat="math logic quick" style="border: 2px solid #f59e0b; background: linear-gradient(145deg, #78350f, #0f172a);">
+            <div class="arcade-card-icon">🔢🧩</div>
+            <div class="arcade-card-title">Calcudoku Cross-Grid</div>
+            <div class="arcade-card-topic">ARITHMETIC CAGES & LATIN SQUARE</div>
+            <p class="arcade-card-desc">KenKen-style math puzzle! Fill grids without repeating digits while satisfying arithmetic cages.</p>
+            <div class="arcade-card-stats" id="stats-card-calcu">3×3 to 5×5 • Math Cages</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #d97706, #f59e0b); color:#0f172a; font-weight:800;">PLAY CALCUDOKU ➔</button>
           </div>
 
           <!-- Game 1: Snake (Math + Quick) -->
@@ -1096,6 +1110,259 @@
           </div>
         </div>
       </section>
+
+      <!-- 17. 🧪 ELEMENT FUSION LAB (SCIENCE CRAFT) VIEW -->
+      <section id="view-element-fusion" class="view-panel hidden">
+        <div class="fusion-container">
+          <!-- Top HUD Bar -->
+          <div class="fusion-hud-bar">
+            <button class="close-arena-btn" id="exit-fusion-btn">✕ Exit</button>
+            <div class="fusion-title-wrap">
+              <span class="fusion-title-icon">🧪</span>
+              <span class="fusion-title-text">Element Fusion Lab</span>
+            </div>
+            <div class="fusion-progress-container">
+              <div class="fusion-progress-track">
+                <div class="fusion-progress-fill" id="fusion-progress-fill"></div>
+              </div>
+              <span class="fusion-progress-count" id="fusion-progress-count">4 / 126</span>
+            </div>
+            <div class="fusion-hud-actions">
+              <button class="fusion-hud-btn hint" id="fusion-hint-btn">💡 Hint</button>
+              <button class="fusion-hud-btn" id="fusion-clear-btn">🧹 Clear</button>
+            </div>
+          </div>
+
+          <!-- Main Layout: Left Library Sidebar + Right Workbench -->
+          <div class="fusion-stage-layout">
+            <!-- Left Library Panel -->
+            <div class="fusion-library-panel">
+              <div class="fusion-search-box">
+                <input type="text" class="fusion-search-input" id="fusion-search-input" placeholder="🔍 Search elements...">
+              </div>
+              <div class="fusion-category-tabs" id="fusion-category-tabs">
+                <!-- Injected dynamically -->
+              </div>
+              <div class="fusion-library-grid" id="fusion-library-grid">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Right Interactive Workbench -->
+            <div class="fusion-workbench-area" id="fusion-workbench-area">
+              <!-- Elements placed dynamically -->
+            </div>
+          </div>
+
+          <!-- Discovery Celebration Modal -->
+          <div class="m2048-modal-overlay hidden" id="fusion-discovery-modal">
+            <div class="m2048-modal-card fusion-discovery-card" style="border-color: #38bdf8;">
+              <div class="fusion-discovery-header">🎉 NEW ELEMENT DISCOVERED! 🎉</div>
+              <div class="fusion-discovery-emoji" id="fusion-modal-emoji">♨️</div>
+              <div class="fusion-discovery-title" id="fusion-modal-title">STEAM</div>
+              <div class="fusion-discovery-desc" id="fusion-modal-desc">Water in gaseous vapor state.</div>
+              <div class="fusion-discovery-fact" id="fusion-modal-fact">💡 Fact: Steam engines powered the Industrial Revolution!</div>
+              <div class="m2048-modal-aura">+25 AURA • +50 XP • +1 💎</div>
+              <button class="m2048-modal-btn" id="fusion-modal-close-btn" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color:#0f172a; font-weight:800; margin-top:12px;">AWESOME! ➔</button>
+            </div>
+          </div>
+
+          <!-- Hint Modal -->
+          <div class="m2048-modal-overlay hidden" id="fusion-hint-modal">
+            <div class="m2048-modal-card" style="border-color: #f59e0b;">
+              <div id="fusion-hint-content"></div>
+              <button class="m2048-modal-btn" id="fusion-hint-close-btn" style="background: #1e293b; color:#cbd5e1; border:1px solid #475569; margin-top:12px;">CLOSE</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18. 🗺️ GLOBAL GEO-EXPLORER (WORLDLE & FLAGLE) VIEW -->
+      <section id="view-geo-explorer" class="view-panel hidden">
+        <div class="geo-container">
+          <!-- Top HUD Bar -->
+          <div class="geo-hud-bar">
+            <button class="close-arena-btn" id="exit-geo-btn">✕ Exit</button>
+            <div class="geo-mode-toggle">
+              <button class="geo-mode-btn active" id="geo-mode-worldle-btn">🗺️ Worldle (Silhouette)</button>
+              <button class="geo-mode-btn" id="geo-mode-flagle-btn">🚩 Flagle (Mosaic)</button>
+            </div>
+            <div class="geo-stat-pill" id="geo-attempts-counter">Attempt 0 / 6</div>
+            <button class="citadel-hud-btn" id="geo-restart-btn">🔄 New Country</button>
+          </div>
+
+          <!-- Stage: Country SVG Silhouette or Flag Mosaic -->
+          <div class="geo-stage-wrap">
+            <svg class="geo-silhouette-svg" id="geo-silhouette-svg" viewBox="0 0 100 100"></svg>
+            <div class="geo-flag-mosaic hidden" id="geo-flag-mosaic"></div>
+          </div>
+
+          <!-- Autocomplete Search Input -->
+          <div class="geo-input-wrap">
+            <input type="text" class="geo-search-input" id="geo-country-search" placeholder="Type a country name (e.g. France, Japan, Brazil)..." autocomplete="off">
+            <div class="geo-search-dropdown hidden" id="geo-search-dropdown"></div>
+          </div>
+
+          <!-- 6 Guesses History Rows -->
+          <div class="geo-guesses-list" id="geo-guesses-list">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Victory / Defeat Modal -->
+          <div class="m2048-modal-overlay hidden" id="geo-result-modal">
+            <div class="m2048-modal-card" style="border-color: #06b6d4;">
+              <div class="m2048-modal-icon" id="geo-modal-icon" style="font-size: 48px;">🎉🌍✨</div>
+              <h2 class="m2048-modal-title" id="geo-modal-title">TERRITORY DISCOVERED!</h2>
+              <div class="m2048-modal-score" id="geo-modal-country" style="font-size: 22px; color:#fbbf24;">🇺🇸 United States</div>
+              <div class="geo-modal-stats">
+                <div id="geo-modal-capital">🏛️ Capital: Washington, D.C.</div>
+                <div id="geo-modal-continent">🌐 Continent: North America</div>
+                <div id="geo-modal-pop">👥 Population: 333 Million</div>
+              </div>
+              <div class="geo-modal-fact" id="geo-modal-fact">💡 Fact: The Grand Canyon is one of the Seven Natural Wonders!</div>
+              <button class="m2048-modal-btn" id="geo-modal-next-btn" style="background: linear-gradient(135deg, #0891b2, #06b6d4); color:#fff; font-weight:800;">NEXT EXPEDITION ➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 19. ⚡ CYBER LOGIC GATE RUNNER (BOOLEAN CIRCUITS) VIEW -->
+      <section id="view-logic-gate" class="view-panel hidden">
+        <div class="logic-container">
+          <!-- Top HUD Bar -->
+          <div class="logic-hud-bar">
+            <button class="close-arena-btn" id="exit-logic-btn">✕ Exit</button>
+            <div class="logic-title-group">
+              <span class="logic-badge" id="logic-level-badge">LEVEL 1 • TIER 1</span>
+              <span class="logic-heading" id="logic-level-title">Power Grid Boot</span>
+            </div>
+            <div class="fusion-hud-actions">
+              <button class="fusion-hud-btn" id="logic-truth-table-btn">📖 Truth Table</button>
+              <button class="fusion-hud-btn" id="logic-level-select-btn">🗺️ Levels</button>
+              <button class="citadel-hud-btn" id="logic-restart-btn">🔄 Reset</button>
+            </div>
+          </div>
+
+          <!-- Description Hint Bar -->
+          <div class="logic-desc-bar" id="logic-level-desc">
+            Flip the switch to activate the AND gate and power the Robot Eye.
+          </div>
+
+          <!-- Interactive Circuit Board -->
+          <div class="logic-circuit-board" id="logic-circuit-board">
+            <!-- Injected dynamically -->
+          </div>
+
+          <!-- Victory Modal -->
+          <div class="m2048-modal-overlay hidden" id="logic-win-modal">
+            <div class="m2048-modal-card" style="border-color: #10b981;">
+              <div class="m2048-modal-icon" style="font-size: 48px;">⚡🤖✨</div>
+              <h2 class="m2048-modal-title" style="color: #34d399;">CIRCUIT ACTIVATED!</h2>
+              <div class="m2048-modal-score">All target output terminals powered!</div>
+              <div class="m2048-modal-aura">+20 AURA • +40 XP</div>
+              <button class="m2048-modal-btn" id="logic-next-level-btn" style="background: linear-gradient(135deg, #059669, #10b981); color:#fff; margin-top:12px;">NEXT CIRCUIT ➔</button>
+            </div>
+          </div>
+
+          <!-- Truth Table Helper Modal -->
+          <div class="m2048-modal-overlay hidden" id="logic-truth-modal">
+            <div class="m2048-modal-card" style="max-width: 680px; border-color: #38bdf8;">
+              <h3 style="color:#38bdf8; margin-bottom:12px;">⚡ BOOLEAN LOGIC GATES TRUTH TABLE</h3>
+              <div class="truth-table-grid">
+                <div class="truth-table-card">
+                  <div class="truth-table-title">AND Gate (⩓)</div>
+                  <table class="truth-table-raw"><tr><th>A</th><th>B</th><th>OUT</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td><strong>1</strong></td></tr></table>
+                </div>
+                <div class="truth-table-card">
+                  <div class="truth-table-title">OR Gate (⩔)</div>
+                  <table class="truth-table-raw"><tr><th>A</th><th>B</th><th>OUT</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td><strong>1</strong></td></tr><tr><td>1</td><td>0</td><td><strong>1</strong></td></tr><tr><td>1</td><td>1</td><td><strong>1</strong></td></tr></table>
+                </div>
+                <div class="truth-table-card">
+                  <div class="truth-table-title">NOT Gate (¬)</div>
+                  <table class="truth-table-raw"><tr><th>A</th><th>OUT</th></tr><tr><td>0</td><td><strong>1</strong></td></tr><tr><td>1</td><td>0</td></tr></table>
+                </div>
+                <div class="truth-table-card">
+                  <div class="truth-table-title">XOR Gate (⊕)</div>
+                  <table class="truth-table-raw"><tr><th>A</th><th>B</th><th>OUT</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td><strong>1</strong></td></tr><tr><td>1</td><td>0</td><td><strong>1</strong></td></tr><tr><td>1</td><td>1</td><td>0</td></tr></table>
+                </div>
+                <div class="truth-table-card">
+                  <div class="truth-table-title">NAND Gate (⊼)</div>
+                  <table class="truth-table-raw"><tr><th>A</th><th>B</th><th>OUT</th></tr><tr><td>0</td><td>0</td><td><strong>1</strong></td></tr><tr><td>0</td><td>1</td><td><strong>1</strong></td></tr><tr><td>1</td><td>0</td><td><strong>1</strong></td></tr><tr><td>1</td><td>1</td><td>0</td></tr></table>
+                </div>
+                <div class="truth-table-card">
+                  <div class="truth-table-title">NOR Gate (⊽)</div>
+                  <table class="truth-table-raw"><tr><th>A</th><th>B</th><th>OUT</th></tr><tr><td>0</td><td>0</td><td><strong>1</strong></td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></table>
+                </div>
+              </div>
+              <button class="m2048-modal-btn" id="logic-truth-close-btn" style="background:#1e293b; color:#cbd5e1; border:1px solid #475569; margin-top:14px;">CLOSE TABLE</button>
+            </div>
+          </div>
+
+          <!-- Level Select Modal -->
+          <div class="m2048-modal-overlay hidden" id="logic-level-modal">
+            <div class="m2048-modal-card" style="max-width: 650px; border-color: #10b981;">
+              <h3 style="color:#34d399; margin-bottom:12px;">SELECT CIRCUIT MISSION</h3>
+              <div class="logic-level-grid" id="logic-level-grid"></div>
+              <button class="m2048-modal-btn" id="logic-level-close-btn" style="background:#1e293b; color:#cbd5e1; border:1px solid #475569; margin-top:14px;">CANCEL</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 20. 🔢 CALCUDOKU CROSS-GRID (MATH CAGES) VIEW -->
+      <section id="view-calcudoku" class="view-panel hidden">
+        <div class="calcu-container">
+          <!-- Top HUD Bar -->
+          <div class="calcu-hud-bar">
+            <button class="close-arena-btn" id="exit-calcu-btn">✕ Exit</button>
+            <div class="calcu-title-wrap">
+              <span class="calcu-tier-badge" id="calcu-puzzle-tier">3×3 Beginner</span>
+              <span class="calcu-puzzle-name" id="calcu-puzzle-title">Mini Grid Alpha</span>
+            </div>
+            <div class="fusion-hud-actions">
+              <button class="fusion-hud-btn" id="calcu-level-btn">🗺️ Puzzles</button>
+              <button class="citadel-hud-btn" id="calcu-restart-btn">🔄 Reset</button>
+            </div>
+          </div>
+
+          <!-- Grid Stage Wrap -->
+          <div class="calcu-stage-wrap">
+            <div class="calcu-grid-container" id="calcu-grid-container">
+              <!-- Cells injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Controls & Keypad Bar -->
+          <div class="calcu-controls-bar">
+            <button class="calcu-ctrl-btn" id="calcu-pencil-btn">✏️ Pencil</button>
+            <div class="calcu-keypad" id="calcu-keypad">
+              <!-- Number buttons injected dynamically based on puzzle size -->
+            </div>
+            <button class="calcu-ctrl-btn" id="calcu-erase-btn">⌫ Erase</button>
+            <button class="calcu-ctrl-btn" id="calcu-hint-btn" style="background: rgba(245, 158, 11, 0.2); border-color:#f59e0b; color:#fbbf24;">💡 Hint</button>
+          </div>
+
+          <!-- Victory Modal -->
+          <div class="m2048-modal-overlay hidden" id="calcu-win-modal">
+            <div class="m2048-modal-card" style="border-color: #f59e0b;">
+              <div class="m2048-modal-icon" style="font-size: 48px;">🔢✨🏆</div>
+              <h2 class="m2048-modal-title" style="color: #fbbf24;">CALCUDOKU SOLVED!</h2>
+              <div class="m2048-modal-score">All Latin square & cage arithmetic constraints satisfied!</div>
+              <div class="m2048-modal-aura">+25 AURA • +50 XP • +1 💎</div>
+              <button class="m2048-modal-btn" id="calcu-next-btn" style="background: linear-gradient(135deg, #d97706, #f59e0b); color:#0f172a; font-weight:800; margin-top:12px;">NEXT PUZZLE ➔</button>
+            </div>
+          </div>
+
+          <!-- Level Select Modal -->
+          <div class="m2048-modal-overlay hidden" id="calcu-level-modal">
+            <div class="m2048-modal-card" style="max-width: 580px; border-color: #f59e0b;">
+              <h3 style="color:#fbbf24; margin-bottom:12px;">SELECT CALCUDOKU PUZZLE</h3>
+              <div class="logic-level-grid" id="calcu-level-grid"></div>
+              <button class="m2048-modal-btn" id="calcu-level-close-btn" style="background:#1e293b; color:#cbd5e1; border:1px solid #475569; margin-top:14px;">CANCEL</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile Screens <= 768px) -->
@@ -1397,8 +1664,16 @@
   <script src="js/components/supernova24Engine.js"></script>
   <script src="js/components/codebreakerEngine.js"></script>
   <script src="js/components/cosmicGridlockEngine.js"></script>
+  <script src="js/data/elementFusionData.js"></script>
+  <script src="js/data/geoExplorerData.js"></script>
+  <script src="js/data/logicGateData.js"></script>
+  <script src="js/data/calcudokuData.js"></script>
   <script src="js/components/wordOdysseyEngine.js"></script>
   <script src="js/components/multiplier2048Engine.js"></script>
+  <script src="js/components/elementFusionEngine.js"></script>
+  <script src="js/components/geoExplorerEngine.js"></script>
+  <script src="js/components/logicGateEngine.js"></script>
+  <script src="js/components/calcudokuEngine.js"></script>
   <script src="js/utils/helpers.js"></script>
   <script src="js/app.js"></script>
 </body>

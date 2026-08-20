@@ -52,10 +52,11 @@ class WordOdysseyEngine {
     // Category Selector
     const catBtns = document.querySelectorAll('.wo-cat-pill');
     catBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
         catBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         this.currentCategory = btn.dataset.cat || 'countries';
+        if (e.currentTarget) e.currentTarget.blur();
         this.startNewGame();
       });
     });
@@ -63,17 +64,24 @@ class WordOdysseyEngine {
     // New Game / Next Word button
     const newBtn = document.getElementById('wo-new-btn');
     if (newBtn) {
-      newBtn.addEventListener('click', () => this.startNewGame());
+      newBtn.addEventListener('click', (e) => {
+        if (e.currentTarget) e.currentTarget.blur();
+        this.startNewGame();
+      });
     }
 
     // Clue button
     if (this.clueBtn) {
-      this.clueBtn.addEventListener('click', () => this.revealClue());
+      this.clueBtn.addEventListener('click', (e) => {
+        if (e.currentTarget) e.currentTarget.blur();
+        this.revealClue();
+      });
     }
 
     // Keyboard Toggle button
     if (this.kbToggleBtn) {
-      this.kbToggleBtn.addEventListener('click', () => {
+      this.kbToggleBtn.addEventListener('click', (e) => {
+        if (e.currentTarget) e.currentTarget.blur();
         this.showVirtualKeyboard = !this.showVirtualKeyboard;
         if (this.keyboardEl) {
           this.keyboardEl.style.display = this.showVirtualKeyboard ? 'flex' : 'none';
@@ -113,7 +121,8 @@ class WordOdysseyEngine {
     // Win Modal Next Button
     const winNextBtn = document.getElementById('wo-win-next-btn');
     if (winNextBtn) {
-      winNextBtn.addEventListener('click', () => {
+      winNextBtn.addEventListener('click', (e) => {
+        if (e.currentTarget) e.currentTarget.blur();
         if (this.winModalEl) this.winModalEl.classList.add('hidden');
         this.startNewGame();
       });
@@ -125,8 +134,10 @@ class WordOdysseyEngine {
         // If target is not the native input itself, handle keys
         if (e.target !== this.nativeInputEl) {
           if (e.key === 'Enter') {
+            e.preventDefault();
             this.handleKeyInput('ENTER');
           } else if (e.key === 'Backspace') {
+            e.preventDefault();
             this.handleKeyInput('BACKSPACE');
           } else if (/^[a-zA-Z]$/.test(e.key)) {
             this.handleKeyInput(e.key.toUpperCase());

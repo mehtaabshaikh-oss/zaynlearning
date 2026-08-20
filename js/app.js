@@ -31,6 +31,10 @@ class App {
     window.cosmicGridlock = new CosmicGridlockEngine();
     window.wordOdyssey = new WordOdysseyEngine();
     window.multiplier2048 = new Multiplier2048Engine();
+    window.elementFusion = new ElementFusionEngine();
+    window.geoExplorer = new GeoExplorerEngine();
+    window.logicGate = new LogicGateEngine();
+    window.calcudoku = new CalcudokuEngine();
 
     this.showView('view-arcade-hub');
     this.updateTopBarHUD();
@@ -64,7 +68,20 @@ class App {
     topNavBtns.forEach(btn => {
       const btnTarget = btn.dataset.view;
       const isMatch = (btnTarget === viewId) || 
-                      (btnTarget === 'view-arcade-hub' && (viewId === 'view-arcade-arena' || viewId === 'view-phonk-arena' || viewId === 'view-odyssey-hub' || viewId === 'view-supernova-24' || viewId === 'view-codebreaker' || viewId === 'view-cosmic-gridlock' || viewId === 'view-word-odyssey' || viewId === 'view-multiplier-2048'));
+                      (btnTarget === 'view-arcade-hub' && (
+                        viewId === 'view-arcade-arena' || 
+                        viewId === 'view-phonk-arena' || 
+                        viewId === 'view-odyssey-hub' || 
+                        viewId === 'view-supernova-24' || 
+                        viewId === 'view-codebreaker' || 
+                        viewId === 'view-cosmic-gridlock' || 
+                        viewId === 'view-word-odyssey' || 
+                        viewId === 'view-multiplier-2048' ||
+                        viewId === 'view-element-fusion' ||
+                        viewId === 'view-geo-explorer' ||
+                        viewId === 'view-logic-gate' ||
+                        viewId === 'view-calcudoku'
+                      ));
       btn.classList.toggle('active', isMatch);
     });
 

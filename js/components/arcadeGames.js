@@ -213,6 +213,26 @@ class ArcadeHub {
       if (window.multiplier2048) window.multiplier2048.startNewGame();
       return;
     }
+    if (gameType === 'element_fusion') {
+      if (window.app) window.app.showView('view-element-fusion');
+      if (window.elementFusion) window.elementFusion.startNewGame();
+      return;
+    }
+    if (gameType === 'geo_explorer') {
+      if (window.app) window.app.showView('view-geo-explorer');
+      if (window.geoExplorer) window.geoExplorer.startNewGame();
+      return;
+    }
+    if (gameType === 'logic_gate') {
+      if (window.app) window.app.showView('view-logic-gate');
+      if (window.logicGate) window.logicGate.startNewGame();
+      return;
+    }
+    if (gameType === 'calcudoku') {
+      if (window.app) window.app.showView('view-calcudoku');
+      if (window.calcudoku) window.calcudoku.startNewGame();
+      return;
+    }
 
     this.currentGameType = gameType;
     if (window.app) window.app.showView('view-arcade-arena');

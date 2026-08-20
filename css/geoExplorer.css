@@ -1,0 +1,314 @@
+/**
+ * Global Geo-Explorer Stylesheet
+ * Cartography Map HUD, Glowing Silhouette Viewer, Flag Mosaic Grid, and Compass Proximity Bars
+ */
+
+.geo-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px;
+  box-sizing: border-box;
+  background: linear-gradient(145deg, #090d16 0%, #0c1829 50%, #020617 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
+  overflow-y: auto;
+}
+
+/* --- HUD BAR --- */
+.geo-hud-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 12px;
+}
+
+.geo-mode-toggle {
+  display: flex;
+  background: rgba(30, 41, 59, 0.6);
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.geo-mode-btn {
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.geo-mode-btn.active {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.geo-stat-pill {
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+/* --- STAGE: SILHOUETTE OR FLAG MOSAIC --- */
+.geo-stage-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: radial-gradient(circle at center, rgba(14, 116, 144, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  margin-bottom: 12px;
+  padding: 16px;
+  position: relative;
+}
+
+.geo-silhouette-svg {
+  width: 160px;
+  height: 160px;
+  viewBox: 0 0 100 100;
+  transition: transform 0.3s ease;
+}
+
+.geo-flag-mosaic {
+  position: relative;
+  width: 200px;
+  height: 130px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.geo-flag-backdrop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  line-height: 1;
+  user-select: none;
+}
+
+.geo-mosaic-tiles-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+  background: rgba(15, 23, 42, 0.2);
+}
+
+.geo-mosaic-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #94a3b8;
+  transition: all 0.3s;
+}
+
+.geo-mosaic-tile.covered {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.geo-mosaic-tile.revealed {
+  background: transparent;
+}
+
+/* --- SEARCH & INPUT AREA --- */
+.geo-input-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.geo-search-input {
+  width: 100%;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 2px solid rgba(56, 189, 248, 0.3);
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.geo-search-input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+}
+
+.geo-search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 50;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+}
+
+.geo-search-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s;
+}
+
+.geo-search-option:hover {
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.geo-opt-flag {
+  font-size: 20px;
+}
+
+.geo-opt-name {
+  font-weight: 700;
+  color: #f1f5f9;
+  flex: 1;
+}
+
+.geo-opt-cont {
+  font-size: 11px;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.8);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.geo-dropdown-empty {
+  padding: 14px;
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* --- GUESSES LIST --- */
+.geo-guesses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.geo-guess-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.geo-guess-row.correct {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+}
+
+.geo-guess-row.empty {
+  opacity: 0.4;
+  justify-content: center;
+  border-style: dashed;
+}
+
+.geo-guess-placeholder {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.geo-guess-country {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.geo-guess-dist {
+  min-width: 80px;
+  color: #fbbf24;
+}
+
+.geo-guess-bearing {
+  font-size: 16px;
+  min-width: 50px;
+}
+
+.geo-guess-prox-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.geo-guess-prox-bar {
+  height: 8px;
+  background: linear-gradient(90deg, #ef4444, #f59e0b 50%, #10b981 100%);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.geo-guess-prox-text {
+  font-size: 11px;
+  color: #94a3b8;
+  min-width: 32px;
+}
+
+/* --- RESULT MODAL --- */
+.geo-modal-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.6);
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.geo-modal-fact {
+  background: rgba(14, 116, 144, 0.2);
+  border-left: 4px solid #06b6d4;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #a5f3fc;
+  margin-bottom: 16px;
+  text-align: left;
+  line-height: 1.4;
+}

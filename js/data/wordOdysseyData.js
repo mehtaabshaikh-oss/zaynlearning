@@ -68,7 +68,8 @@ const WORD_ODYSSEY_CATEGORIES = {
       { word: "BOGOTA", len: 6, clue: "High-altitude Andean capital of Colombia.", fact: "Bogota sits over 8,600 feet high in the Andes Mountains with cool mountain air!" },
       { word: "PRAGUE", len: 6, clue: "City of a Hundred Spires, capital of the Czech Republic.", fact: "Prague Castle is the largest ancient castle complex in the world!" },
       { word: "LONDON", len: 6, clue: "Capital of the UK with Big Ben and the Tower Bridge.", fact: "London has over 170 museums and Big Ben's clock tower has ticked since 1859!" },
-      { word: "CANBER", len: 6, clue: "Planned capital city of Australia surrounded by bushland.", fact: "Canberra was specially designed around a beautiful artificial lake named Lake Burley Griffin!" }
+      { word: "WARSAW", len: 6, clue: "Historic capital of Poland on the Vistula River.", fact: "Warsaw was painstakingly rebuilt after WWII and is famous for its colorful market square!" },
+      { word: "TAIPEI", len: 6, clue: "Bustling capital of Taiwan with the famous Taipei 101 skyscraper.", fact: "Taipei 101 features a giant 660-ton pendulum tuned damper ball that protects it from earthquakes!" }
     ]
   },
 
@@ -102,7 +103,7 @@ const WORD_ODYSSEY_CATEGORIES = {
       { word: "ZENITH", len: 6, clue: "The imaginary point directly overhead in the celestial sphere.", fact: "Telescopes point straight up to the zenith to look through the thinnest layer of atmosphere!" },
       { word: "VORTEX", len: 6, clue: "A whirling mass of space gas or planetary storm.", fact: "Jupiter's Great Red Spot is a giant vortex storm that has raged for over 300 years!" },
       { word: "SPHERE", len: 6, clue: "The round shape assumed by planets under gravity.", fact: "Gravity pulls large planets into round spheres equally in all directions!" },
-      { word: "GRAVITY", len: 7, clue: "The universal force pulling objects together in space.", fact: "Gravity keeps Earth orbiting the Sun and keeps our feet planted firmly on the ground!" }
+      { word: "VACUUM", len: 6, clue: "A space entirely devoid of matter like deep outer space.", fact: "Outer space is a near-perfect vacuum where sound cannot travel at all!" }
     ]
   },
 
@@ -126,7 +127,8 @@ const WORD_ODYSSEY_CATEGORIES = {
       { word: "ZEBRA", len: 5, clue: "African herbivore known for dazzling black-and-white stripes.", fact: "Zebra stripes help confuse biting insects and act as a natural optical cooling system!" },
       { word: "SLOTH", len: 5, clue: "Tree-dwelling mammal famous for super slow motion.", fact: "Sloths are so slow that harmless green algae actually grows on their fur to camouflage them!" },
       { word: "CAMEL", len: 5, clue: "Desert traveler with water-conserving humps.", fact: "A camel's hump stores nutrient-rich fat, allowing it to go weeks without food!" },
-      { word: "DOLPHI", len: 6, clue: "Intelligent marine mammal that communicates using clicks and whistles.", fact: "Dolphins sleep with one eye open and one half of their brain awake so they can breathe!" },
+      { word: "TOUCAN", len: 6, clue: "Tropical bird with a colorful, oversized lightweight bill.", fact: "A toucan's massive bill acts like a natural radiator to regulate its body temperature!" },
+      { word: "TURTLE", len: 6, clue: "Ancient reptile with a protective shell that navigates ocean currents.", fact: "Sea turtles have built-in magnetic compasses that guide them across thousands of miles of ocean!" },
       { word: "MONKEY", len: 6, clue: "Clever primate with nimble hands and expressive faces.", fact: "Some monkeys use prehensile tails like a fifth hand to swing through jungle canopies!" },
       { word: "FALCON", len: 6, clue: "Fastest animal on Earth during its high-speed hunting dives.", fact: "The peregrine falcon can dive through the sky at speeds over 240 miles per hour!" },
       { word: "PARROT", len: 6, clue: "Colorful bird capable of mimicking human speech and sounds.", fact: "Some African grey parrots have been proven to understand math concepts and word meanings!" },
@@ -162,7 +164,8 @@ const WORD_ODYSSEY_CATEGORIES = {
       { word: "PLANET", len: 6, clue: "A celestial body orbiting a star that has cleared its orbital path.", fact: "Astronomers have discovered over 5,000 exoplanets orbiting distant stars beyond our solar system!" },
       { word: "MAGNET", len: 6, clue: "An object that produces a magnetic field attracting iron and steel.", fact: "Earth itself is a giant magnet with a liquid iron-nickel core generating a protective magnetic shield!" },
       { word: "ENERGY", len: 6, clue: "The capacity to do work, found in kinetic, potential, and thermal forms.", fact: "The law of conservation of energy states that energy cannot be created or destroyed, only transformed!" },
-      { word: "CIRCUIT", len: 7, clue: "A closed loop through which an electric current flows.", fact: "Microchips in modern smartphones contain billions of microscopic electronic circuits!" },
+      { word: "PROTON", len: 6, clue: "Positively charged subatomic particle inside the nucleus.", fact: "The number of protons in an atom determines which chemical element it is!" },
+      { word: "NEURON", len: 6, clue: "Specialized nerve cell that transmits electrical signals through the brain.", fact: "The human brain contains roughly 86 billion interconnected neurons!" },
       { word: "OXYGEN", len: 6, clue: "Essential gas element that animals breathe and plants produce.", fact: "Ocean phytoplankton produce over 50% of the oxygen in Earth's atmosphere!" },
       { word: "CARBON", len: 6, clue: "The versatile chemical element that forms the basis of all organic life.", fact: "Diamonds and pencil graphite are both made of 100% pure carbon atoms arranged differently!" },
       { word: "MOTION", len: 6, clue: "The change in position of an object over time.", fact: "Galileo proved that in a vacuum with no air resistance, a feather and a bowling ball fall at the exact same rate!" }
