@@ -157,6 +157,10 @@ class SoundEngine {
     });
   }
 
+  playFanfare() {
+    this.playLevelUp();
+  }
+
   playChest() {
     if (!this.ctx || this.currentMode === 'mute') return;
     this.resume();

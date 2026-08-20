@@ -26,6 +26,11 @@ class App {
     window.classroomEngine = new ClassroomEngine();
     window.globalOdysseyEngine = new GlobalOdysseyEngine();
     window.aiChatBuddy = new AIChatBuddy();
+    window.supernova24 = new Supernova24Engine();
+    window.codebreaker = new CodebreakerEngine();
+    window.cosmicGridlock = new CosmicGridlockEngine();
+    window.wordOdyssey = new WordOdysseyEngine();
+    window.multiplier2048 = new Multiplier2048Engine();
 
     this.showView('view-arcade-hub');
     this.updateTopBarHUD();
@@ -59,7 +64,7 @@ class App {
     topNavBtns.forEach(btn => {
       const btnTarget = btn.dataset.view;
       const isMatch = (btnTarget === viewId) || 
-                      (btnTarget === 'view-arcade-hub' && (viewId === 'view-arcade-arena' || viewId === 'view-phonk-arena' || viewId === 'view-odyssey-hub'));
+                      (btnTarget === 'view-arcade-hub' && (viewId === 'view-arcade-arena' || viewId === 'view-phonk-arena' || viewId === 'view-odyssey-hub' || viewId === 'view-supernova-24' || viewId === 'view-codebreaker' || viewId === 'view-cosmic-gridlock' || viewId === 'view-word-odyssey' || viewId === 'view-multiplier-2048'));
       btn.classList.toggle('active', isMatch);
     });
 
@@ -75,6 +80,12 @@ class App {
     }
     if (viewId !== 'view-logic-club' && window.logicClub) {
       window.logicClub.clearTimer();
+    }
+    if (viewId !== 'view-supernova-24' && window.supernova24) {
+      window.supernova24.stopTimer();
+    }
+    if (viewId !== 'view-codebreaker' && window.codebreaker) {
+      window.codebreaker.stopTimer();
     }
 
     if (viewId === 'view-map' && window.mapRenderer) {

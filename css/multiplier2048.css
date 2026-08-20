@@ -1,0 +1,419 @@
+/* ==========================================================================
+   TIMES TABLE 2048: MULTIPLIER MATRIX STYLESHEET
+   Hardware-Accelerated 60/120fps GPU Transitions (translate3d), ProMotion Easing,
+   Persistent DOM Tile Container, Neon Tier Gradients & Font Auto-Scaling
+   ========================================================================== */
+
+.m2048-arena-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+
+/* Top HUD Bar */
+.m2048-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.m2048-hud-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m2048-stat-pill {
+  background: #111a2e;
+  border: 1px solid #3b82f6;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #93c5fd;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.m2048-stat-pill.best {
+  border-color: #f59e0b;
+  color: #fcd34d;
+}
+
+/* Multiplier Selector Pills Bar */
+.m2048-mult-bar {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  width: 100%;
+}
+
+.m2048-mult-pill {
+  background: #111a2e;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.m2048-mult-pill:hover {
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.m2048-mult-pill.active {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border-color: #7dd3fc;
+  color: #0f172a;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.4);
+}
+
+/* Header Box */
+.m2048-header-box {
+  text-align: center;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.m2048-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #38bdf8, #818cf8, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2px;
+}
+
+.m2048-goal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1.5px solid #f59e0b;
+  padding: 5px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fde047;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+.m2048-subtitle {
+  font-size: 13.5px;
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   4x4 BOARD & HARDWARE-ACCELERATED TILE CONTAINER
+   ========================================================================== */
+
+.m2048-board-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 18px;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+.m2048-board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #090e1a;
+  border: 3px solid #1e293b;
+  border-radius: 20px;
+  padding: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 1. Static 4x4 Background Cells */
+.m2048-grid-bg {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.m2048-cell-bg {
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 41, 59, 0.45);
+  border-radius: 12px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. Absolute Persistent Tile Layer (Overlaid on Grid) */
+.m2048-tiles-container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  pointer-events: none;
+}
+
+/* 3. Individual GPU-Accelerated Tile Element */
+.m2048-tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc((100% - 30px) / 4);
+  height: calc((100% - 30px) / 4);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 4px 8px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Hardware-accelerated 60/120fps CSS GPU transition */
+  transition: transform 115ms cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Spawn Animation for Newly Appeared Tiles */
+.m2048-tile.tile-appear {
+  animation: tileAppearAnim 0.16s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes tileAppearAnim {
+  0% { opacity: 0; transform: var(--tile-pos) scale(0); }
+  60% { opacity: 1; transform: var(--tile-pos) scale(1.12); }
+  100% { opacity: 1; transform: var(--tile-pos) scale(1); }
+}
+
+/* Pop Animation on Merged Tiles */
+.m2048-tile.tile-merged {
+  z-index: 10;
+  animation: tilePopAnim 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes tilePopAnim {
+  0% { transform: var(--tile-pos) scale(0.8); }
+  50% { transform: var(--tile-pos) scale(1.2); }
+  100% { transform: var(--tile-pos) scale(1); }
+}
+
+/* Font auto-scaling for multi-digit numbers */
+.m2048-tile.text-md { font-size: 22px !important; }
+.m2048-tile.text-sm { font-size: 17px !important; }
+.m2048-tile.text-xs { font-size: 13.5px !important; }
+
+/* Neon Tier Palettes */
+.m2048-tile.tier-1 {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  border: 1.5px solid #7dd3fc;
+}
+
+.m2048-tile.tier-2 {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: 1.5px solid #93c5fd;
+}
+
+.m2048-tile.tier-3 {
+  background: linear-gradient(135deg, #6366f1, #4338ca);
+  border: 1.5px solid #a5b4fc;
+}
+
+.m2048-tile.tier-4 {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  border: 1.5px solid #c4b5fd;
+}
+
+.m2048-tile.tier-5 {
+  background: linear-gradient(135deg, #ec4899, #be185d);
+  border: 1.5px solid #fbcfe8;
+}
+
+.m2048-tile.tier-6 {
+  background: linear-gradient(135deg, #f97316, #c2410c);
+  border: 1.5px solid #fed7aa;
+}
+
+.m2048-tile.tier-7 {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  color: #0f172a;
+  border: 1.5px solid #fde68a;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+.m2048-tile.tier-8 {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  color: #0f172a;
+  border: 1.5px solid #fef08a;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.6);
+}
+
+.m2048-tile.tier-9 {
+  background: linear-gradient(135deg, #10b981, #047857);
+  border: 1.5px solid #6ee7b7;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+}
+
+.m2048-tile.tier-10 {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border: 1.5px solid #fca5a5;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.7);
+}
+
+/* Tier 11: Goal Tile (1024 * M) */
+.m2048-tile.tier-11, .m2048-tile.tier-12, .m2048-tile.tier-13 {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444);
+  border: 2px solid #fffbeb;
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.9);
+  animation: goalTilePulse 1.2s infinite alternate;
+}
+
+@keyframes goalTilePulse {
+  0% { transform: var(--tile-pos) scale(0.98); box-shadow: 0 0 15px rgba(251, 191, 36, 0.7); }
+  100% { transform: var(--tile-pos) scale(1.02); box-shadow: 0 0 28px rgba(239, 68, 68, 0.9); }
+}
+
+/* Action Controls Bar */
+.m2048-actions-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.m2048-action-btn {
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  border: none;
+  min-height: 48px;
+  touch-action: manipulation;
+}
+
+.m2048-action-btn.undo, .m2048-action-btn.restart {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #f1f5f9;
+}
+
+.m2048-action-btn.undo:hover, .m2048-action-btn.restart:hover {
+  background: #334155;
+  border-color: #94a3b8;
+}
+
+/* Modals */
+.m2048-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.m2048-modal-card {
+  background: linear-gradient(145deg, #0f172a, #1e1b4b);
+  border: 2px solid #38bdf8;
+  border-radius: 28px;
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+}
+
+.m2048-modal-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 8px;
+}
+
+.m2048-modal-tile {
+  font-size: 38px;
+  font-weight: 900;
+  color: #fde047;
+  margin: 10px 0;
+  letter-spacing: 1px;
+}
+
+.m2048-modal-score {
+  font-size: 15px;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.m2048-modal-aura {
+  font-size: 16px;
+  font-weight: 800;
+  color: #4ade80;
+  margin-bottom: 18px;
+}
+
+.m2048-modal-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border: none;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  cursor: pointer;
+  margin-bottom: 8px;
+  min-height: 50px;
+}

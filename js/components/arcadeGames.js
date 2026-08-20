@@ -188,6 +188,31 @@ class ArcadeHub {
       if (window.app) window.app.showView('view-odyssey-hub');
       return;
     }
+    if (gameType === 'supernova24') {
+      if (window.app) window.app.showView('view-supernova-24');
+      if (window.supernova24) window.supernova24.startNewGame();
+      return;
+    }
+    if (gameType === 'codebreaker') {
+      if (window.app) window.app.showView('view-codebreaker');
+      if (window.codebreaker) window.codebreaker.startNewGame();
+      return;
+    }
+    if (gameType === 'gridlock') {
+      if (window.app) window.app.showView('view-cosmic-gridlock');
+      if (window.cosmicGridlock) window.cosmicGridlock.loadLevel(window.cosmicGridlock.currentLevelIndex || 0);
+      return;
+    }
+    if (gameType === 'word_odyssey') {
+      if (window.app) window.app.showView('view-word-odyssey');
+      if (window.wordOdyssey) window.wordOdyssey.startNewGame();
+      return;
+    }
+    if (gameType === 'multiplier_2048') {
+      if (window.app) window.app.showView('view-multiplier-2048');
+      if (window.multiplier2048) window.multiplier2048.startNewGame();
+      return;
+    }
 
     this.currentGameType = gameType;
     if (window.app) window.app.showView('view-arcade-arena');

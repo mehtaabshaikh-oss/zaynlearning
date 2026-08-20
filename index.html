@@ -25,6 +25,11 @@
   <link rel="stylesheet" href="css/globalOdyssey.css">
   <link rel="stylesheet" href="css/loginModal.css">
   <link rel="stylesheet" href="css/aiChat.css">
+  <link rel="stylesheet" href="css/supernova24.css">
+  <link rel="stylesheet" href="css/codebreaker.css">
+  <link rel="stylesheet" href="css/cosmicGridlock.css">
+  <link rel="stylesheet" href="css/wordOdyssey.css">
+  <link rel="stylesheet" href="css/multiplier2048.css">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -198,6 +203,56 @@
         </div>
 
         <div class="arcade-games-grid" id="arcade-games-grid">
+          <!-- Game: Supermath (New Sprint 1 Addition) -->
+          <div class="arcade-game-card" data-game="supernova24" data-cat="math logic quick arcade" style="border: 2px solid #fbbf24; background: linear-gradient(145deg, #1e1b4b, #0f172a);">
+            <div class="arcade-card-icon">🌟🔢</div>
+            <div class="arcade-card-title">Supermath</div>
+            <div class="arcade-card-topic">FACTORS, PEMDAS & ARITHMETIC</div>
+            <p class="arcade-card-desc">Combine 4 cosmic cards using +, −, ×, ÷ and merge them together to hit the target goal!</p>
+            <div class="arcade-card-stats" id="stats-card-supernova24">Best: 0 • Streak: 0 🔥</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #22c55e, #16a34a);">PLAY SUPERMATH ➔</button>
+          </div>
+
+          <!-- Game: Cryptic Codebreaker (New Sprint 1 Addition) -->
+          <div class="arcade-game-card" data-game="codebreaker" data-cat="logic quick arcade" style="border: 2px solid #818cf8; background: linear-gradient(145deg, #111827, #0f172a);">
+            <div class="arcade-card-icon">🕵️🔓</div>
+            <div class="arcade-card-title">Cryptic Codebreaker</div>
+            <div class="arcade-card-topic">DEDUCTIVE LOGIC & MASTERMIND</div>
+            <p class="arcade-card-desc">Crack the AI's secret code in 8 tries with real-time neon exact (🎯) and slot-move (🔀) clues!</p>
+            <div class="arcade-card-stats" id="stats-card-codebreaker">Best: 0 • Vaults: 0</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">CRACK VAULT ➔</button>
+          </div>
+
+          <!-- Game: Cosmic Gridlock (New Sprint 2 Addition) -->
+          <div class="arcade-game-card" data-game="gridlock" data-cat="logic adventure arcade" style="border: 2px solid #ef4444; background: linear-gradient(145deg, #1f1118, #0f172a);">
+            <div class="arcade-card-icon">🚀🌌</div>
+            <div class="arcade-card-title">Cosmic Gridlock</div>
+            <div class="arcade-card-topic">SLIDING PUZZLES & SPATIAL LOGIC</div>
+            <p class="arcade-card-desc">Slide interstellar cruisers to clear a path and guide your Red Flagship out the Warp Exit!</p>
+            <div class="arcade-card-stats" id="stats-card-gridlock">Level: 1 • Stars: 0 ⭐</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626);">UNBLOCK ➔</button>
+          </div>
+
+          <!-- Game: Zayn's Wordle (New Sprint 2 Addition) -->
+          <div class="arcade-game-card" data-game="word_odyssey" data-cat="quick adventure arcade" style="border: 2px solid #10b981; background: linear-gradient(145deg, #062b20, #0f172a);">
+            <div class="arcade-card-icon">📚✨</div>
+            <div class="arcade-card-title">Zayn's Wordle</div>
+            <div class="arcade-card-topic">THEMATIC WORDLE & TRIVIA</div>
+            <p class="arcade-card-desc">Crack 4, 5, and 6-letter mystery words across Space, Animals, Countries, and Science!</p>
+            <div class="arcade-card-stats" id="stats-card-word-odyssey">Streak: 0 🔥 • Solved: 0</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #10b981, #059669);">PLAY WORDLE ➔</button>
+          </div>
+
+          <!-- Game: Times Table 2048 -->
+          <div class="arcade-game-card" data-game="multiplier_2048" data-cat="math quick arcade" style="border: 2px solid #38bdf8; background: linear-gradient(145deg, #082f49, #0f172a);">
+            <div class="arcade-card-icon">🔢⚡</div>
+            <div class="arcade-card-title">Times Table 2048</div>
+            <div class="arcade-card-topic">DOUBLING & MULTIPLICATION MATRIX</div>
+            <p class="arcade-card-desc">Swipe and merge matching times-table tiles to build up to the legendary 1024× Multiplier Tile!</p>
+            <div class="arcade-card-stats" id="stats-card-m2048">Best: 0 • Max: 0</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color:#0f172a; font-weight:800;">PLAY 2048 ➔</button>
+          </div>
+
           <!-- Game 1: Snake (Math + Quick) -->
           <div class="arcade-game-card" data-game="snake" data-cat="math quick arcade">
             <div class="arcade-card-icon">🐍🍎</div>
@@ -706,6 +761,341 @@
           <!-- Dynamically populated via GlobalOdysseyEngine -->
         </div>
       </section>
+
+      <!-- 12. 🌟 SUPERMATH VIEW -->
+      <section id="view-supernova-24" class="view-panel hidden">
+        <div class="s24-arena-container">
+          <div class="s24-top-bar">
+            <button class="close-arena-btn" id="exit-s24-btn">✕ Exit</button>
+            <div class="s24-diff-group">
+              <button class="s24-diff-btn" data-diff="easy">NOVICE</button>
+              <button class="s24-diff-btn active" data-diff="medium">PRO</button>
+              <button class="s24-diff-btn" data-diff="hard">MASTER</button>
+            </div>
+            <div class="s24-hud-group">
+              <div class="s24-stat-pill timer">⏱️ <span id="s24-timer-val">0:00</span></div>
+              <div class="s24-stat-pill"><span id="s24-streak-val">0 🔥</span></div>
+            </div>
+          </div>
+
+          <!-- Target Mode Selector Bar -->
+          <div class="s24-mode-bar" id="s24-mode-select">
+            <button class="s24-mode-pill active" data-mode="variable">🎲 Variable Target</button>
+            <button class="s24-mode-pill" data-mode="fixed24">🌟 Classic 24</button>
+            <button class="s24-mode-pill" data-mode="big">🚀 Big Goals (30-60)</button>
+          </div>
+
+          <div class="s24-header-box">
+            <h1 class="s24-title">🌟 SUPERMATH</h1>
+            <div class="s24-target-badge">🎯 TARGET GOAL: <span id="s24-target-number">24</span></div>
+            <p class="s24-subtitle">Combine all 4 cards using +, −, ×, ÷ to hit exactly <strong id="s24-target-subtitle" style="color:#fbbf24;">24</strong>!</p>
+          </div>
+
+          <div class="s24-equation-bar" id="s24-equation-preview">Tap a card to start!</div>
+
+          <div class="s24-cards-grid" id="s24-cards-container">
+            <!-- 4 Interactive Cards -->
+          </div>
+
+          <div class="s24-ops-grid" id="s24-ops-container">
+            <button class="s24-op-btn" data-op="+">+</button>
+            <button class="s24-op-btn" data-op="-">−</button>
+            <button class="s24-op-btn" data-op="×">×</button>
+            <button class="s24-op-btn" data-op="÷">÷</button>
+          </div>
+
+          <div class="s24-actions-bar">
+            <button class="s24-action-btn undo" id="s24-undo-btn">↩️ Undo</button>
+            <button class="s24-action-btn reset" id="s24-reset-btn">🔄 Reset</button>
+            <button class="s24-action-btn hint" id="s24-hint-btn">💡 Hint</button>
+            <button class="s24-action-btn new" id="s24-new-btn">⚡ New Deal</button>
+          </div>
+
+          <div class="s24-hint-card hidden" id="s24-hint-box">
+            <span id="s24-hint-text"></span>
+          </div>
+
+          <div class="s24-modal-overlay hidden" id="s24-win-modal">
+            <div class="s24-modal-card">
+              <div class="s24-modal-icon">🌟</div>
+              <h2 class="s24-modal-title" id="s24-win-title">SUPERMATH ACHIEVED!</h2>
+              <div class="s24-modal-eq" id="s24-win-equation">(8 - 2) × (3 + 1) = 24</div>
+              <div class="s24-modal-stats" id="s24-win-stats">⏱️ Time: 14s • 🔥 Streak: 3</div>
+              <div class="s24-modal-aura" id="s24-win-aura">+50 AURA • +75 XP</div>
+              <button class="s24-modal-btn" id="s24-win-next-btn">NEXT PUZZLE ➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13. 🕵️ CRYPTIC CODEBREAKER VIEW -->
+      <section id="view-codebreaker" class="view-panel hidden">
+        <div class="cb-arena-container">
+          <div class="cb-top-bar">
+            <button class="close-arena-btn" id="exit-cb-btn">✕ Exit</button>
+            <div class="cb-diff-group">
+              <button class="cb-diff-btn active" data-diff="tier1">TIER 1 (No Dupes)</button>
+              <button class="cb-diff-btn" data-diff="tier2">TIER 2 (Dupes)</button>
+              <button class="cb-diff-btn" data-diff="tier3">TIER 3 (5 Slots)</button>
+            </div>
+            <div class="cb-hud-group">
+              <div class="cb-stat-pill timer">⏱️ <span id="cb-timer-val">0:00</span></div>
+              <div class="cb-stat-pill"><span id="cb-streak-val">0 🔥</span></div>
+            </div>
+          </div>
+
+          <div class="cb-header-box">
+            <h1 class="cb-title">🕵️ CRYPTIC CODEBREAKER</h1>
+            <p class="cb-subtitle">Deduce the secret sequence in 8 attempts with real-time feedback clues!</p>
+          </div>
+
+          <!-- How to Read Feedback Guide -->
+          <div class="cb-guide-box">
+            <div class="cb-guide-item"><span class="cb-guide-badge exact">🎯 Perfect</span> = Right color & right slot!</div>
+            <div class="cb-guide-item"><span class="cb-guide-badge partial">🔀 Move Slot</span> = Right color, but in another slot!</div>
+            <div class="cb-guide-item"><span class="cb-guide-badge miss">❌ Miss</span> = Not in secret code</div>
+          </div>
+
+          <div class="cb-board-container" id="cb-board-rows">
+            <!-- 8 Attempt rows generated by CodebreakerEngine -->
+          </div>
+
+          <div class="cb-tray-container">
+            <div class="cb-slots-row" id="cb-current-slots">
+              <!-- Current Slots -->
+            </div>
+          </div>
+
+          <div class="cb-palette-container" id="cb-palette-bar">
+            <!-- Palette colors -->
+          </div>
+
+          <div class="cb-actions-bar">
+            <button class="cb-action-btn clear" id="cb-clear-btn">🧹 Clear</button>
+            <button class="cb-action-btn scratch" id="cb-scratchpad-btn">✏️ Scratchpad</button>
+            <button class="cb-action-btn submit" id="cb-submit-btn" disabled>TRANSMIT CODE ➔</button>
+            <button class="cb-action-btn new" id="cb-new-btn">⚡ New Vault</button>
+          </div>
+
+          <div class="cb-modal-overlay hidden" id="cb-win-modal">
+            <div class="cb-modal-card">
+              <div class="cb-modal-icon" id="cb-modal-icon-elem">🔓</div>
+              <h2 class="cb-modal-title" id="cb-win-title">VAULT CRACKED!</h2>
+              <div class="cb-modal-secret" id="cb-win-secret"></div>
+              <div class="cb-modal-stats" id="cb-win-stats"></div>
+              <div class="cb-modal-aura" id="cb-win-aura"></div>
+              <button class="cb-modal-btn" id="cb-win-next-btn">NEXT VAULT ➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14. 🚀 COSMIC GRIDLOCK (UNBLOCK ME) VIEW -->
+      <section id="view-cosmic-gridlock" class="view-panel hidden">
+        <div class="cgl-arena-container">
+          <div class="cgl-top-bar">
+            <button class="close-arena-btn" id="exit-cgl-btn">✕ Exit</button>
+            <span class="cgl-tier-badge" id="cgl-level-tier">CADET</span>
+            <div class="cgl-hud-group">
+              <div class="cgl-stat-pill">🎯 Moves: <span id="cgl-moves-val">0</span> / <span id="cgl-par-val">6</span></div>
+              <div class="cgl-stat-pill" id="cgl-stars-display">⭐⭐⭐</div>
+            </div>
+          </div>
+
+          <div class="cgl-header-box">
+            <h1 class="cgl-title" id="cgl-level-title">Level 1: Nebula Gate 01</h1>
+            <p class="cgl-subtitle">Slide the obstacles out of the path to guide your Red Flagship out the Warp Exit!</p>
+          </div>
+
+          <div class="cgl-board-wrapper">
+            <div class="cgl-board" id="cgl-board">
+              <!-- Rendered via CosmicGridlockEngine -->
+            </div>
+            <div class="cgl-exit-gate" title="Warp Exit Gate">EXIT ➔</div>
+          </div>
+
+          <div class="cgl-actions-bar">
+            <button class="cgl-action-btn undo" id="cgl-undo-btn">↩️ Undo</button>
+            <button class="cgl-action-btn reset" id="cgl-reset-btn">🔄 Reset</button>
+            <button class="cgl-action-btn hint" id="cgl-hint-btn">💡 Hint</button>
+            <button class="cgl-action-btn select" id="cgl-select-btn">📂 Select Level</button>
+          </div>
+
+          <!-- Level Select Modal -->
+          <div class="cgl-modal-overlay hidden" id="cgl-level-select-modal">
+            <div class="cgl-modal-card">
+              <h2 class="cgl-modal-title">🌌 MISSION SELECT</h2>
+              <div class="cgl-level-grid" id="cgl-level-grid">
+                <!-- Populated via CosmicGridlockEngine -->
+              </div>
+              <button class="cgl-modal-btn" id="cgl-close-select-btn" style="background:#334155;">CLOSE</button>
+            </div>
+          </div>
+
+          <!-- Win Victory Modal -->
+          <div class="cgl-modal-overlay hidden" id="cgl-win-modal">
+            <div class="cgl-modal-card">
+              <div style="font-size:52px; margin-bottom:8px;">🚀</div>
+              <h2 class="cgl-modal-title" id="cgl-win-title">WARP GATE CLEARED!</h2>
+              <div style="font-size:32px; margin:10px 0;" id="cgl-win-stars">⭐⭐⭐</div>
+              <div style="font-size:14px; color:#cbd5e1; margin-bottom:6px;" id="cgl-win-stats"></div>
+              <div style="font-size:16px; font-weight:800; color:#4ade80; margin-bottom:18px;" id="cgl-win-aura"></div>
+              <button class="cgl-modal-btn" id="cgl-win-next-btn">NEXT LEVEL ➔</button>
+              <button class="cgl-modal-btn" id="cgl-win-replay-btn" style="background:#334155; margin-top:8px;">REPLAY LEVEL 🔄</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15. 📚 ZAYN'S WORDLE VIEW -->
+      <section id="view-word-odyssey" class="view-panel hidden">
+        <div class="wo-arena-container">
+          <div class="wo-top-bar">
+            <button class="close-arena-btn" id="exit-wo-btn">✕ Exit</button>
+            <div class="wo-stat-pill"><span id="wo-streak-val">0 🔥</span></div>
+          </div>
+
+          <div class="wo-header-box">
+            <h1 class="wo-title">📚 ZAYN'S WORDLE</h1>
+            <p class="wo-subtitle">Guess the hidden mystery word in 6 tries with letter clues!</p>
+          </div>
+
+          <!-- Category Selector -->
+          <div class="wo-cat-bar" id="wo-category-select">
+            <button class="wo-cat-pill active" data-cat="countries">🌍 Countries</button>
+            <button class="wo-cat-pill" data-cat="capitals">🏛️ Capitals</button>
+            <button class="wo-cat-pill" data-cat="space">🚀 Space</button>
+            <button class="wo-cat-pill" data-cat="animals">🐾 Animals</button>
+            <button class="wo-cat-pill" data-cat="science">🔬 Science</button>
+          </div>
+
+          <!-- Clue Box -->
+          <div class="wo-clue-card hidden" id="wo-clue-box">
+            <span id="wo-clue-text"></span>
+          </div>
+
+          <!-- Hidden Native Input Proxy (Summons Native iPad / Mac Keyboard on Tap) -->
+          <input type="text" id="wo-native-input" class="wo-native-input-proxy" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" inputmode="text" aria-label="Word Guess Input">
+
+          <!-- Word Matrix Grid -->
+          <div class="wo-board-container" id="wo-board-grid" title="Tap anywhere to type with Native iPad / Mac Keyboard">
+            <!-- 6 Rows generated dynamically -->
+          </div>
+
+          <div class="wo-actions-bar">
+            <button class="wo-action-btn clue" id="wo-clue-btn" disabled>💡 Pixel's Clue (3 Guesses)</button>
+            <button class="wo-action-btn kb-toggle" id="wo-kb-toggle-btn">⌨️ Toggle Keyboard</button>
+            <button class="wo-action-btn new" id="wo-new-btn">⚡ New Word</button>
+          </div>
+
+          <!-- On-screen QWERTY Keyboard -->
+          <div class="wo-keyboard-container" id="wo-keyboard">
+            <!-- Populated via WordOdysseyEngine -->
+          </div>
+
+          <!-- Victory Fact Card Modal -->
+          <div class="wo-modal-overlay hidden" id="wo-win-modal">
+            <div class="wo-modal-card">
+              <div class="wo-modal-icon">🎉</div>
+              <h2 class="wo-modal-title">WORD DISCOVERED!</h2>
+              <div class="wo-modal-word" id="wo-win-word">TOKYO</div>
+              <div class="wo-modal-fact" id="wo-win-fact"></div>
+              <div class="wo-modal-stats" id="wo-win-stats"></div>
+              <div class="wo-modal-aura" id="wo-win-aura"></div>
+              <button class="wo-modal-btn" id="wo-win-next-btn">NEXT WORD ➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16. 🔢 TIMES TABLE 2048 VIEW -->
+      <section id="view-multiplier-2048" class="view-panel hidden">
+        <div class="m2048-arena-container">
+          <div class="m2048-top-bar">
+            <button class="close-arena-btn" id="exit-m2048-btn">✕ Exit</button>
+            <div class="m2048-hud-group">
+              <div class="m2048-stat-pill">Score: <span id="m2048-score-val">0</span></div>
+              <div class="m2048-stat-pill best">🏆 Best: <span id="m2048-best-val">0</span></div>
+            </div>
+          </div>
+
+          <!-- Times Table Multiplier Selector -->
+          <div class="m2048-mult-bar" id="m2048-multiplier-select">
+            <button class="m2048-mult-pill active" data-mult="2">2× (Classic)</button>
+            <button class="m2048-mult-pill" data-mult="3">3× Table</button>
+            <button class="m2048-mult-pill" data-mult="4">4× Table</button>
+            <button class="m2048-mult-pill" data-mult="6">6× Table</button>
+            <button class="m2048-mult-pill" data-mult="7">7× Table</button>
+            <button class="m2048-mult-pill" data-mult="8">8× Table</button>
+            <button class="m2048-mult-pill" data-mult="9">9× Table</button>
+            <button class="m2048-mult-pill" data-mult="11">11× Table</button>
+            <button class="m2048-mult-pill" data-mult="12">12× Table</button>
+          </div>
+
+          <div class="m2048-header-box">
+            <h1 class="m2048-title">⚡ MULTIPLIER MATRIX 2048</h1>
+            <div class="m2048-goal-badge">🎯 GOAL TILE: <strong id="m2048-goal-val">2,048</strong></div>
+            <p class="m2048-subtitle">Swipe or use Arrow keys to merge identical matching tiles!</p>
+          </div>
+
+          <!-- 4x4 Board Grid with Static Cells + GPU Tiles Overlay -->
+          <div class="m2048-board-wrapper">
+            <div class="m2048-board" id="m2048-board">
+              <!-- Static 4x4 Background Grid -->
+              <div class="m2048-grid-bg">
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+                <div class="m2048-cell-bg"></div>
+              </div>
+              <!-- Hardware-Accelerated Dynamic Tiles Layer -->
+              <div class="m2048-tiles-container" id="m2048-tiles-container"></div>
+            </div>
+          </div>
+
+          <!-- Actions Bar -->
+          <div class="m2048-actions-bar">
+            <button class="m2048-action-btn undo" id="m2048-undo-btn">↩️ Undo Move</button>
+            <button class="m2048-action-btn restart" id="m2048-restart-btn">🔄 Restart Game</button>
+          </div>
+
+          <!-- Victory Modal -->
+          <div class="m2048-modal-overlay hidden" id="m2048-win-modal">
+            <div class="m2048-modal-card">
+              <div class="m2048-modal-icon" style="font-size: 48px;">🌟🏆</div>
+              <h2 class="m2048-modal-title" id="m2048-win-title">GOAL TILE REACHED!</h2>
+              <div class="m2048-modal-tile" id="m2048-win-tile-num">2,048</div>
+              <div class="m2048-modal-score" id="m2048-win-score">Final Score: 18,450</div>
+              <div class="m2048-modal-aura" id="m2048-win-aura">+100 AURA • +150 XP • +3 💎</div>
+              <button class="m2048-modal-btn" id="m2048-win-keep-btn" style="background: linear-gradient(135deg, #10b981, #059669); color:#fff; margin-bottom:8px;">CONTINUE PLAYING (ENDLESS) ➔</button>
+              <button class="m2048-modal-btn" id="m2048-win-new-btn" style="background: #1e293b; color:#cbd5e1; border: 1px solid #475569;">NEW GAME 🔄</button>
+            </div>
+          </div>
+
+          <!-- Game Over Modal -->
+          <div class="m2048-modal-overlay hidden" id="m2048-gameover-modal">
+            <div class="m2048-modal-card" style="border-color: #ef4444;">
+              <div class="m2048-modal-icon" style="font-size: 48px;">💥</div>
+              <h2 class="m2048-modal-title" style="color: #ef4444;">NO MORE MOVES!</h2>
+              <div class="m2048-modal-score">Max Tile: <strong id="m2048-go-max-tile" style="color:#fbbf24;">1,024</strong></div>
+              <div class="m2048-modal-score">Final Score: <strong id="m2048-go-score">8,420</strong></div>
+              <button class="m2048-modal-btn" id="m2048-go-retry-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); color:#fff; margin-top: 12px;">TRY AGAIN 🔄</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile Screens <= 768px) -->
@@ -983,6 +1373,8 @@
   <script src="js/data/classroomCurriculum.js"></script>
   <script src="js/data/triviaFactsData.js"></script>
   <script src="js/data/globalOdysseyData.js"></script>
+  <script src="js/data/cosmicGridlockData.js"></script>
+  <script src="js/data/wordOdysseyData.js"></script>
   <script src="js/state/cloudAuth.js"></script>
   <script src="js/state/gameState.js"></script>
   <script src="js/state/adaptiveEngine.js"></script>
@@ -1002,6 +1394,11 @@
   <script src="js/components/lockerModal.js"></script>
   <script src="js/components/loginModal.js"></script>
   <script src="js/components/aiChatBuddy.js"></script>
+  <script src="js/components/supernova24Engine.js"></script>
+  <script src="js/components/codebreakerEngine.js"></script>
+  <script src="js/components/cosmicGridlockEngine.js"></script>
+  <script src="js/components/wordOdysseyEngine.js"></script>
+  <script src="js/components/multiplier2048Engine.js"></script>
   <script src="js/utils/helpers.js"></script>
   <script src="js/app.js"></script>
 </body>
