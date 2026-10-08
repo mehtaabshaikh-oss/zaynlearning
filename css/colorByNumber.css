@@ -246,16 +246,16 @@
 .mandala-region.active-target path,
 .mandala-region.active-target polygon,
 .mandala-region.active-target circle {
-  animation: target-pulse 1.6s infinite alternate ease-in-out;
-  stroke: #ffd54f !important;
-  stroke-width: 3px !important;
-  stroke-dasharray: 6 3;
+  stroke: #f59e0b !important;
+  stroke-width: 2.5px !important;
+  stroke-dasharray: 4 2;
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.45));
 }
 
 .mandala-region.active-target text {
-  fill: #e65100 !important;
+  fill: #ea580c !important;
   font-weight: 900 !important;
-  animation: text-pop 1s infinite alternate;
+  font-size: 16px !important;
 }
 
 .mandala-region.hint-flash path,
@@ -355,16 +355,6 @@
 }
 
 /* --- ANIMATIONS --- */
-@keyframes target-pulse {
-  0% { stroke: #ffd54f; stroke-width: 2px; }
-  100% { stroke: #ff9800; stroke-width: 4px; }
-}
-
-@keyframes text-pop {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.25); }
-}
-
 @keyframes hint-glow {
   0% { fill: #f59e0b !important; }
   100% { fill: #ffffff !important; }
