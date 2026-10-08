@@ -171,6 +171,9 @@ class ArcadeHub {
         el.textContent = `Best: ${s.highScore.toLocaleString()} • Acc: ${s.highAccuracy}%`;
       }
     }
+    if (window.colorByNumber) {
+      window.colorByNumber.updateArcadeCardStats();
+    }
   }
 
   handleInput(code) {
@@ -231,6 +234,11 @@ class ArcadeHub {
     if (gameType === 'calcudoku') {
       if (window.app) window.app.showView('view-calcudoku');
       if (window.calcudoku) window.calcudoku.startNewGame();
+      return;
+    }
+    if (gameType === 'color_by_number') {
+      if (window.app) window.app.showView('view-color-by-number');
+      if (window.colorByNumber) window.colorByNumber.startOrResume();
       return;
     }
 

@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="css/geoExplorer.css">
   <link rel="stylesheet" href="css/logicGate.css">
   <link rel="stylesheet" href="css/calcudoku.css">
+  <link rel="stylesheet" href="css/colorByNumber.css">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -191,7 +192,7 @@
         <!-- Category Tabs & Practice Mode Toggle -->
         <div class="arcade-controls-bar">
           <div class="arcade-category-tabs" id="arcade-cat-tabs">
-            <button class="arcade-cat-btn active" data-cat="all">ALL (20)</button>
+            <button class="arcade-cat-btn active" data-cat="all">ALL (21)</button>
             <button class="arcade-cat-btn" data-cat="math">MATH</button>
             <button class="arcade-cat-btn" data-cat="science">SCIENCE</button>
             <button class="arcade-cat-btn" data-cat="logic">LOGIC</button>
@@ -207,6 +208,15 @@
         </div>
 
         <div class="arcade-games-grid" id="arcade-games-grid">
+          <!-- Game: 🎨 Color with Numbers (Dual Vector & Pixel Engine) -->
+          <div class="arcade-game-card" data-game="color_by_number" data-cat="math logic quick arcade" style="border: 2px solid #ec4899; background: linear-gradient(145deg, #1f1124, #0f172a);">
+            <div class="arcade-card-icon">🎨✨</div>
+            <div class="arcade-card-title">Color with Numbers</div>
+            <div class="arcade-card-topic">NUMBER SENSE & GEOMETRIC LOGIC</div>
+            <p class="arcade-card-desc">Color vibrant mandalas, cute animals, and pixel art by matching numbers and revealing hidden masterpieces!</p>
+            <div class="arcade-card-stats" id="stats-card-color-number">Artworks: 0/32 ⭐ • Aura: +50</div>
+            <button class="arcade-play-btn" style="background: linear-gradient(135deg, #ec4899, #be185d);">PLAY COLORING ➔</button>
+          </div>
           <!-- Game: Supermath (New Sprint 1 Addition) -->
           <div class="arcade-game-card" data-game="supernova24" data-cat="math logic quick arcade" style="border: 2px solid #fbbf24; background: linear-gradient(145deg, #1e1b4b, #0f172a);">
             <div class="arcade-card-icon">🌟🔢</div>
@@ -1363,6 +1373,95 @@
           </div>
         </div>
       </section>
+
+      <!-- 21. 🎨 COLOR WITH NUMBERS VIEW -->
+      <section id="view-color-by-number" class="view-panel hidden">
+        <div class="color-number-container">
+          <!-- Top HUD Bar -->
+          <div class="color-hud-bar">
+            <button class="close-arena-btn" id="exit-color-btn">✕ Exit</button>
+            <div class="color-title-wrap">
+              <span class="color-category-badge" id="color-category-badge">Coloring Book</span>
+              <span class="color-art-title" id="color-art-title">🎨 Cute Bird on a Branch</span>
+            </div>
+            <div class="color-hud-actions">
+              <button class="color-hud-btn gallery-btn" id="color-gallery-btn">🗺️ Gallery</button>
+              <button class="color-hud-btn magic-btn" id="color-magic-btn" style="display: none;">🪄 Symmetry</button>
+              <button class="color-hud-btn hint-btn" id="color-hint-btn">💡 Hint</button>
+              <button class="color-hud-btn" id="color-restart-btn">🔄 Reset</button>
+            </div>
+          </div>
+
+          <!-- Progress & Motivation Status Bar -->
+          <div class="color-status-panel">
+            <div class="color-progress-row">
+              <div class="color-progress-track">
+                <div class="color-progress-fill" id="color-progress-fill"></div>
+              </div>
+              <span class="color-progress-text" id="color-progress-text">0%</span>
+            </div>
+            <div class="color-instruction-banner" id="color-instruction-banner">
+              Now coloring <strong>#1</strong> — tap below to switch anytime:
+            </div>
+          </div>
+
+          <!-- Dual Canvas & SVG Stage -->
+          <div class="color-stage-wrap">
+            <div class="color-canvas-wrapper" id="color-canvas-wrapper">
+              <canvas id="color-canvas"></canvas>
+              <svg id="color-svg" style="display: none;"></svg>
+            </div>
+            <canvas id="color-confetti-canvas"></canvas>
+          </div>
+
+          <!-- Palette Chips Bar -->
+          <div class="color-palette-bar" id="color-palette-bar">
+            <!-- Injected dynamically by ColorByNumberEngine -->
+          </div>
+
+          <!-- Victory Modal -->
+          <div class="color-modal-overlay hidden" id="color-win-modal">
+            <div class="color-win-card">
+              <div class="color-win-icon">🎨🏆✨</div>
+              <h2 class="color-win-title" id="color-win-title">MASTERPIECE COMPLETED!</h2>
+              <p class="color-win-sub">You colored all number regions and brought this artwork to life!</p>
+              
+              <div class="color-win-prizes">
+                <div class="color-prize-pill aura-pill"><span>📈</span><span>+50 Aura</span></div>
+                <div class="color-prize-pill"><span>⭐</span><span>+25 XP</span></div>
+                <div class="color-prize-pill"><span>💎</span><span>+5 Gems</span></div>
+              </div>
+
+              <div class="color-win-actions">
+                <button class="color-win-btn download-btn" id="color-win-download-btn">📥 SAVE / DOWNLOAD PICTURE</button>
+                <button class="color-win-btn primary" id="color-win-next-btn">NEXT ARTWORK ➔</button>
+                <button class="color-win-btn secondary" id="color-win-gallery-btn">PICK ANOTHER ARTWORK 🎨</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gallery Catalog Modal (32 Artworks) -->
+          <div class="color-modal-overlay hidden" id="color-gallery-modal">
+            <div class="color-gallery-card">
+              <div class="color-gallery-header">
+                <div class="color-gallery-title">
+                  <span>🎨</span>
+                  <span>Zayn's Masterpiece Gallery (32 Artworks)</span>
+                </div>
+                <button class="color-gallery-close" id="color-gallery-close-btn">✕</button>
+              </div>
+
+              <div class="color-category-tabs" id="color-category-tabs">
+                <!-- Dynamically populated -->
+              </div>
+
+              <div class="color-gallery-grid" id="color-gallery-grid">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- Mobile Bottom Navigation Bar (Visible on Mobile Screens <= 768px) -->
@@ -1668,12 +1767,14 @@
   <script src="js/data/geoExplorerData.js"></script>
   <script src="js/data/logicGateData.js"></script>
   <script src="js/data/calcudokuData.js"></script>
+  <script src="js/data/colorByNumberData.js"></script>
   <script src="js/components/wordOdysseyEngine.js"></script>
   <script src="js/components/multiplier2048Engine.js"></script>
   <script src="js/components/elementFusionEngine.js"></script>
   <script src="js/components/geoExplorerEngine.js"></script>
   <script src="js/components/logicGateEngine.js"></script>
   <script src="js/components/calcudokuEngine.js"></script>
+  <script src="js/components/colorByNumberEngine.js"></script>
   <script src="js/utils/helpers.js"></script>
   <script src="js/app.js"></script>
 </body>

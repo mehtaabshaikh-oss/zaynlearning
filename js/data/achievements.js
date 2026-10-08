@@ -198,5 +198,13 @@ const ACHIEVEMENTS_DATA = [
     icon: "🧊",
     unlocked: false,
     xpReward: 200
+  },
+  {
+    id: "ach_master_artist",
+    name: "Master Colorist",
+    desc: "Complete your first Color with Numbers masterpiece",
+    icon: "🎨",
+    unlocked: false,
+    xpReward: 250
   }
 ];

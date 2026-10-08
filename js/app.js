@@ -35,6 +35,7 @@ class App {
     window.geoExplorer = new GeoExplorerEngine();
     window.logicGate = new LogicGateEngine();
     window.calcudoku = new CalcudokuEngine();
+    window.colorByNumber = new ColorByNumberEngine();
 
     this.showView('view-arcade-hub');
     this.updateTopBarHUD();
@@ -80,7 +81,8 @@ class App {
                         viewId === 'view-element-fusion' ||
                         viewId === 'view-geo-explorer' ||
                         viewId === 'view-logic-gate' ||
-                        viewId === 'view-calcudoku'
+                        viewId === 'view-calcudoku' ||
+                        viewId === 'view-color-by-number'
                       ));
       btn.classList.toggle('active', isMatch);
     });
