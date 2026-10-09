@@ -515,6 +515,50 @@
   color: #fca5a5 !important;
 }
 
+.quiz-opt-btn.retry {
+  background: #78350f !important;
+  border-color: #f59e0b !important;
+  color: #fef3c7 !important;
+  animation: gentle-wobble 0.35s ease;
+}
+
+@keyframes gentle-wobble {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.quiz-hint-btn {
+  background: #1e1b4b;
+  border: 1px dashed #6366f1;
+  color: #c7d2fe;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.quiz-hint-btn:hover {
+  background: #312e81;
+  border-color: #818cf8;
+  color: #ffffff;
+}
+
+.quiz-hint-box {
+  background: #1e1b4b;
+  border: 1px solid #4f46e5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #e0e7ff;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .quiz-explanation-banner {
   background: #1e293b;
   border-left: 4px solid #38bdf8;
@@ -709,6 +753,100 @@
   background: #334155;
 }
 
+/* Civics Branches Sorter Widget */
+.civics-sorter-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.civics-buckets-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.civics-bucket {
+  background: #0b1120;
+  border: 2px dashed #334155;
+  border-radius: 12px;
+  padding: 12px 8px;
+  min-height: 140px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.civics-bucket:hover {
+  border-color: #60a5fa;
+  background: #0f172a;
+}
+
+.civics-bucket-title {
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.civics-bucket-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.civics-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  background: #090e1a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 50px;
+}
+
+.civics-chip {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.civics-chip:hover {
+  background: #334155;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.civics-chip.selected {
+  background: #2563eb !important;
+  border-color: #60a5fa !important;
+  color: #ffffff !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+.civics-chip.sorted {
+  background: #14532d !important;
+  border-color: #22c55e !important;
+  color: #86efac !important;
+  cursor: default !important;
+  font-size: 11px;
+  padding: 5px 8px;
+  border-radius: 8px;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   #view-classroom-hub {
@@ -729,7 +867,8 @@
     grid-template-columns: 1fr;
   }
 
-  .sorter-buckets-row {
+  .sorter-buckets-row,
+  .civics-buckets-row {
     grid-template-columns: 1fr;
   }
 }

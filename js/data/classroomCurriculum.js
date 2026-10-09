@@ -390,6 +390,137 @@ const CLASSROOM_CURRICULUM = {
         { q: "A camping tent with two triangular ends and three rectangular sides is which 3D shape?", options: ["Triangular Prism", "Cylinder", "Cube", "Sphere"], answer: 0, explanation: "A triangular prism has 2 triangular bases and 3 rectangular faces." }
       ]
     }
+  ],
+  civics: [
+    {
+      id: "civics_us_government",
+      title: "U.S. Government & Civics Practice Test",
+      category: "civics",
+      icon: "🏛️",
+      tag: "FRIDAY TEST PREP • 15 QUESTIONS",
+      estimatedMins: 8,
+      isPracticeTest: true,
+      achievementId: "ach_civics_scholar",
+      didYouKnow: "The United States government was designed with THREE separate branches so that no single person or group could hold all the power. This system of checks and balances keeps our democracy fair!",
+      definition: "In an American democracy, power belongs to the citizens who pick their leaders by voting. Government is structured into 3 Branches (Legislative, Executive, Judicial) and 3 Levels (Local, State, National).",
+      examples: [
+        { name: "🏛️ Legislative Branch", text: "Congress (Senate & House of Representatives) at the U.S. Capitol. Main job: Makes the laws!" },
+        { name: "🦅 Executive Branch", text: "The President & Vice President at the White House. Main job: Enforces (carries out) the laws." },
+        { name: "⚖️ Judicial Branch", text: "The Supreme Court & federal judges. Main job: Interprets the laws and decides if they are fair." },
+        { name: "🏠 Local Level", text: "Led by the Mayor and City Council to manage local cities and towns." },
+        { name: "🌴 State Level", text: "Led by the Governor to manage each state (such as Florida)." },
+        { name: "🇺🇸 National Level", text: "Led by the President for the entire country." }
+      ],
+      interactiveType: "civics_branches_sorter",
+      goDeeper: "Remember Zayn's golden memory tips: 'L'egislative makes the 'L'aws, 'E'xecutive 'E'nforces the laws, and 'J'udicial has the 'J'udges! Also remember: 3 Levels = Local, State, National; 3 Branches = Legislative, Executive, Judicial!",
+      questions: [
+        {
+          q: "What branch of government makes the laws?",
+          options: ["Legislative Branch", "Executive Branch", "Judicial Branch", "City Council"],
+          answer: 0,
+          hint: "Remember the letter 'L': Legislative makes the Laws!",
+          explanation: "The Legislative Branch (Congress: Senate and House of Representatives) makes the laws."
+        },
+        {
+          q: "Most cities and towns are led by who?",
+          options: ["The Mayor", "The Governor", "The President", "A Judge"],
+          answer: 0,
+          hint: "Think local: Who is the head of City Hall?",
+          explanation: "The Mayor is the elected leader of a local city or town government."
+        },
+        {
+          q: "Who is the leader of our entire country and belongs to the Executive Branch?",
+          options: ["The President", "The Chief Justice", "The Speaker of the House", "The Governor"],
+          answer: 0,
+          hint: "This leader lives and works at the White House in Washington, D.C.",
+          explanation: "The President is the leader of the entire country and heads the Executive Branch."
+        },
+        {
+          q: "Which branch of government do the courts and judges belong to?",
+          options: ["Judicial Branch", "Legislative Branch", "Executive Branch", "Local Branch"],
+          answer: 0,
+          hint: "Remember the letter 'J': Judicial = Judges!",
+          explanation: "The Judicial Branch includes the courts and judges. They interpret the laws and decide if they are fair."
+        },
+        {
+          q: "What type of government do we have in the United States?",
+          options: ["Democracy", "Monarchy (King/Queen)", "Dictatorship", "Oligarchy"],
+          answer: 0,
+          hint: "In this government, power belongs to the people and citizens vote.",
+          explanation: "The United States is a Democracy, where citizens choose their leaders by voting."
+        },
+        {
+          q: "How do the citizens of the United States choose their representatives?",
+          options: ["By Voting in elections", "By playing a game", "The oldest person chooses", "By drawing names from a hat"],
+          answer: 0,
+          hint: "On election day, citizens cast a ballot.",
+          explanation: "American citizens exercise their power by voting in democratic elections to pick their leaders."
+        },
+        {
+          q: "The City Council works with which level of government?",
+          options: ["Local Level", "State Level", "National Level", "International Level"],
+          answer: 0,
+          hint: "Cities and towns are at the closest, community level of government.",
+          explanation: "The City Council works at the Local Level alongside the Mayor to manage city streets, parks, and services."
+        },
+        {
+          q: "What is the main job of the Executive Branch?",
+          options: ["Enforces (carries out) the laws", "Makes the laws", "Explains and judges the laws", "Writes the Constitution"],
+          answer: 0,
+          hint: "Remember the letter 'E': Executive Enforces the laws!",
+          explanation: "The Executive Branch, led by the President, enforces and carries out the laws made by Congress."
+        },
+        {
+          q: "Where is the highest court of the Judicial Branch located?",
+          options: ["The U.S. Supreme Court", "The White House", "The U.S. Capitol", "City Hall"],
+          answer: 0,
+          hint: "It has nine justices and 'Supreme' is in its name.",
+          explanation: "The U.S. Supreme Court is the highest court in the Judicial Branch and the whole nation."
+        },
+        {
+          q: "The Governor is the leader of which level of government?",
+          options: ["State Level (like Florida)", "Local Level (City)", "National Level (USA)", "School Board"],
+          answer: 0,
+          hint: "Who leads the state of Florida from Tallahassee?",
+          explanation: "The Governor is the elected leader of a State (such as the Governor of Florida)."
+        },
+        {
+          q: "Where is the Legislative Branch (Congress) located in Washington, D.C.?",
+          options: ["The U.S. Capitol Building", "The White House", "The Lincoln Memorial", "The Supreme Court"],
+          answer: 0,
+          hint: "Look for the famous building with the large white dome!",
+          explanation: "Congress (the Legislative Branch) meets in the U.S. Capitol building in Washington, D.C."
+        },
+        {
+          q: "Who takes over if the President dies, resigns, or is unable to do their duties?",
+          options: ["The Vice President", "The Governor", "The Mayor", "The Chief Judge"],
+          answer: 0,
+          hint: "Who is the President's second-in-command running mate?",
+          explanation: "The Vice President immediately steps up to become President if the President cannot serve."
+        },
+        {
+          q: "The President is also known by which two important titles?",
+          options: ["Head of State & Commander in Chief", "King & Chief Judge", "Governor & Senator", "Mayor & Council Leader"],
+          answer: 0,
+          hint: "One title represents the nation, and one leads the military armed forces.",
+          explanation: "The President is the Head of State (representing America) and the Commander in Chief (leading the military)."
+        },
+        {
+          q: "What are the TWO parts of Congress in the Legislative Branch?",
+          options: ["The Senate & the House of Representatives", "The President & Vice President", "The Supreme Court & Local Courts", "The Mayors & Governors"],
+          answer: 0,
+          hint: "One chamber has 100 senators (2 per state), and the other has 435 voting members based on population.",
+          explanation: "Congress is divided into two houses: The Senate and the House of Representatives."
+        },
+        {
+          q: "What are the THREE levels of government in the United States?",
+          options: ["Local, State, and National", "Legislative, Executive, and Judicial", "Elementary, Middle, and High School", "City, County, and World"],
+          answer: 0,
+          hint: "Think of the ladder: City (Local) -> State (Florida) -> Country (National). Don't mix up Levels with Branches!",
+          explanation: "The 3 Levels of government are Local (city/town), State (Florida), and National (entire USA)!"
+        }
+      ]
+    }
   ]
 };
 
@@ -397,8 +528,10 @@ const CLASSROOM_CURRICULUM = {
 const DAILY_SCHOOL_WORDS = [
   { term: "ECOSYSTEM", category: "Science", definition: "A community of living organisms interacting with nonliving things in their environment.", example: "A pond with fish, algae, water, and sunlight forms an ecosystem.", question: "What is an ecosystem?", options: ["Living and nonliving things interacting in an environment", "Only rocks and water", "A single animal in a zoo"], answer: 0 },
   { term: "PRODUCT", category: "Math", definition: "The answer or result obtained by multiplying two or more factors.", example: "In 6 × 8 = 48, 48 is the product.", question: "In 7 × 5 = 35, what is 35 called?", options: ["Product", "Factor", "Quotient"], answer: 0 },
+  { term: "DEMOCRACY", category: "Civics", definition: "A government where power belongs to the citizens, who elect their leaders by voting.", example: "In the United States democracy, citizens vote for their representatives.", question: "What type of government is the United States?", options: ["Democracy", "Monarchy", "Empire"], answer: 0 },
   { term: "HABITAT", category: "Science", definition: "The natural home of an animal or plant that provides food, water, shelter, and space.", example: "The arctic tundra is the natural habitat of the polar bear.", question: "What must a habitat provide?", options: ["Food, water, shelter, and space", "Only a roof", "Candy and toys"], answer: 0 },
   { term: "QUOTIENT", category: "Math", definition: "The result or answer of a division problem.", example: "In 40 ÷ 5 = 8, 8 is the quotient.", question: "What is the answer to a division problem called?", options: ["Quotient", "Product", "Factor"], answer: 0 },
+  { term: "CONGRESS", category: "Civics", definition: "The legislative branch of the U.S. government made up of the Senate and House of Representatives that makes laws.", example: "Congress meets at the U.S. Capitol building in Washington, D.C.", question: "What is the main job of Congress?", options: ["Make the laws", "Fly airplanes", "Build roads"], answer: 0 },
   { term: "ADAPTATION", category: "Science", definition: "A body structure or behavior that helps an organism survive in its environment.", example: "A duck's webbed feet are a structural adaptation for paddling in water.", question: "What is a duck's webbed feet an example of?", options: ["Structural adaptation", "Weather change", "Extinction"], answer: 0 },
   { term: "COMMUTATIVE", category: "Math", definition: "The rule that changing the order of factors does not change the product (a × b = b × a).", example: "3 × 9 = 27 and 9 × 3 = 27.", question: "Which equation shows the commutative property?", options: ["4 × 6 = 6 × 4", "4 + 6 = 10", "4 × 1 = 4"], answer: 0 },
   { term: "FOSSIL", category: "Science", definition: "Preserved remains, impressions, or traces of organisms from the ancient past.", example: "A preserved footprint of a T-Rex is a trace fossil.", question: "Can a preserved dinosaur footprint be a fossil?", options: ["Yes, it is a trace fossil", "No, only bones are fossils"], answer: 0 }
