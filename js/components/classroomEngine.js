@@ -157,11 +157,25 @@ class ClassroomEngine {
     this.activeTopic = topic;
     this.currentStep = 1;
     this.quizMistakes = [];
+    this.isPracticeMode = !!topic.isPracticeTest;
     
-    // Pick 5 randomized questions
-    const allQs = [...topic.questions];
-    allQs.sort(() => Math.random() - 0.5);
-    this.quizQuestions = allQs.slice(0, 5);
+    if (this.isPracticeMode) {
+      // Practice test: load ALL questions and thoroughly shuffle them with each run
+      const allQs = [...topic.questions];
+      for (let i = allQs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQs[i], allQs[j]] = [allQs[j], allQs[i]];
+      }
+      this.quizQuestions = allQs;
+    } else {
+      // Standard lesson: pick 5 randomized questions
+      const allQs = [...topic.questions];
+      for (let i = allQs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQs[i], allQs[j]] = [allQs[j], allQs[i]];
+      }
+      this.quizQuestions = allQs.slice(0, 5);
+    }
     this.currentQuizIdx = 0;
     this.quizScore = 0;
 
@@ -231,18 +245,29 @@ class ClassroomEngine {
           <!-- Widget mounts here -->
         </div>
       `;
+      const nextBtnText = this.isPracticeMode
+        ? `START PRACTICE TEST (${this.quizQuestions.length} Qs) ➔`
+        : `POP QUIZ (5 Qs) ➔`;
       footer.innerHTML = `
         <button class="lesson-nav-btn" style="background:#334155;" onclick="window.classroomEngine.prevStep()">⬅ BACK</button>
-        <button class="lesson-nav-btn" onclick="window.classroomEngine.nextStep()">POP QUIZ (5 Qs) ➔</button>
+        <button class="lesson-nav-btn" onclick="window.classroomEngine.nextStep()">${nextBtnText}</button>
       `;
       this.mountInteractiveWidget();
     } else if (this.currentStep === 4) {
-      // Step 4: Pop Quiz
-      if (stepInd) stepInd.textContent = `STEP 4 / 5 • ⚡ POP QUIZ (Question ${this.currentQuizIdx + 1} of 5)`;
+      // Step 4: Pop Quiz or Practice Test
+      if (stepInd) {
+        if (this.isPracticeMode) {
+          stepInd.textContent = `PRACTICE TEST • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
+        } else {
+          stepInd.textContent = `STEP 4 / 5 • ⚡ POP QUIZ (Question ${this.currentQuizIdx + 1} of 5)`;
+        }
+      }
       this.renderQuizQuestion();
     } else if (this.currentStep === 5) {
       // Step 5: Results & Mastery
-      if (stepInd) stepInd.textContent = `STEP 5 / 5 • 🏆 POWER-UP COMPLETE!`;
+      if (stepInd) {
+        stepInd.textContent = this.isPracticeMode ? `STEP 5 / 5 • 🏆 PRACTICE COMPLETE!` : `STEP 5 / 5 • 🏆 POWER-UP COMPLETE!`;
+      }
       this.renderLessonResults();
     }
   }
@@ -290,6 +315,8 @@ class ClassroomEngine {
       this.renderArrayRotator();
     } else if (type === 'ecosystem_sorter') {
       this.renderEcosystemSorter();
+    } else if (type === 'civics_branches_sorter') {
+      this.renderCivicsBranchesSorter();
     } else {
       // Default Visual Concept Card
       mount.innerHTML = `
@@ -461,13 +488,133 @@ class ClassroomEngine {
     }
   }
 
+  // --- Civics 3 Branches Sorter ---
+  renderCivicsBranchesSorter() {
+    const mount = document.getElementById('interactive-widget-mount');
+    if (!mount) return;
+
+    this.civicsSorterData = [
+      { id: 'c1', text: 'Makes the Laws 📜', branch: 'legislative', branchName: 'Legislative Branch' },
+      { id: 'c2', text: 'U.S. Capitol Building 🏛️', branch: 'legislative', branchName: 'Legislative Branch' },
+      { id: 'c3', text: 'Senate & House of Reps 👥', branch: 'legislative', branchName: 'Legislative Branch' },
+      { id: 'c4', text: 'Enforces the Laws 👮', branch: 'executive', branchName: 'Executive Branch' },
+      { id: 'c5', text: 'The President 🇺🇸', branch: 'executive', branchName: 'Executive Branch' },
+      { id: 'c6', text: 'The White House 🏡', branch: 'executive', branchName: 'Executive Branch' },
+      { id: 'c7', text: 'Interprets the Laws ⚖️', branch: 'judicial', branchName: 'Judicial Branch' },
+      { id: 'c8', text: 'The Supreme Court 🏛️', branch: 'judicial', branchName: 'Judicial Branch' },
+      { id: 'c9', text: 'Federal Judges 🧑‍⚖️', branch: 'judicial', branchName: 'Judicial Branch' }
+    ];
+    this.selectedCivicsChip = null;
+    this.civicsSortedCount = 0;
+
+    mount.innerHTML = `
+      <div class="civics-sorter-wrap">
+        <div style="font-size:13px; color:#cbd5e1; text-align:center; font-weight:700;">
+          🏛️ <strong>3 Branches Sorting Drill</strong>: Tap a card below, then tap the branch where it belongs!
+        </div>
+
+        <div class="civics-buckets-row">
+          <div class="civics-bucket" id="bucket-legislative" onclick="window.classroomEngine.handleCivicsBucketClick('legislative')">
+            <div class="civics-bucket-title" style="color:#60a5fa;">🏛️ LEGISLATIVE<br><small style="font-size:10px; color:#94a3b8; font-weight:600;">Congress • Capitol</small></div>
+            <div class="civics-bucket-items" id="items-legislative"></div>
+          </div>
+          <div class="civics-bucket" id="bucket-executive" onclick="window.classroomEngine.handleCivicsBucketClick('executive')">
+            <div class="civics-bucket-title" style="color:#f59e0b;">🦅 EXECUTIVE<br><small style="font-size:10px; color:#94a3b8; font-weight:600;">President • White House</small></div>
+            <div class="civics-bucket-items" id="items-executive"></div>
+          </div>
+          <div class="civics-bucket" id="bucket-judicial" onclick="window.classroomEngine.handleCivicsBucketClick('judicial')">
+            <div class="civics-bucket-title" style="color:#a855f7;">⚖️ JUDICIAL<br><small style="font-size:10px; color:#94a3b8; font-weight:600;">Supreme Court • Judges</small></div>
+            <div class="civics-bucket-items" id="items-judicial"></div>
+          </div>
+        </div>
+
+        <div style="font-size:12px; color:#94a3b8; text-align:center;" id="civics-sorter-instruction">
+          👉 Tap a card below to select it:
+        </div>
+
+        <div class="civics-pool" id="civics-sorter-pool">
+          ${this.civicsSorterData.map(item => `
+            <button class="civics-chip" id="chip-${item.id}" onclick="window.classroomEngine.selectCivicsChip('${item.id}')">
+              ${item.text}
+            </button>
+          `).join('')}
+        </div>
+        <div id="civics-sorter-congrats" style="display:none; text-align:center; font-weight:800; color:#4ade80; font-size:14px;">
+          🎉 All 9 cards sorted into the 3 branches! Outstanding job, Zayn!
+        </div>
+      </div>
+    `;
+  }
+
+  selectCivicsChip(itemId) {
+    const item = this.civicsSorterData.find(d => d.id === itemId);
+    if (!item) return;
+
+    document.querySelectorAll('.civics-chip').forEach(c => c.classList.remove('selected'));
+    const chipEl = document.getElementById(`chip-${itemId}`);
+    if (chipEl) chipEl.classList.add('selected');
+    this.selectedCivicsChip = item;
+
+    const instr = document.getElementById('civics-sorter-instruction');
+    if (instr) {
+      instr.innerHTML = `Now tap the branch bucket for: <strong>"${item.text}"</strong>`;
+    }
+    if (window.soundEngine) window.soundEngine.playTap();
+  }
+
+  handleCivicsBucketClick(branch) {
+    if (!this.selectedCivicsChip) return;
+    const item = this.selectedCivicsChip;
+    const isCorrect = (item.branch === branch);
+
+    if (isCorrect) {
+      const chipEl = document.getElementById(`chip-${item.id}`);
+      const targetItems = document.getElementById(`items-${branch}`);
+      if (chipEl && targetItems) {
+        chipEl.classList.remove('selected');
+        chipEl.classList.add('sorted');
+        chipEl.onclick = null;
+        targetItems.appendChild(chipEl);
+      }
+      this.selectedCivicsChip = null;
+      this.civicsSortedCount++;
+      if (window.soundEngine) window.soundEngine.playCorrect();
+
+      const instr = document.getElementById('civics-sorter-instruction');
+      if (instr) instr.textContent = `✅ That's right! "${item.text}" belongs to the ${item.branchName}. Pick your next card:`;
+
+      if (this.civicsSortedCount >= this.civicsSorterData.length) {
+        const congrats = document.getElementById('civics-sorter-congrats');
+        if (congrats) congrats.style.display = 'block';
+        if (instr) instr.style.display = 'none';
+        if (window.soundEngine) window.soundEngine.playLevelUp();
+        if (window.helpers) window.helpers.spawnConfetti(30);
+      }
+    } else {
+      if (window.soundEngine) window.soundEngine.playTap();
+      const instr = document.getElementById('civics-sorter-instruction');
+      if (instr) {
+        instr.innerHTML = `🤔 Not quite! "${item.text}" doesn't belong in ${branch.toUpperCase()}. Try one of the other 2 branches!`;
+      }
+    }
+  }
+
   // ==========================================================================
-  // POP QUIZ RUNNER
+  // POP QUIZ / PRACTICE TEST RUNNER
   // ==========================================================================
   renderQuizQuestion() {
     const body = document.getElementById('lesson-modal-content');
     const footer = document.getElementById('lesson-modal-footer-btns');
+    const stepInd = document.getElementById('lesson-step-ind');
     if (!body || this.currentQuizIdx >= this.quizQuestions.length) return;
+
+    if (stepInd) {
+      if (this.isPracticeMode) {
+        stepInd.textContent = `🏛️ CIVICS PRACTICE TEST • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
+      } else {
+        stepInd.textContent = `STEP 4 / 5 • ⚡ POP QUIZ (Question ${this.currentQuizIdx + 1} of 5)`;
+      }
+    }
 
     const qData = this.quizQuestions[this.currentQuizIdx];
 
@@ -481,55 +628,126 @@ class ClassroomEngine {
     this.currentCorrectQuizIdx = indexedOpts.findIndex(o => o.isCorrect);
 
     const optionsHTML = indexedOpts.map((optObj, i) => `
-      <button class="quiz-opt-btn" onclick="window.classroomEngine.handleQuizChoice(${i})">
+      <button class="quiz-opt-btn" id="quiz-opt-btn-${i}" onclick="window.classroomEngine.handleQuizChoice(${i})">
         <span style="opacity:0.6; font-family:'Space Grotesk'; font-weight:800;">${String.fromCharCode(65 + i)}.</span>
         <span>${optObj.text}</span>
       </button>
     `).join('');
 
+    const hintButtonHTML = (this.isPracticeMode && qData.hint) ? `
+      <div style="margin-bottom: 6px;">
+        <button class="quiz-hint-btn" id="quiz-hint-toggle-btn" onclick="window.classroomEngine.toggleHint()">
+          💡 Need a Hint / Memory Tip?
+        </button>
+        <div class="quiz-hint-box" id="quiz-hint-box" style="display:none; margin-top:8px;">
+          <strong>Memory Tip:</strong> ${qData.hint}
+        </div>
+      </div>
+    ` : '';
+
     body.innerHTML = `
       <div class="classroom-quiz-container">
         <div class="quiz-question-box">${qData.q}</div>
+        ${hintButtonHTML}
         <div class="quiz-options-grid" id="quiz-opts-grid">${optionsHTML}</div>
         <div id="quiz-feedback-mount"></div>
       </div>
     `;
 
-    footer.innerHTML = `
-      <div style="font-size:12px; color:#94a3b8; font-weight:700;">Score: ${this.quizScore} / 5</div>
-      <button class="lesson-nav-btn" id="quiz-next-btn" style="display:none;" onclick="window.classroomEngine.advanceQuiz()">NEXT QUESTION ➔</button>
-    `;
+    if (this.isPracticeMode) {
+      footer.innerHTML = `
+        <div style="font-size:12px; color:#38bdf8; font-weight:700;">
+          🛡️ Practice Mode: Try as many times as you like! No penalties.
+        </div>
+        <button class="lesson-nav-btn" id="quiz-next-btn" style="display:none;" onclick="window.classroomEngine.advanceQuiz()">NEXT QUESTION ➔</button>
+      `;
+    } else {
+      footer.innerHTML = `
+        <div style="font-size:12px; color:#94a3b8; font-weight:700;">Score: ${this.quizScore} / 5</div>
+        <button class="lesson-nav-btn" id="quiz-next-btn" style="display:none;" onclick="window.classroomEngine.advanceQuiz()">NEXT QUESTION ➔</button>
+      `;
+    }
+  }
+
+  toggleHint() {
+    const box = document.getElementById('quiz-hint-box');
+    const btn = document.getElementById('quiz-hint-toggle-btn');
+    if (!box) return;
+    if (box.style.display === 'none') {
+      box.style.display = 'block';
+      if (btn) btn.textContent = '💡 Hide Hint';
+      if (window.soundEngine) window.soundEngine.playTap();
+    } else {
+      box.style.display = 'none';
+      if (btn) btn.textContent = '💡 Need a Hint / Memory Tip?';
+    }
   }
 
   handleQuizChoice(choiceIdx) {
     const qData = this.quizQuestions[this.currentQuizIdx];
-    const opts = document.querySelectorAll('.quiz-opt-btn');
-    opts.forEach(b => b.disabled = true);
-
     const isCorrect = (choiceIdx === this.currentCorrectQuizIdx);
-    if (isCorrect) {
-      this.quizScore++;
-      opts[choiceIdx].classList.add('correct');
-      if (window.soundEngine) window.soundEngine.playCorrect();
-    } else {
-      opts[choiceIdx].classList.add('wrong');
-      opts[this.currentCorrectQuizIdx].classList.add('correct');
-      this.quizMistakes.push({ q: qData.q, correct: this.currentShuffledQuizOpts[this.currentCorrectQuizIdx].text });
-      if (window.soundEngine) window.soundEngine.playWrong();
-    }
-
     const feedbackMount = document.getElementById('quiz-feedback-mount');
-    if (feedbackMount) {
-      feedbackMount.innerHTML = `
-        <div class="quiz-explanation-banner">
-          ${isCorrect ? '✅ <strong>Correct!</strong> ' : '💡 <strong>Explanation:</strong> '}
-          ${qData.explanation}
-        </div>
-      `;
-    }
-
     const nextBtn = document.getElementById('quiz-next-btn');
-    if (nextBtn) nextBtn.style.display = 'block';
+
+    if (this.isPracticeMode) {
+      const clickedBtn = document.getElementById(`quiz-opt-btn-${choiceIdx}`);
+      if (isCorrect) {
+        const opts = document.querySelectorAll('.quiz-opt-btn');
+        opts.forEach(b => b.disabled = true);
+        if (clickedBtn) clickedBtn.classList.add('correct');
+        if (window.soundEngine) window.soundEngine.playCorrect();
+
+        if (feedbackMount) {
+          feedbackMount.innerHTML = `
+            <div class="quiz-explanation-banner" style="border-left-color: #22c55e;">
+              🌟 <strong>Spot on!</strong> ${qData.explanation}
+              ${qData.hint ? `<div style="margin-top:6px; color:#cbd5e1; font-size:12px;">💡 <em>Remember: ${qData.hint}</em></div>` : ''}
+            </div>
+          `;
+        }
+        if (nextBtn) nextBtn.style.display = 'block';
+      } else {
+        if (clickedBtn) {
+          clickedBtn.classList.add('retry');
+          clickedBtn.disabled = true;
+        }
+        if (window.soundEngine) window.soundEngine.playTap();
+
+        if (feedbackMount) {
+          feedbackMount.innerHTML = `
+            <div class="quiz-explanation-banner" style="border-left-color: #f59e0b; background:#1c1917;">
+              🤔 <strong>Not quite!</strong> That's okay, give another option a try — you've got this!
+              ${qData.hint ? `<div style="margin-top:4px; color:#fef3c7; font-size:12px;">💡 <strong>Hint:</strong> ${qData.hint}</div>` : ''}
+            </div>
+          `;
+        }
+      }
+    } else {
+      const opts = document.querySelectorAll('.quiz-opt-btn');
+      opts.forEach(b => b.disabled = true);
+
+      if (isCorrect) {
+        this.quizScore++;
+        opts[choiceIdx].classList.add('correct');
+        if (window.soundEngine) window.soundEngine.playCorrect();
+      } else {
+        opts[choiceIdx].classList.add('wrong');
+        opts[this.currentCorrectQuizIdx].classList.add('correct');
+        this.quizMistakes.push({ q: qData.q, correct: this.currentShuffledQuizOpts[this.currentCorrectQuizIdx].text });
+        if (window.soundEngine) window.soundEngine.playWrong();
+      }
+
+      if (feedbackMount) {
+        feedbackMount.innerHTML = `
+          <div class="quiz-explanation-banner">
+            ${isCorrect ? '✅ <strong>Correct!</strong> ' : '💡 <strong>Explanation:</strong> '}
+            ${qData.explanation}
+          </div>
+        `;
+      }
+
+      if (nextBtn) nextBtn.style.display = 'block';
+    }
   }
 
   advanceQuiz() {
@@ -548,8 +766,122 @@ class ClassroomEngine {
   renderLessonResults() {
     const body = document.getElementById('lesson-modal-content');
     const footer = document.getElementById('lesson-modal-footer-btns');
+    const stepInd = document.getElementById('lesson-step-ind');
     if (!body || !this.activeTopic) return;
 
+    if (stepInd) {
+      stepInd.textContent = this.isPracticeMode
+        ? `STEP 5 / 5 • 🏆 PRACTICE COMPLETE!`
+        : `STEP 5 / 5 • 🏆 POWER-UP COMPLETE!`;
+    }
+
+    if (this.isPracticeMode) {
+      // Unscored practice test celebration & memory table
+      const xpEarned = 100;
+      window.gameState.addXP(xpEarned);
+      window.gameState.addAura(50);
+
+      if (!window.gameState.data.classroomProgress) {
+        window.gameState.data.classroomProgress = { concepts: {} };
+      }
+      const concepts = window.gameState.data.classroomProgress.concepts;
+      const current = concepts[this.activeTopic.id] || { state: 'NEW', sessions: [] };
+      const d = new Date();
+      const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      current.sessions.push({ date: today, score: 15, acc: 100, mode: 'practice' });
+      current.lastPracticed = today;
+      current.state = 'PRACTICED';
+      if (this.activeTopic.achievementId && window.gameState.unlockAchievement) {
+        window.gameState.unlockAchievement(this.activeTopic.achievementId);
+      }
+      concepts[this.activeTopic.id] = current;
+      window.gameState.save();
+
+      if (window.soundEngine) window.soundEngine.playLevelUp();
+      if (window.helpers) window.helpers.spawnConfetti(60);
+
+      body.innerHTML = `
+        <div style="text-align:center; padding:10px 0;">
+          <div style="font-size:52px; margin-bottom:10px;">🏛️ ⭐ 🇺🇸</div>
+          <h2 style="font-size:24px; font-weight:900; font-family:'Space Grotesk', sans-serif; color:#f8fafc; margin-bottom:6px;">
+            Practice Test Completed!
+          </h2>
+          <p style="color:#94a3b8; font-size:14px; margin-bottom:20px;">
+            Awesome job, Zayn! You completed all 15 review questions from your school slides with <strong>zero grading pressure</strong>. You're building great muscle memory for Friday!
+          </p>
+
+          <div style="display:flex; justify-content:center; gap:16px; margin-bottom:24px;">
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#38bdf8;">15 / 15</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">Questions Practiced</div>
+            </div>
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#fde047;">+${xpEarned} XP</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">XP Earned</div>
+            </div>
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#a855f7;">+50 🔮</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">Aura Bonus</div>
+            </div>
+          </div>
+
+          <!-- 60-Second Civics Study Table -->
+          <div style="background:#0f172a; border:1px solid #334155; border-radius:14px; padding:18px; text-align:left; margin-bottom:16px;">
+            <div style="font-size:13px; font-weight:800; color:#fde047; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+              <span>🧠</span> ZAYN'S 60-SECOND CIVICS TEST CHEAT SHEET
+            </div>
+
+            <div style="overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse; font-size:12px; color:#e2e8f0; margin-bottom:14px;">
+                <thead>
+                  <tr style="border-bottom:1px solid #334155; text-align:left; color:#94a3b8;">
+                    <th style="padding:6px 8px;">Branch</th>
+                    <th style="padding:6px 8px;">Who / Building</th>
+                    <th style="padding:6px 8px;">Main Job</th>
+                    <th style="padding:6px 8px;">Memory Hook</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid #1e293b;">
+                    <td style="padding:8px; font-weight:700; color:#60a5fa;">🏛️ Legislative</td>
+                    <td style="padding:8px;">Congress (Capitol)</td>
+                    <td style="padding:8px;">Makes the Laws</td>
+                    <td style="padding:8px; color:#fde047;"><strong>L</strong>egislative = <strong>L</strong>aws</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid #1e293b;">
+                    <td style="padding:8px; font-weight:700; color:#f59e0b;">🦅 Executive</td>
+                    <td style="padding:8px;">President (White House)</td>
+                    <td style="padding:8px;">Enforces the Laws</td>
+                    <td style="padding:8px; color:#fde047;"><strong>E</strong>xecutive = <strong>E</strong>nforces</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:8px; font-weight:700; color:#c084fc;">⚖️ Judicial</td>
+                    <td style="padding:8px;">Judges (Supreme Court)</td>
+                    <td style="padding:8px;">Interprets the Laws</td>
+                    <td style="padding:8px; color:#fde047;"><strong>J</strong>udicial = <strong>J</strong>udges</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:12px; color:#cbd5e1; border-top:1px solid #1e293b; padding-top:12px;">
+              <div><strong>🌴 3 Levels Ladder:</strong> Local (Mayor) ➔ State (Governor) ➔ National (President)</div>
+              <div><strong>🗳️ Our Government:</strong> A <em>Democracy</em> where citizens pick leaders by <em>Voting</em></div>
+              <div><strong>🏛️ Congress Split:</strong> Senate & House of Representatives</div>
+              <div><strong>🇺🇸 President Titles:</strong> Head of State & Commander in Chief (VP succeeds)</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      footer.innerHTML = `
+        <button class="lesson-nav-btn" style="background:#334155;" onclick="window.classroomEngine.startLesson(window.classroomEngine.activeTopic)">RETRY PRACTICE TEST 🔄</button>
+        <button class="lesson-nav-btn" onclick="window.classroomEngine.closeLesson()">RETURN TO CLASSROOM HUB ➔</button>
+      `;
+      return;
+    }
+
+    // Standard scored lesson results
     const acc = Math.round((this.quizScore / 5) * 100);
     const xpEarned = 50 + (this.quizScore * 10);
     window.gameState.addXP(xpEarned);
@@ -568,9 +900,6 @@ class ClassroomEngine {
     current.sessions.push({ date: today, score: this.quizScore, acc });
     current.lastPracticed = today;
     
-    // Multi-session Mastery progression logic:
-    // 1 session high score -> PRACTICING / STRONG
-    // 2 sessions on different days with >= 80% -> MASTERED!
     const uniqueDays = new Set(current.sessions.filter(s => s.acc >= 80).map(s => s.date));
     
     if (uniqueDays.size >= 2) {
