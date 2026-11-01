@@ -872,3 +872,80 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   TIMSS 2027 GRADE 4 MATHEMATICS EXTENSIONS
+   ========================================================================== */
+
+.timss-daily-quick-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+
+.timss-daily-quick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.5);
+}
+
+/* Interactive SVG Diagram Container */
+.quiz-svg-container {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 14px auto 18px auto;
+  max-width: 460px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  border: 2px solid #38bdf8;
+  overflow: hidden;
+}
+
+.quiz-svg-container svg {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  display: block;
+}
+
+/* Domain Badges */
+.timss-domain-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.timss-domain-geometry {
+  background: rgba(194, 65, 12, 0.2);
+  color: #fdba74;
+  border: 1px solid #ea580c;
+}
+
+.timss-domain-number {
+  background: rgba(2, 132, 199, 0.2);
+  color: #7dd3fc;
+  border: 1px solid #0284c7;
+}
+
+.timss-domain-data {
+  background: rgba(147, 51, 234, 0.2);
+  color: #d8b4fe;
+  border: 1px solid #9333ea;
+}
+
+.timss-domain-extended {
+  background: rgba(225, 29, 72, 0.2);
+  color: #fda4af;
+  border: 1px solid #e11d48;
+}

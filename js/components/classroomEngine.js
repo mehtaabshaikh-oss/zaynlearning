@@ -31,6 +31,10 @@ class ClassroomEngine {
     this.arrayCols = 4;
     this.arrayRotated = false;
 
+    // TIMSS Grade 4 state
+    this.isTimssMode = false;
+    this.timssDomain = null;
+
     this.bindDOM();
   }
 
@@ -54,7 +58,11 @@ class ClassroomEngine {
       });
     });
 
-    // Quick Tools: Daily Word & Quick Quiz
+    // Quick Tools: Daily Word & Quick Quiz & TIMSS Daily Practice
+    const timssDailyBtn = document.getElementById('classroom-timss-daily-btn');
+    if (timssDailyBtn) {
+      timssDailyBtn.addEventListener('click', () => this.launchTimssDailyPractice());
+    }
     const dailyWordBtn = document.getElementById('classroom-daily-word-btn');
     if (dailyWordBtn) {
       dailyWordBtn.addEventListener('click', () => this.launchDailySchoolWord());
@@ -117,6 +125,94 @@ class ClassroomEngine {
     if (!container) return;
 
     container.innerHTML = '';
+
+    // Specialized TIMSS Grade 4 Mathematics Category
+    if (this.currentCategory === 'timss') {
+      const timssModules = [
+        {
+          id: 'timss_all',
+          domain: null,
+          title: '🎯 Daily 10-Question Random Blitz',
+          tag: 'MIXED REASONING • ALL DOMAINS',
+          icon: '🎯',
+          badge: 'RECOMMENDED',
+          badgeClass: 'badge-strong',
+          desc: 'A fresh, randomized 10-question set pulled from all 75 TIMSS questions. Ideal for everyday warm-up with zero grading stress!',
+          count: '75 Qs in Pool',
+          time: '5 min'
+        },
+        {
+          id: 'timss_geo',
+          domain: 'geometry',
+          title: '📐 Geometry, Angles & 3D Shapes',
+          tag: 'SPATIAL REASONING • HIGH PRIORITY',
+          icon: '📐',
+          badge: '25 QUESTIONS',
+          badgeClass: 'badge-learning',
+          desc: 'Protractors, missing angles, parallel/perpendicular lines, symmetry, 3D shape nets, and coordinate grids.',
+          count: '25 Questions',
+          time: '6 min'
+        },
+        {
+          id: 'timss_num',
+          domain: 'number',
+          title: '🔢 Number Sense, Fractions & Decimals',
+          tag: 'ARITHMETIC & FRACTIONS',
+          icon: '🔢',
+          badge: '29 QUESTIONS',
+          badgeClass: 'badge-practicing',
+          desc: 'Place value composition, multi-digit operations, fractions on number lines, adding decimals, and number rules.',
+          count: '29 Questions',
+          time: '6 min'
+        },
+        {
+          id: 'timss_data',
+          domain: 'data',
+          title: '📊 Data Display & Visual Graphs',
+          tag: 'DATA & INTERPRETATION',
+          icon: '📊',
+          badge: '11 QUESTIONS',
+          badgeClass: 'badge-new',
+          desc: 'Line plots with fractional data, two-dataset bar graphs, frequency tables, and circle graphs (pie charts).',
+          count: '11 Questions',
+          time: '4 min'
+        },
+        {
+          id: 'timss_ext',
+          domain: 'extended',
+          title: '🚀 TIMSS Grandmaster Reasoning',
+          tag: 'NON-ROUTINE LOGIC • 625+ LEVEL',
+          icon: '🚀',
+          badge: '10 QUESTIONS',
+          badgeClass: 'badge-mastered',
+          desc: 'Challenging multi-step constraint puzzles, balancing mystery equations, and composite geometry problems.',
+          count: '10 Questions',
+          time: '7 min'
+        }
+      ];
+
+      timssModules.forEach(mod => {
+        const card = document.createElement('div');
+        card.className = 'classroom-topic-card';
+        card.innerHTML = `
+          <div class="topic-card-top">
+            <div class="topic-card-icon">${mod.icon}</div>
+            <span class="topic-card-badge ${mod.badgeClass}">${mod.badge}</span>
+          </div>
+          <div class="topic-card-tag">${mod.tag}</div>
+          <div class="topic-card-title">${mod.title}</div>
+          <div class="topic-card-desc">${mod.desc}</div>
+          <div class="topic-card-footer">
+            <span class="topic-card-time">⏱️ ~${mod.time}</span>
+            <button class="topic-start-btn">START PRACTICE ➔</button>
+          </div>
+        `;
+        card.addEventListener('click', () => this.launchTimssDailyPractice(mod.domain));
+        container.appendChild(card);
+      });
+      return;
+    }
+
     const list = CLASSROOM_CURRICULUM[this.currentCategory] || [];
     const progress = window.gameState.data.classroomProgress?.concepts || {};
 
@@ -189,6 +285,8 @@ class ClassroomEngine {
   closeLesson() {
     const modal = document.getElementById('classroom-lesson-modal');
     if (modal) modal.classList.add('hidden');
+    this.isTimssMode = false;
+    this.timssDomain = null;
     this.renderHub();
   }
 
@@ -609,7 +707,9 @@ class ClassroomEngine {
     if (!body || this.currentQuizIdx >= this.quizQuestions.length) return;
 
     if (stepInd) {
-      if (this.isPracticeMode) {
+      if (this.isTimssMode) {
+        stepInd.textContent = `🌍 TIMSS GRADE 4 • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
+      } else if (this.isPracticeMode) {
         stepInd.textContent = `🏛️ CIVICS PRACTICE TEST • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
       } else {
         stepInd.textContent = `STEP 4 / 5 • ⚡ POP QUIZ (Question ${this.currentQuizIdx + 1} of 5)`;
@@ -645,9 +745,18 @@ class ClassroomEngine {
       </div>
     ` : '';
 
+    const svgHTML = qData.svg ? `<div class="quiz-svg-container">${qData.svg}</div>` : '';
+    const badgeHTML = qData.domain ? `
+      <div class="timss-domain-badge timss-domain-${qData.domain}">
+        ${qData.domLabel || qData.domain} • ${qData.cognitive || 'TIMSS G4'}
+      </div>
+    ` : '';
+
     body.innerHTML = `
       <div class="classroom-quiz-container">
+        ${badgeHTML}
         <div class="quiz-question-box">${qData.q}</div>
+        ${svgHTML}
         ${hintButtonHTML}
         <div class="quiz-options-grid" id="quiz-opts-grid">${optionsHTML}</div>
         <div id="quiz-feedback-mount"></div>
@@ -768,6 +877,86 @@ class ClassroomEngine {
     const footer = document.getElementById('lesson-modal-footer-btns');
     const stepInd = document.getElementById('lesson-step-ind');
     if (!body || !this.activeTopic) return;
+
+    // TIMSS Grade 4 Daily Practice Completion
+    if (this.isTimssMode) {
+      if (stepInd) stepInd.textContent = `STEP 5 / 5 • 🏆 TIMSS PRACTICE COMPLETE!`;
+
+      const xpEarned = 120;
+      window.gameState.addXP(xpEarned);
+      window.gameState.addAura(60);
+      if (window.gameState.addGems) window.gameState.addGems(25);
+
+      if (!window.gameState.data.classroomProgress) {
+        window.gameState.data.classroomProgress = { concepts: {} };
+      }
+      const d = new Date();
+      const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      if (!window.gameState.data.classroomProgress.timssDaily) {
+        window.gameState.data.classroomProgress.timssDaily = [];
+      }
+      window.gameState.data.classroomProgress.timssDaily.push({
+        date: today,
+        domain: this.timssDomain || 'all',
+        total: this.quizQuestions.length,
+        timestamp: Date.now()
+      });
+      window.gameState.save();
+
+      if (window.soundEngine) window.soundEngine.playLevelUp();
+      if (window.helpers) window.helpers.spawnConfetti(70);
+
+      const domainTitle = this.timssDomain
+        ? (window.TIMSS_CURRICULUM?.domains?.[this.timssDomain]?.name || 'Grade 4 Math')
+        : 'All Grade 4 Math Domains';
+
+      body.innerHTML = `
+        <div style="text-align:center; padding:10px 0;">
+          <div style="font-size:52px; margin-bottom:10px;">🌍 ⭐ 📐</div>
+          <h2 style="font-size:24px; font-weight:900; font-family:'Space Grotesk', sans-serif; color:#f8fafc; margin-bottom:6px;">
+            TIMSS Daily Practice Complete!
+          </h2>
+          <p style="color:#94a3b8; font-size:14px; margin-bottom:20px;">
+            Outstanding work, Zayn! You completed <strong>${this.quizQuestions.length} Grade 4 International Math questions</strong> in <strong>${domainTitle}</strong> with untimed mastery!
+          </p>
+
+          <div style="display:flex; justify-content:center; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#38bdf8;">${this.quizQuestions.length} / ${this.quizQuestions.length}</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">Questions Solved</div>
+            </div>
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#fde047;">+${xpEarned} XP</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">XP Earned</div>
+            </div>
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#a855f7;">+60 🔮</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">Aura Bonus</div>
+            </div>
+            <div style="background:#131d38; border:1px solid #1e293b; border-radius:12px; padding:12px 24px;">
+              <div style="font-size:22px; font-weight:800; color:#34d399;">+25 💎</div>
+              <div style="font-size:11px; color:#94a3b8; font-weight:700; text-transform:uppercase;">Gems Earned</div>
+            </div>
+          </div>
+
+          <div style="background:#0f172a; border:1px solid #334155; border-radius:14px; padding:16px; text-align:left; margin-bottom:16px;">
+            <div style="font-size:13px; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:6px;">
+              💡 Daily Practice Habit
+            </div>
+            <p style="font-size:13px; color:#cbd5e1; line-height:1.5; margin:0;">
+              Every session pulls fresh random questions from the 75-question Grade 4 pool. Come back tomorrow for another quick 5-minute set to keep your geometry and reasoning skills super sharp!
+            </p>
+          </div>
+        </div>
+      `;
+
+      const domainArg = this.timssDomain ? `'${this.timssDomain}'` : '';
+      footer.innerHTML = `
+        <button class="lesson-nav-btn" style="background:#334155;" onclick="window.classroomEngine.launchTimssDailyPractice(${domainArg})">🔄 10 NEW QUESTIONS</button>
+        <button class="lesson-nav-btn" onclick="window.classroomEngine.closeLesson()">RETURN TO HUB ➔</button>
+      `;
+      return;
+    }
 
     if (stepInd) {
       stepInd.textContent = this.isPracticeMode
@@ -959,6 +1148,54 @@ class ClassroomEngine {
       <div></div>
       <button class="lesson-nav-btn" onclick="window.classroomEngine.closeLesson()">RETURN TO CLASSROOM HUB ➔</button>
     `;
+  }
+
+  // ==========================================================================
+  // TIMSS GRADE 4 INTERACTIVE MCQ ENGINE (RANDOM ORDER & DAILY PRACTICE)
+  // ==========================================================================
+  launchTimssDailyPractice(domain = null) {
+    if (!window.TIMSS_CURRICULUM || !window.TIMSS_CURRICULUM.questions) {
+      console.warn('TIMSS_CURRICULUM not loaded');
+      return;
+    }
+
+    let pool = [...window.TIMSS_CURRICULUM.questions];
+    if (domain) {
+      pool = pool.filter(q => q.domain === domain);
+    }
+
+    // Fisher-Yates shuffle questions for randomized daily practice
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    // Pick 10 questions (or all if pool has fewer)
+    const count = Math.min(10, pool.length);
+    const selected = pool.slice(0, count);
+
+    this.isPracticeMode = true;
+    this.isTimssMode = true;
+    this.timssDomain = domain;
+    this.activeTopic = {
+      id: domain ? `timss_${domain}` : 'timss_daily',
+      title: domain ? `TIMSS Math: ${window.TIMSS_CURRICULUM.domains[domain]?.name || 'Domain Practice'}` : "TIMSS Grade 4 Daily Practice",
+      tag: "IEA TIMSS 2027 INTERNATIONAL BENCHMARK",
+      icon: domain ? (window.TIMSS_CURRICULUM.domains[domain]?.icon || '🌍') : "🎯",
+      questions: selected,
+      estimatedMins: 5
+    };
+    this.quizQuestions = selected;
+    this.currentQuizIdx = 0;
+    this.quizScore = 0;
+    this.quizMistakes = [];
+    this.currentStep = 4; // Jump directly to interactive quiz
+
+    const modal = document.getElementById('classroom-lesson-modal');
+    if (modal) modal.classList.remove('hidden');
+
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderCurrentStep();
   }
 
   // ==========================================================================
