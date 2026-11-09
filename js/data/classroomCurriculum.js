@@ -391,133 +391,377 @@ const CLASSROOM_CURRICULUM = {
       ]
     }
   ],
-  civics: [
+  economics: [
     {
-      id: "civics_us_government",
-      title: "U.S. Government & Civics Practice Test",
-      category: "civics",
-      icon: "🏛️",
-      tag: "FRIDAY TEST PREP • 15 QUESTIONS",
-      estimatedMins: 8,
+      id: "econ_elementary_test_prep",
+      title: "Elementary Economics Practice Test",
+      category: "economics",
+      icon: "💰",
+      tag: "FRIDAY TEST PREP • 32 QUESTIONS",
+      estimatedMins: 10,
       isPracticeTest: true,
-      achievementId: "ach_civics_scholar",
-      didYouKnow: "The United States government was designed with THREE separate branches so that no single person or group could hold all the power. This system of checks and balances keeps our democracy fair!",
-      definition: "In an American democracy, power belongs to the citizens who pick their leaders by voting. Government is structured into 3 Branches (Legislative, Executive, Judicial) and 3 Levels (Local, State, National).",
+      achievementId: "ach_young_economist",
+      didYouKnow: "Every day, you make economic choices! When you decide whether to spend an afternoon baking cookies or walking a dog, you experience 'Opportunity Cost'—the value of the next-best choice you gave up!",
+      definition: "Economics is the study of how people make choices with limited resources to satisfy their needs and wants. It includes producing goods and services, earning profit, managing costs, and trading through markets or barter.",
       examples: [
-        { name: "🏛️ Legislative Branch", text: "Congress (Senate & House of Representatives) at the U.S. Capitol. Main job: Makes the laws!" },
-        { name: "🦅 Executive Branch", text: "The President & Vice President at the White House. Main job: Enforces (carries out) the laws." },
-        { name: "⚖️ Judicial Branch", text: "The Supreme Court & federal judges. Main job: Interprets the laws and decides if they are fair." },
-        { name: "🏠 Local Level", text: "Led by the Mayor and City Council to manage local cities and towns." },
-        { name: "🌴 State Level", text: "Led by the Governor to manage each state (such as Florida)." },
-        { name: "🇺🇸 National Level", text: "Led by the President for the entire country." }
+        { name: "📦 Goods vs. ✂️ Services", text: "Goods are items people can touch, own, or use (books, bread, bicycles). Services are work done for someone rather than a physical item (haircuts, dog walking, teaching)." },
+        { name: "🍎 Needs vs. 🎮 Wants", text: "Needs are essential things people must have to live (food, water, shelter). Wants are things people would like to have but can live without (video games, skateboards, toys)." },
+        { name: "🏭 Producers vs. 🛒 Consumers", text: "Producers make or provide products and services (a baker baking cookies). Consumers buy or use goods and services (a customer buying a cookie)." },
+        { name: "⚖️ Supply & Demand", text: "Supply is the amount sellers are willing and able to offer. Demand is the amount buyers are willing and able to buy." },
+        { name: "🪙 Costs, Profit & Loss", text: "Costs are the time, money, or resources used to make something. Profit is money left after costs are paid. A loss happens when costs are greater than money earned." },
+        { name: "🔄 Barter & Opportunity Cost", text: "Barter is trading goods or services directly without money (trading a drawing for a book). Opportunity cost is the value of the next-best choice given up!" }
       ],
-      interactiveType: "civics_branches_sorter",
-      goDeeper: "Remember Zayn's golden memory tips: 'L'egislative makes the 'L'aws, 'E'xecutive 'E'nforces the laws, and 'J'udicial has the 'J'udges! Also remember: 3 Levels = Local, State, National; 3 Branches = Legislative, Executive, Judicial!",
+      interactiveType: "economics_lab",
+      goDeeper: "Zayn's 4 Golden Economics Rules:\n1. PRODUCER makes or sells ➔ CONSUMER buys or uses!\n2. GOODS you can touch ➔ SERVICES are work done for someone!\n3. PROFIT = Money Earned - Costs (If costs > earnings, that's a LOSS)!\n4. OPPORTUNITY COST = The next-best choice you GAVE UP!",
       questions: [
+        // --- 1. THE 17 VOCABULARY DEFINITIONS ---
         {
-          q: "What branch of government makes the laws?",
-          options: ["Legislative Branch", "Executive Branch", "Judicial Branch", "City Council"],
+          q: "What is SUPPLY in economics?",
+          options: [
+            "The amount of a product or service that sellers are willing and able to offer",
+            "The amount of money a buyer has in their piggy bank",
+            "Trading an item directly without using money",
+            "Work done for someone else, like walking a dog"
+          ],
           answer: 0,
-          hint: "Remember the letter 'L': Legislative makes the Laws!",
-          explanation: "The Legislative Branch (Congress: Senate and House of Representatives) makes the laws."
+          hint: "Think about what sellers bring to the store or market table to sell!",
+          explanation: "Supply is the amount of a product or service that sellers are willing and able to offer."
         },
         {
-          q: "Most cities and towns are led by who?",
-          options: ["The Mayor", "The Governor", "The President", "A Judge"],
+          q: "What is DEMAND in economics?",
+          options: [
+            "The amount of a product or service that buyers are willing and able to buy",
+            "The money left over after all bills and expenses are paid",
+            "A person who bakes bread or makes bicycles",
+            "A physical object you can touch, hold, and take home"
+          ],
           answer: 0,
-          hint: "Think local: Who is the head of City Hall?",
-          explanation: "The Mayor is the elected leader of a local city or town government."
+          hint: "Think about buyers wanting and having the money to purchase an item!",
+          explanation: "Demand is the amount of a product or service that buyers are willing and able to buy."
         },
         {
-          q: "Who is the leader of our entire country and belongs to the Executive Branch?",
-          options: ["The President", "The Chief Justice", "The Speaker of the House", "The Governor"],
+          q: "What is an OPPORTUNITY COST?",
+          options: [
+            "The value of the next-best choice given up when a decision is made",
+            "The price tag printed on a toy at the store",
+            "The total money earned after selling cookies",
+            "The cost of buying wrapping paper for a gift"
+          ],
           answer: 0,
-          hint: "This leader lives and works at the White House in Washington, D.C.",
-          explanation: "The President is the leader of the entire country and heads the Executive Branch."
+          hint: "Whenever you pick choice A, opportunity cost is the wonderful choice B you had to give up!",
+          explanation: "Opportunity cost is the value of the next-best choice given up when a decision is made."
         },
         {
-          q: "Which branch of government do the courts and judges belong to?",
-          options: ["Judicial Branch", "Legislative Branch", "Executive Branch", "Local Branch"],
+          q: "What does SCARCITY mean in economics?",
+          options: [
+            "The condition in which limited resources cannot satisfy all people's wants",
+            "Having so many toys that you run out of closet space",
+            "A situation where a business makes a huge profit",
+            "Work done for someone rather than a physical item"
+          ],
           answer: 0,
-          hint: "Remember the letter 'J': Judicial = Judges!",
-          explanation: "The Judicial Branch includes the courts and judges. They interpret the laws and decide if they are fair."
+          hint: "Think about limited resources: we can't have everything we want because resources are limited!",
+          explanation: "Scarcity is the condition in which limited resources cannot satisfy all people's wants."
         },
         {
-          q: "What type of government do we have in the United States?",
-          options: ["Democracy", "Monarchy (King/Queen)", "Dictatorship", "Oligarchy"],
+          q: "What is ECONOMIC INTERDEPENDENCE?",
+          options: [
+            "Depending on one another to get goods and services",
+            "A person who does everything by themselves without any help",
+            "Trading things without using any coins or dollars",
+            "A situation where costs are greater than money earned"
+          ],
           answer: 0,
-          hint: "In this government, power belongs to the people and citizens vote.",
-          explanation: "The United States is a Democracy, where citizens choose their leaders by voting."
+          hint: "Notice 'inter-dependence': people and communities depend on each other!",
+          explanation: "Economic interdependence means depending on one another to get goods and services (e.g., a baker depends on a farmer for wheat, and the farmer depends on a doctor)."
         },
         {
-          q: "How do the citizens of the United States choose their representatives?",
-          options: ["By Voting in elections", "By playing a game", "The oldest person chooses", "By drawing names from a hat"],
+          q: "What is SPECIALIZATION?",
+          options: [
+            "Focusing on a particular task or type of work",
+            "Trying to do every single job in a city all at once",
+            "Losing money when selling products at a market",
+            "Buying things you like but can live without"
+          ],
           answer: 0,
-          hint: "On election day, citizens cast a ballot.",
-          explanation: "American citizens exercise their power by voting in democratic elections to pick their leaders."
+          hint: "Think about an expert who specializes in one skill, like a baker or dentist!",
+          explanation: "Specialization is focusing on a particular task or type of work to become very good and efficient at it."
         },
         {
-          q: "The City Council works with which level of government?",
-          options: ["Local Level", "State Level", "National Level", "International Level"],
+          q: "Who are PRODUCERS in economics?",
+          options: [
+            "People or groups that make or provide products and services",
+            "People or groups that buy or use goods and services",
+            "Items people can touch, own, or use",
+            "Coins and dollar bills used at the checkout register"
+          ],
           answer: 0,
-          hint: "Cities and towns are at the closest, community level of government.",
-          explanation: "The City Council works at the Local Level alongside the Mayor to manage city streets, parks, and services."
+          hint: "Producers PRODUCE (make or provide) things for others!",
+          explanation: "Producers are people or groups that make or provide products and services."
         },
         {
-          q: "What is the main job of the Executive Branch?",
-          options: ["Enforces (carries out) the laws", "Makes the laws", "Explains and judges the laws", "Writes the Constitution"],
+          q: "Who are CONSUMERS in economics?",
+          options: [
+            "People or groups that buy or use goods and services",
+            "People or groups that make or provide products and services",
+            "The money and materials used to make a product",
+            "The helpful results and advantages of a decision"
+          ],
           answer: 0,
-          hint: "Remember the letter 'E': Executive Enforces the laws!",
-          explanation: "The Executive Branch, led by the President, enforces and carries out the laws made by Congress."
+          hint: "Consumers CONSUME (buy or use) goods and services!",
+          explanation: "Consumers are people or groups that buy or use goods and services."
         },
         {
-          q: "Where is the highest court of the Judicial Branch located?",
-          options: ["The U.S. Supreme Court", "The White House", "The U.S. Capitol", "City Hall"],
+          q: "What are GOODS in economics?",
+          options: [
+            "Items people can touch, own, or use",
+            "Work done for someone, rather than a physical item",
+            "Trading without money",
+            "A loss of money in a business"
+          ],
           answer: 0,
-          hint: "It has nine justices and 'Supreme' is in its name.",
-          explanation: "The U.S. Supreme Court is the highest court in the Judicial Branch and the whole nation."
+          hint: "Goods are physical items you can hold in your hands: like a bicycle, book, or loaf of bread!",
+          explanation: "Goods are items people can touch, own, or use."
         },
         {
-          q: "The Governor is the leader of which level of government?",
-          options: ["State Level (like Florida)", "Local Level (City)", "National Level (USA)", "School Board"],
+          q: "What are SERVICES in economics?",
+          options: [
+            "Work done for someone, rather than a physical item",
+            "Items people can touch, own, or use",
+            "Things required to survive, like food and water",
+            "The cash left over after paying all costs"
+          ],
           answer: 0,
-          hint: "Who leads the state of Florida from Tallahassee?",
-          explanation: "The Governor is the elected leader of a State (such as the Governor of Florida)."
+          hint: "Services are actions or work done for someone: like a haircut, car wash, or dog walking!",
+          explanation: "Services are work done for someone, rather than a physical item."
         },
         {
-          q: "Where is the Legislative Branch (Congress) located in Washington, D.C.?",
-          options: ["The U.S. Capitol Building", "The White House", "The Lincoln Memorial", "The Supreme Court"],
+          q: "What are NEEDS in economics?",
+          options: [
+            "Important things people must have to live, such as food, water, and shelter",
+            "Things people would like to have but can live without",
+            "A situation where costs are greater than money earned",
+            "Trading toys with a friend at school"
+          ],
           answer: 0,
-          hint: "Look for the famous building with the large white dome!",
-          explanation: "Congress (the Legislative Branch) meets in the U.S. Capitol building in Washington, D.C."
+          hint: "Needs are essential for survival: without food, water, or shelter, we cannot live!",
+          explanation: "Needs are important things people must have to live, such as food, water, and shelter."
         },
         {
-          q: "Who takes over if the President dies, resigns, or is unable to do their duties?",
-          options: ["The Vice President", "The Governor", "The Mayor", "The Chief Judge"],
+          q: "What are WANTS in economics?",
+          options: [
+            "Things people would like to have but can live without",
+            "Important things people must have to survive every day",
+            "The time and money spent to produce a product",
+            "People who provide haircuts and medical care"
+          ],
           answer: 0,
-          hint: "Who is the President's second-in-command running mate?",
-          explanation: "The Vice President immediately steps up to become President if the President cannot serve."
+          hint: "Wants are nice and fun to have, like video games or skateboards, but you can live without them!",
+          explanation: "Wants are things people would like to have but can live without."
         },
         {
-          q: "The President is also known by which two important titles?",
-          options: ["Head of State & Commander in Chief", "King & Chief Judge", "Governor & Senator", "Mayor & Council Leader"],
+          q: "What is BARTER in economics?",
+          options: [
+            "Trading goods or services directly without using money",
+            "Buying items at the supermarket using dollar bills",
+            "The money left over after all costs are paid",
+            "Focusing on a single specialized job"
+          ],
           answer: 0,
-          hint: "One title represents the nation, and one leads the military armed forces.",
-          explanation: "The President is the Head of State (representing America) and the Commander in Chief (leading the military)."
+          hint: "Barter means trading directly: like trading a drawing for a book without any money!",
+          explanation: "Barter is trading goods or services directly without using money."
         },
         {
-          q: "What are the TWO parts of Congress in the Legislative Branch?",
-          options: ["The Senate & the House of Representatives", "The President & Vice President", "The Supreme Court & Local Courts", "The Mayors & Governors"],
+          q: "What is PROFIT in a business?",
+          options: [
+            "The money left after the costs of making or selling something are paid",
+            "A situation where costs are higher than the money made",
+            "The total number of cookies baked in an oven",
+            "Work done for someone without being paid"
+          ],
           answer: 0,
-          hint: "One chamber has 100 senators (2 per state), and the other has 435 voting members based on population.",
-          explanation: "Congress is divided into two houses: The Senate and the House of Representatives."
+          hint: "Profit = Total Money Earned MINUS the Costs!",
+          explanation: "Profit is the money left after the costs of making or selling something are paid."
         },
         {
-          q: "What are the THREE levels of government in the United States?",
-          options: ["Local, State, and National", "Legislative, Executive, and Judicial", "Elementary, Middle, and High School", "City, County, and World"],
+          q: "What is a LOSS in business?",
+          options: [
+            "A situation in which costs are greater than the money earned from a sale",
+            "The money left over after all costs are paid",
+            "When a store runs out of shopping carts",
+            "Trading an apple for an orange at lunch"
+          ],
           answer: 0,
-          hint: "Think of the ladder: City (Local) -> State (Florida) -> Country (National). Don't mix up Levels with Branches!",
-          explanation: "The 3 Levels of government are Local (city/town), State (Florida), and National (entire USA)!"
+          hint: "A loss happens when you spend MORE money on costs than you get back from sales!",
+          explanation: "A loss is a situation in which costs are greater than the money earned from a sale."
+        },
+        {
+          q: "What are COSTS in economics?",
+          options: [
+            "The time, money, or resources used to make or get something",
+            "The money left over after selling all products",
+            "The good results or advantages of a choice",
+            "People who purchase items at a store"
+          ],
+          answer: 0,
+          hint: "Costs are the expenses: ingredients, materials, time, and money spent!",
+          explanation: "Costs are the time, money, or resources used to make or get something."
+        },
+        {
+          q: "What are BENEFITS in economics?",
+          options: [
+            "The good results or advantages of a choice",
+            "The money spent to buy flour and sugar",
+            "A situation where a business loses money",
+            "The next-best choice that was given up"
+          ],
+          answer: 0,
+          hint: "Benefits are the positive, helpful results you get from making a decision!",
+          explanation: "Benefits are the good results or advantages of a choice."
+        },
+
+        // --- 2. THE 8 FILL-IN-THE-BLANKS FROM ZAYN'S WORKSHEET ---
+        {
+          q: "Fill in the blank: People who buy or use products are called _____.",
+          options: ["consumers", "producers", "costs", "services"],
+          answer: 0,
+          hint: "Think about who consumes (uses or buys) goods and services!",
+          explanation: "People who buy or use products are called consumers."
+        },
+        {
+          q: "Fill in the blank: A bicycle and a loaf of bread are examples of _____.",
+          options: ["goods", "services", "barters", "losses"],
+          answer: 0,
+          hint: "Can you touch and hold a bicycle or a loaf of bread? Yes, they are physical items!",
+          explanation: "A bicycle and a loaf of bread are physical objects, so they are examples of goods."
+        },
+        {
+          q: "Fill in the blank: A haircut is one example of a _____.",
+          options: ["service", "good", "need", "loss"],
+          answer: 0,
+          hint: "A haircut is work someone does for you with scissors, not a physical object you take home!",
+          explanation: "A haircut is work done for someone, making it a service."
+        },
+        {
+          q: "Fill in the blank: Food, water, and shelter are examples of _____.",
+          options: ["needs", "wants", "barters", "profits"],
+          answer: 0,
+          hint: "Can human beings survive without food, water, or shelter? No, they are essential!",
+          explanation: "Food, water, and shelter are essential for survival, so they are examples of needs."
+        },
+        {
+          q: "Fill in the blank: A new video game may be something a person _____ but does not need.",
+          options: ["wants", "produces", "costs", "barters"],
+          answer: 0,
+          hint: "You might really desire a video game for fun, but your body can live without it!",
+          explanation: "A video game is fun to have, making it something a person wants, not an essential need."
+        },
+        {
+          q: "Fill in the blank: Trading a drawing for a book directly, without money, is called _____.",
+          options: ["barter", "scarcity", "demand", "profit"],
+          answer: 0,
+          hint: "Direct trade of one item for another without using coins or cash is called...",
+          explanation: "Trading items directly without using money is called barter."
+        },
+        {
+          q: "Fill in the blank: The money and materials used to make a product are its _____.",
+          options: ["costs", "benefits", "wants", "consumers"],
+          answer: 0,
+          hint: "What you spend to buy ingredients, wood, or cloth are the...",
+          explanation: "The money and materials used to make a product are its costs."
+        },
+        {
+          q: "Fill in the blank: The helpful results of a choice are its _____.",
+          options: ["benefits", "costs", "losses", "scarcities"],
+          answer: 0,
+          hint: "The positive, helpful advantages you gain are called...",
+          explanation: "The helpful results of a choice are its benefits."
+        },
+
+        // --- 3. EVERYDAY ECONOMICS APPLICATION (JORDAN'S SCENARIO) ---
+        {
+          q: "Jordan has an afternoon free and decides to bake cookies to sell instead of walking a neighbor's dog for a fee. What is the OPPORTUNITY COST of Jordan's choice?",
+          options: [
+            "Walking the neighbor's dog for a fee (the next-best choice given up)",
+            "The price of the flour and sugar",
+            "The snack Jordan buys later",
+            "The time spent cleaning the kitchen"
+          ],
+          answer: 0,
+          hint: "Opportunity cost is the next-best activity Jordan had to sacrifice to bake cookies!",
+          explanation: "The opportunity cost is helping the neighbor walk the dog for a fee because that was the next-best choice Jordan gave up."
+        },
+        {
+          q: "In the scenario, Jordan bakes cookies to sell at a neighborhood table. What role is Jordan playing?",
+          options: [
+            "A producer (making and selling a product)",
+            "A consumer (eating dinner)",
+            "A banker (loaning money)",
+            "A government official (making laws)"
+          ],
+          answer: 0,
+          hint: "Jordan is making and providing cookies for others to buy!",
+          explanation: "Jordan is acting as a producer because Jordan is making and providing cookies to sell."
+        },
+        {
+          q: "Neighbors buy cookies from Jordan, and Jordan uses some of the money to buy a snack. Who is acting as a CONSUMER?",
+          options: [
+            "Both the neighbors buying cookies and Jordan buying a snack",
+            "Only the dog walking neighbor",
+            "Nobody in the story",
+            "Only the grocery store manager"
+          ],
+          answer: 0,
+          hint: "Anyone who buys and uses a product is a consumer!",
+          explanation: "The neighbors are consumers when they buy cookies, and Jordan is a consumer when using money to buy a snack."
+        },
+        {
+          q: "In Jordan's story, which of the following is an example of a SERVICE?",
+          options: [
+            "Walking a neighbor's dog for a fee",
+            "A batch of chocolate chip cookies",
+            "A snack bought at the store",
+            "Bags of flour and sugar"
+          ],
+          answer: 0,
+          hint: "Which of these is work done for someone rather than a physical item you hold?",
+          explanation: "Walking a dog is work done for someone, which makes it a service."
+        },
+        {
+          q: "If Jordan spent $5 on ingredients (costs) and earned $15 selling cookies, what was Jordan's PROFIT?",
+          options: [
+            "$10 profit ($15 earned - $5 costs)",
+            "$20 profit ($15 + $5)",
+            "$5 profit",
+            "A $10 loss"
+          ],
+          answer: 0,
+          hint: "Profit = Total Money Earned ($15) MINUS Costs ($5)!",
+          explanation: "$15 earned minus $5 in costs leaves $10 in profit ($15 - $5 = $10)."
+        },
+        {
+          q: "If Jordan spent $18 on fancy cookie boxes and ingredients, but only sold $10 worth of cookies, what happened?",
+          options: [
+            "Jordan had a loss of $8 because costs were greater than money earned",
+            "Jordan made an $8 profit",
+            "Jordan broke even with zero costs",
+            "Jordan engaged in barter"
+          ],
+          answer: 0,
+          hint: "Costs ($18) were greater than earnings ($10), so money was lost!",
+          explanation: "Because costs ($18) were greater than the money earned ($10), Jordan experienced an $8 loss ($18 - $10 = $8)."
+        },
+        {
+          q: "There are only 10 cookies left on Jordan's table, but 25 hungry neighbors want to buy them. This condition of limited resources not satisfying all wants is called:",
+          options: [
+            "Scarcity",
+            "Specialization",
+            "Barter",
+            "Interdependence"
+          ],
+          answer: 0,
+          hint: "When there is not enough supply to satisfy everyone's demand, resources are scarce!",
+          explanation: "Scarcity is the condition where limited resources (10 cookies) cannot satisfy all people's wants (25 buyers)."
         }
       ]
     }
@@ -534,7 +778,11 @@ const DAILY_SCHOOL_WORDS = [
   { term: "CONGRESS", category: "Civics", definition: "The legislative branch of the U.S. government made up of the Senate and House of Representatives that makes laws.", example: "Congress meets at the U.S. Capitol building in Washington, D.C.", question: "What is the main job of Congress?", options: ["Make the laws", "Fly airplanes", "Build roads"], answer: 0 },
   { term: "ADAPTATION", category: "Science", definition: "A body structure or behavior that helps an organism survive in its environment.", example: "A duck's webbed feet are a structural adaptation for paddling in water.", question: "What is a duck's webbed feet an example of?", options: ["Structural adaptation", "Weather change", "Extinction"], answer: 0 },
   { term: "COMMUTATIVE", category: "Math", definition: "The rule that changing the order of factors does not change the product (a × b = b × a).", example: "3 × 9 = 27 and 9 × 3 = 27.", question: "Which equation shows the commutative property?", options: ["4 × 6 = 6 × 4", "4 + 6 = 10", "4 × 1 = 4"], answer: 0 },
-  { term: "FOSSIL", category: "Science", definition: "Preserved remains, impressions, or traces of organisms from the ancient past.", example: "A preserved footprint of a T-Rex is a trace fossil.", question: "Can a preserved dinosaur footprint be a fossil?", options: ["Yes, it is a trace fossil", "No, only bones are fossils"], answer: 0 }
+  { term: "FOSSIL", category: "Science", definition: "Preserved remains, impressions, or traces of organisms from the ancient past.", example: "A preserved footprint of a T-Rex is a trace fossil.", question: "Can a preserved dinosaur footprint be a fossil?", options: ["Yes, it is a trace fossil", "No, only bones are fossils"], answer: 0 },
+  { term: "OPPORTUNITY COST", category: "Economics", definition: "The value of the next-best choice given up when a decision is made.", example: "When Jordan baked cookies, walking the dog was the opportunity cost given up.", question: "What is an opportunity cost?", options: ["The next-best choice given up", "The cost of wrapping paper", "Money in a piggy bank"], answer: 0 },
+  { term: "SCARCITY", category: "Economics", definition: "The condition in which limited resources cannot satisfy all people's wants.", example: "When 20 kids want cookies but only 6 are baked, there is scarcity.", question: "What does scarcity mean?", options: ["Limited resources cannot satisfy all wants", "Having unlimited supplies", "Having lots of money"], answer: 0 },
+  { term: "PRODUCER", category: "Economics", definition: "People or groups that make or provide products and services.", example: "A baker baking fresh bread is a producer.", question: "Who is a producer?", options: ["Someone who makes or provides products and services", "Someone who only eats food", "A cash register"], answer: 0 },
+  { term: "BARTER", category: "Economics", definition: "Trading goods or services directly without using money.", example: "Trading a drawing for a book directly is barter.", question: "What is barter?", options: ["Trading items directly without money", "Paying with dollar bills", "Working at a bank"], answer: 0 }
 ];
 
 window.CLASSROOM_CURRICULUM = CLASSROOM_CURRICULUM;

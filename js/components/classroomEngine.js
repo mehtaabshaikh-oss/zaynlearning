@@ -413,6 +413,8 @@ class ClassroomEngine {
       this.renderArrayRotator();
     } else if (type === 'ecosystem_sorter') {
       this.renderEcosystemSorter();
+    } else if (type === 'economics_lab') {
+      this.renderEconomicsLab();
     } else if (type === 'civics_branches_sorter') {
       this.renderCivicsBranchesSorter();
     } else {
@@ -586,6 +588,535 @@ class ClassroomEngine {
     }
   }
 
+  // ==========================================================================
+  // ECONOMICS INTERACTIVE SUITE (Match Pairs, Fill in Blanks, Jordan's Scenario)
+  // ==========================================================================
+  renderEconomicsLab() {
+    const mount = document.getElementById('interactive-widget-mount');
+    if (!mount) return;
+
+    if (!this.econActiveTab) this.econActiveTab = 'match';
+    if (this.econMatchRound === undefined) this.econMatchRound = 0;
+    if (this.econBlankIdx === undefined) this.econBlankIdx = 0;
+    if (this.econScenarioChoice === undefined) this.econScenarioChoice = 'cookies';
+    if (this.econScenarioLossMode === undefined) this.econScenarioLossMode = false;
+    if (!this.econScenarioAnswers) this.econScenarioAnswers = {};
+
+    // 17 Vocabulary Pairs grouped into 3 rounds
+    this.econMasterPairs = [
+      // Round 1 (6 pairs)
+      { id: 'p1', term: 'Supply 📦', def: 'The amount of a product or service that sellers are willing and able to offer.' },
+      { id: 'p2', term: 'Demand 🛒', def: 'The amount of a product or service that buyers are willing and able to buy.' },
+      { id: 'p3', term: 'Opportunity Cost ⚖️', def: 'The value of the next-best choice given up when a decision is made.' },
+      { id: 'p4', term: 'Scarcity ⏳', def: 'The condition in which limited resources cannot satisfy all people\'s wants.' },
+      { id: 'p5', term: 'Economic Interdependence 🤝', def: 'Depending on one another to get goods and services.' },
+      { id: 'p6', term: 'Specialization 🎯', def: 'Focusing on a particular task or type of work.' },
+      // Round 2 (6 pairs)
+      { id: 'p7', term: 'Producers 🏭', def: 'People or groups that make or provide products and services.' },
+      { id: 'p8', term: 'Consumers 🛍️', def: 'People or groups that buy or use goods and services.' },
+      { id: 'p9', term: 'Goods 🍞', def: 'Items people can touch, own, or use.' },
+      { id: 'p10', term: 'Services ✂️', def: 'Work done for someone, rather than a physical item.' },
+      { id: 'p11', term: 'Needs 🍎', def: 'Important things people must have to live, such as food, water, and shelter.' },
+      { id: 'p12', term: 'Wants 🎮', def: 'Things people would like to have but can live without.' },
+      // Round 3 (5 pairs)
+      { id: 'p13', term: 'Barter 🔄', def: 'Trading goods or services directly without using money.' },
+      { id: 'p14', term: 'Profit 💵', def: 'The money left after the costs of making or selling something are paid.' },
+      { id: 'p15', term: 'Loss 📉', def: 'A situation in which costs are greater than the money earned from a sale.' },
+      { id: 'p16', term: 'Costs 🏷️', def: 'The time, money, or resources used to make or get something.' },
+      { id: 'p17', term: 'Benefits ⭐', def: 'The good results or advantages of a choice.' }
+    ];
+
+    // 8 Worksheet Fill in the Blanks
+    this.econBlanksList = [
+      {
+        id: 'b1',
+        sentence: 'People who buy or use products are called',
+        after: '.',
+        answer: 'consumers',
+        hint: 'Think about who buys and uses items!'
+      },
+      {
+        id: 'b2',
+        sentence: 'A bicycle and a loaf of bread are examples of',
+        after: '.',
+        answer: 'goods',
+        hint: 'Physical items you can touch, own, or use!'
+      },
+      {
+        id: 'b3',
+        sentence: 'A haircut is one example of a',
+        after: '.',
+        answer: 'service',
+        hint: 'Work done for someone rather than a physical item!'
+      },
+      {
+        id: 'b4',
+        sentence: 'Food, water, and shelter are examples of',
+        after: '.',
+        answer: 'needs',
+        hint: 'Essential things people must have to live!'
+      },
+      {
+        id: 'b5',
+        sentence: 'A new video game may be something a person',
+        after: 'but does not need.',
+        answer: 'wants',
+        hint: 'Things people would like to have, but can survive without!'
+      },
+      {
+        id: 'b6',
+        sentence: 'Trading a drawing for a book directly, without money, is called',
+        after: '.',
+        answer: 'barter',
+        hint: 'Direct trade of goods/services without using cash!'
+      },
+      {
+        id: 'b7',
+        sentence: 'The money and materials used to make a product are its',
+        after: '.',
+        answer: 'costs',
+        hint: 'The time, money, or resources used to make something!'
+      },
+      {
+        id: 'b8',
+        sentence: 'The helpful results of a choice are its',
+        after: '.',
+        answer: 'benefits',
+        hint: 'The positive advantages or good results of a choice!'
+      }
+    ];
+
+    mount.innerHTML = `
+      <div class="econ-suite-container">
+        <div class="econ-nav-tabs">
+          <button class="econ-nav-pill ${this.econActiveTab === 'match' ? 'active' : ''}" onclick="window.classroomEngine.switchEconTab('match')">
+            🧩 Match Definitions (17 Words)
+          </button>
+          <button class="econ-nav-pill ${this.econActiveTab === 'blanks' ? 'active' : ''}" onclick="window.classroomEngine.switchEconTab('blanks')">
+            ✍️ Fill in the Blanks (8 Sentences)
+          </button>
+          <button class="econ-nav-pill ${this.econActiveTab === 'scenario' ? 'active' : ''}" onclick="window.classroomEngine.switchEconTab('scenario')">
+            🍪 Jordan's Scenario & Profit Lab
+          </button>
+        </div>
+        <div class="econ-view-panel" id="econ-panel-mount"></div>
+      </div>
+    `;
+
+    this.renderEconActiveTab();
+  }
+
+  switchEconTab(tab) {
+    this.econActiveTab = tab;
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderEconomicsLab();
+  }
+
+  renderEconActiveTab() {
+    if (this.econActiveTab === 'match') {
+      this.renderEconMatch();
+    } else if (this.econActiveTab === 'blanks') {
+      this.renderEconBlanks();
+    } else {
+      this.renderEconScenario();
+    }
+  }
+
+  // --- 1. Match Definitions Drill ---
+  renderEconMatch() {
+    const mount = document.getElementById('econ-panel-mount');
+    if (!mount) return;
+
+    // Determine round slice
+    const roundRanges = [
+      { start: 0, end: 6, label: 'Round 1 of 3 • Core Principles (6 Pairs)' },
+      { start: 6, end: 12, label: 'Round 2 of 3 • Producers, Consumers & Goods (6 Pairs)' },
+      { start: 12, end: 17, label: 'Round 3 of 3 • Money, Trade & Profit (5 Pairs)' }
+    ];
+    const range = roundRanges[this.econMatchRound] || roundRanges[0];
+    const currentPairs = this.econMasterPairs.slice(range.start, range.end);
+
+    // Initialize round state if needed
+    if (!this.econShuffledDefs || this.econShuffledDefsRound !== this.econMatchRound) {
+      this.econShuffledDefs = [...currentPairs];
+      for (let i = this.econShuffledDefs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this.econShuffledDefs[i], this.econShuffledDefs[j]] = [this.econShuffledDefs[j], this.econShuffledDefs[i]];
+      }
+      this.econShuffledDefsRound = this.econMatchRound;
+      this.econMatchedInRound = new Set();
+      this.selectedEconWord = null;
+    }
+
+    const isRoundDone = this.econMatchedInRound.size === currentPairs.length;
+    const isAllDone = isRoundDone && this.econMatchRound === 2;
+
+    const wordsHTML = currentPairs.map(p => {
+      const isMatched = this.econMatchedInRound.has(p.id);
+      const isSelected = this.selectedEconWord === p.id;
+      return `
+        <div class="econ-card econ-word-card ${isMatched ? 'matched' : ''} ${isSelected ? 'selected' : ''}" 
+             onclick="window.classroomEngine.selectEconMatchWord('${p.id}')">
+          <span>${p.term}</span>
+          ${isMatched ? '<span>✅</span>' : ''}
+        </div>
+      `;
+    }).join('');
+
+    const defsHTML = this.econShuffledDefs.map(p => {
+      const isMatched = this.econMatchedInRound.has(p.id);
+      return `
+        <div class="econ-card econ-def-card ${isMatched ? 'matched' : ''}" 
+             onclick="window.classroomEngine.selectEconMatchDef('${p.id}')">
+          <span>${isMatched ? '✅ ' : ''}${p.def}</span>
+        </div>
+      `;
+    }).join('');
+
+    let footerBanner = '';
+    if (isAllDone) {
+      footerBanner = `
+        <div style="background:rgba(16,185,129,0.15); border:1px solid #10b981; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-weight:800; color:#34d399; font-size:15px;">🏆 Outstanding! Zayn, you mastered all 17 Economics Vocabulary words!</div>
+          <div style="font-size:12px; color:#cbd5e1; margin-top:4px;">You are fully ready for Friday's matching section!</div>
+          <button class="lesson-nav-btn" style="margin-top:10px;" onclick="window.classroomEngine.resetEconMatch()">🔄 Play Match Again</button>
+        </div>
+      `;
+    } else if (isRoundDone) {
+      footerBanner = `
+        <div style="background:rgba(56,189,248,0.15); border:1px solid #38bdf8; border-radius:10px; padding:12px; text-align:center;">
+          <div style="font-weight:800; color:#38bdf8; font-size:15px;">🎉 Round Complete! All pairs matched!</div>
+          <button class="lesson-nav-btn" style="margin-top:10px;" onclick="window.classroomEngine.advanceEconMatchRound()">
+            NEXT ROUND (${this.econMatchRound + 2} of 3) ➔
+          </button>
+        </div>
+      `;
+    } else {
+      const activeWordObj = currentPairs.find(p => p.id === this.selectedEconWord);
+      footerBanner = `
+        <div id="econ-match-instructions" style="text-align:center; font-size:13px; color:#94a3b8; font-weight:600;">
+          ${activeWordObj ? `👉 Now tap the definition on the right that matches: <strong style="color:#60a5fa;">"${activeWordObj.term}"</strong>` : `👉 Tap a vocabulary word on the left to begin:`}
+        </div>
+      `;
+    }
+
+    mount.innerHTML = `
+      <div class="econ-match-header">
+        <span class="econ-round-badge">${range.label}</span>
+        <span>Matched: <strong style="color:#34d399;">${this.econMatchedInRound.size} / ${currentPairs.length}</strong></span>
+      </div>
+      <div class="econ-match-grid">
+        <div class="econ-match-col">${wordsHTML}</div>
+        <div class="econ-match-col">${defsHTML}</div>
+      </div>
+      ${footerBanner}
+    `;
+  }
+
+  selectEconMatchWord(wordId) {
+    if (this.econMatchedInRound.has(wordId)) return;
+    this.selectedEconWord = wordId;
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderEconMatch();
+  }
+
+  selectEconMatchDef(defId) {
+    if (this.econMatchedInRound.has(defId)) return;
+    if (!this.selectedEconWord) {
+      const instr = document.getElementById('econ-match-instructions');
+      if (instr) instr.innerHTML = `<span style="color:#f59e0b;">⚠️ Please tap a vocabulary word on the left first!</span>`;
+      if (window.soundEngine) window.soundEngine.playTap();
+      return;
+    }
+
+    if (this.selectedEconWord === defId) {
+      // Correct match!
+      this.econMatchedInRound.add(defId);
+      this.selectedEconWord = null;
+      if (window.soundEngine) window.soundEngine.playCorrect();
+
+      const rangeStart = [0, 6, 12][this.econMatchRound];
+      const rangeCount = [6, 6, 5][this.econMatchRound];
+      if (this.econMatchedInRound.size === rangeCount) {
+        if (this.econMatchRound === 2) {
+          if (window.soundEngine) window.soundEngine.playLevelUp();
+          if (window.helpers) window.helpers.spawnConfetti(40);
+        } else {
+          if (window.soundEngine) window.soundEngine.playLevelUp();
+          if (window.helpers) window.helpers.spawnConfetti(20);
+        }
+      }
+      this.renderEconMatch();
+    } else {
+      // Incorrect match
+      if (window.soundEngine) window.soundEngine.playTap();
+      const instr = document.getElementById('econ-match-instructions');
+      if (instr) {
+        instr.innerHTML = `<span style="color:#ef4444;">🤔 Not quite! Read that definition carefully and try another card.</span>`;
+      }
+    }
+  }
+
+  advanceEconMatchRound() {
+    if (this.econMatchRound < 2) {
+      this.econMatchRound++;
+      this.econShuffledDefs = null;
+      if (window.soundEngine) window.soundEngine.playTap();
+      this.renderEconMatch();
+    }
+  }
+
+  resetEconMatch() {
+    this.econMatchRound = 0;
+    this.econShuffledDefs = null;
+    this.econMatchedInRound = new Set();
+    this.selectedEconWord = null;
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderEconMatch();
+  }
+
+  // --- 2. Fill in the Blanks Drill ---
+  renderEconBlanks() {
+    const mount = document.getElementById('econ-panel-mount');
+    if (!mount) return;
+
+    const item = this.econBlanksList[this.econBlankIdx] || this.econBlanksList[0];
+    const isSolved = (this.econBlankSolvedIdx === this.econBlankIdx);
+    const isLast = this.econBlankIdx === this.econBlanksList.length - 1;
+
+    // Word Bank from worksheet Section 2
+    const wordBank = ['consumers', 'goods', 'service', 'needs', 'wants', 'barter', 'costs', 'benefits'];
+
+    const wordBankHTML = wordBank.map(w => {
+      const isCurrentAnswer = isSolved && (w.toLowerCase() === item.answer.toLowerCase());
+      return `
+        <button class="econ-word-chip ${isCurrentAnswer ? 'used' : ''}" onclick="window.classroomEngine.selectEconBlankWord('${w}')">
+          ${w}
+        </button>
+      `;
+    }).join('');
+
+    mount.innerHTML = `
+      <div class="econ-blank-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:#94a3b8; font-weight:700;">
+          <span>WORKSHEET SECTION 2 • FILL IN THE BLANKS</span>
+          <span class="econ-round-badge">Question ${this.econBlankIdx + 1} of ${this.econBlanksList.length}</span>
+        </div>
+
+        <div class="econ-sentence-display">
+          ${item.sentence} 
+          <span class="econ-blank-slot ${isSolved ? 'filled' : ''}">
+            ${isSolved ? item.answer.toUpperCase() : '_______'}
+          </span> 
+          ${item.after}
+        </div>
+
+        <div style="font-size:12px; color:#94a3b8; text-transform:uppercase; font-weight:800; letter-spacing:0.5px;">
+          👉 Choose the best word from the Word Bank:
+        </div>
+
+        <div class="econ-wordbank-pool">${wordBankHTML}</div>
+
+        <div id="econ-blank-feedback" style="min-height:36px; display:flex; align-items:center; justify-content:center;">
+          ${isSolved ? `
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;">
+              <span style="color:#34d399; font-weight:800; font-size:14px;">✅ Correct! "${item.answer}" fits the sentence perfectly!</span>
+              <button class="lesson-nav-btn" onclick="window.classroomEngine.advanceEconBlank()">
+                ${isLast ? '🎉 FINISH BLANKS REVIEW' : 'NEXT SENTENCE ➔'}
+              </button>
+            </div>
+          ` : `
+            <span style="color:#64748b; font-size:13px;">💡 <strong>Hint:</strong> ${item.hint}</span>
+          `}
+        </div>
+      </div>
+    `;
+  }
+
+  selectEconBlankWord(word) {
+    const item = this.econBlanksList[this.econBlankIdx];
+    if (!item) return;
+
+    if (word.toLowerCase() === item.answer.toLowerCase()) {
+      this.econBlankSolvedIdx = this.econBlankIdx;
+      if (window.soundEngine) window.soundEngine.playCorrect();
+      if (this.econBlankIdx === this.econBlanksList.length - 1) {
+        if (window.soundEngine) window.soundEngine.playLevelUp();
+        if (window.helpers) window.helpers.spawnConfetti(35);
+      }
+      this.renderEconBlanks();
+    } else {
+      if (window.soundEngine) window.soundEngine.playTap();
+      const fb = document.getElementById('econ-blank-feedback');
+      if (fb) {
+        fb.innerHTML = `<span style="color:#ef4444; font-weight:700; font-size:13px;">🤔 Not quite! "${word}" doesn't fit. ${item.hint}</span>`;
+      }
+    }
+  }
+
+  advanceEconBlank() {
+    if (this.econBlankIdx < this.econBlanksList.length - 1) {
+      this.econBlankIdx++;
+      this.econBlankSolvedIdx = null;
+    } else {
+      this.econBlankIdx = 0;
+      this.econBlankSolvedIdx = null;
+    }
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderEconBlanks();
+  }
+
+  // --- 3. Jordan's Everyday Economics Lab ---
+  renderEconScenario() {
+    const mount = document.getElementById('econ-panel-mount');
+    if (!mount) return;
+
+    const isCookies = this.econScenarioChoice === 'cookies';
+    const isLoss = this.econScenarioLossMode;
+
+    const sales = 15;
+    const costs = isLoss ? 20 : 5;
+    const net = sales - costs;
+
+    mount.innerHTML = `
+      <div class="econ-scenario-container">
+        <div class="econ-scenario-story">
+          📖 <strong>Worksheet Scenario (Section 3):</strong><br>
+          "Jordan has one afternoon free and can either <strong>bake cookies to sell at a neighborhood table</strong> or <strong>help a neighbor walk a dog for a fee</strong>. Jordan has enough ingredients for a small batch of cookies, and the neighbor needs help. Jordan decides to bake and sell them, then uses some of the money to buy a snack."
+        </div>
+
+        <div style="font-size:12px; color:#94a3b8; font-weight:800; text-transform:uppercase;">
+          👉 Tap a Choice to see what happens to Opportunity Cost & Profit:
+        </div>
+
+        <div class="econ-choice-cards">
+          <div class="econ-choice-card ${isCookies ? 'active-choice' : ''}" onclick="window.classroomEngine.selectEconScenarioChoice('cookies')">
+            <div style="font-size:32px; margin-bottom:6px;">🍪</div>
+            <div style="font-weight:800; color:#f8fafc; font-size:14px;">Bake & Sell Cookies</div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:4px;">Jordan is a <strong>PRODUCER</strong> of <strong>GOODS</strong>!</div>
+            ${isCookies ? '<div style="margin-top:6px; color:#34d399; font-weight:800; font-size:11px;">⭐ SELECTED CHOICE</div>' : ''}
+          </div>
+
+          <div class="econ-choice-card ${!isCookies ? 'active-choice' : ''}" onclick="window.classroomEngine.selectEconScenarioChoice('dog')">
+            <div style="font-size:32px; margin-bottom:6px;">🐕</div>
+            <div style="font-weight:800; color:#f8fafc; font-size:14px;">Walk Neighbor's Dog</div>
+            <div style="font-size:12px; color:#94a3b8; margin-top:4px;">Providing a <strong>SERVICE</strong> for a fee!</div>
+            ${!isCookies ? '<div style="margin-top:6px; color:#34d399; font-weight:800; font-size:11px;">⭐ SELECTED CHOICE</div>' : ''}
+          </div>
+        </div>
+
+        <div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:12px;">
+          <div style="font-weight:800; color:#f59e0b; font-size:13px; margin-bottom:6px;">
+            ⚖️ OPPORTUNITY COST VISUALIZER:
+          </div>
+          <div style="font-size:13px; color:#cbd5e1; line-height:1.5;">
+            ${isCookies 
+              ? 'Because Jordan chose to bake cookies, the <strong>OPPORTUNITY COST</strong> is: <span style="color:#60a5fa; font-weight:700;">Walking the neighbor\'s dog for a fee</span> (the next-best choice given up!).'
+              : 'If Jordan had chosen to walk the dog, the <strong>OPPORTUNITY COST</strong> would be: <span style="color:#60a5fa; font-weight:700;">Baking and selling fresh cookies</span>.'}
+          </div>
+        </div>
+
+        <!-- Profit vs Loss Calculator Bar -->
+        <div class="econ-math-display">
+          <div class="econ-math-item">
+            <div class="econ-math-label">Sales Earned</div>
+            <div class="econ-math-value" style="color:#38bdf8;">$${sales}.00</div>
+          </div>
+          <div style="font-size:18px; font-weight:800; color:#64748b;">-</div>
+          <div class="econ-math-item">
+            <div class="econ-math-label">Costs (Flour & Sugar)</div>
+            <div class="econ-math-value" style="color:#f87171;">$${costs}.00</div>
+          </div>
+          <div style="font-size:18px; font-weight:800; color:#64748b;">=</div>
+          <div class="econ-math-item">
+            <div class="econ-math-label">${net >= 0 ? 'Net Profit 💵' : 'Net Loss 📉'}</div>
+            <div class="econ-math-value" style="color:${net >= 0 ? '#4ade80' : '#ef4444'};">
+              ${net >= 0 ? `+$${net}.00 PROFIT` : `-$${Math.abs(net)}.00 LOSS`}
+            </div>
+          </div>
+          <button class="econ-mini-btn" style="border-color:#eab308; color:#fde047;" onclick="window.classroomEngine.toggleEconLossMode()">
+            ${isLoss ? '🔄 Reset to Normal ($5 Costs)' : '⚡ Test Loss Scenario ($20 Costs)'}
+          </button>
+        </div>
+
+        <!-- 3 Quick Concept Drills -->
+        <div class="econ-scenario-quizzes">
+          <div style="font-size:12px; color:#94a3b8; font-weight:800; text-transform:uppercase;">
+            🎯 Quick Application Checkers:
+          </div>
+
+          <div class="econ-mini-quiz-card">
+            <span style="font-size:12px; color:#e2e8f0; font-weight:600;">1. In baking cookies to sell, Jordan acts as a:</span>
+            <div style="display:flex; gap:8px;">
+              <button class="econ-mini-btn ${this.econScenarioAnswers['q1'] === 'producer' ? 'correct' : ''}" 
+                      onclick="window.classroomEngine.answerEconScenarioQuiz('q1', 'producer', true)">
+                Producer 🏭
+              </button>
+              <button class="econ-mini-btn ${this.econScenarioAnswers['q1'] === 'consumer' ? 'wrong' : ''}" 
+                      onclick="window.classroomEngine.answerEconScenarioQuiz('q1', 'consumer', false)">
+                Consumer 🛒
+              </button>
+            </div>
+          </div>
+
+          <div class="econ-mini-quiz-card">
+            <span style="font-size:12px; color:#e2e8f0; font-weight:600;">2. Walking the neighbor's dog is an example of a:</span>
+            <div style="display:flex; gap:8px;">
+              <button class="econ-mini-btn ${this.econScenarioAnswers['q2'] === 'good' ? 'wrong' : ''}" 
+                      onclick="window.classroomEngine.answerEconScenarioQuiz('q2', 'good', false)">
+                Good 📦
+              </button>
+              <button class="econ-mini-btn ${this.econScenarioAnswers['q2'] === 'service' ? 'correct' : ''}" 
+                      onclick="window.classroomEngine.answerEconScenarioQuiz('q2', 'service', true)">
+                Service 🐕
+              </button>
+            </div>
+          </div>
+
+          <div class="econ-mini-quiz-card">
+            <span style="font-size:12px; color:#e2e8f0; font-weight:600;">3. When Jordan buys a snack with cookie money, Jordan is a:</span>
+            <div style="display:flex; gap:8px;">
+              <button class="econ-mini-btn ${this.econScenarioAnswers['q3'] === 'producer' ? 'wrong' : ''}" 
+                      onclick="window.classroomEngine.answerEconScenarioQuiz('q3', 'producer', false)">
+                Producer 🏭
+              </button>
+              <button class="econ-mini-btn ${this.econScenarioAnswers['q3'] === 'consumer' ? 'correct' : ''}" 
+                      onclick="window.classroomEngine.answerEconScenarioQuiz('q3', 'consumer', true)">
+                Consumer 🛒
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  selectEconScenarioChoice(choiceKey) {
+    this.econScenarioChoice = choiceKey;
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderEconScenario();
+  }
+
+  toggleEconLossMode() {
+    this.econScenarioLossMode = !this.econScenarioLossMode;
+    if (window.soundEngine) window.soundEngine.playTap();
+    this.renderEconScenario();
+  }
+
+  answerEconScenarioQuiz(key, val, isCorrect) {
+    this.econScenarioAnswers[key] = val;
+    if (isCorrect) {
+      if (window.soundEngine) window.soundEngine.playCorrect();
+      if (Object.keys(this.econScenarioAnswers).length >= 3) {
+        if (window.soundEngine) window.soundEngine.playLevelUp();
+        if (window.helpers) window.helpers.spawnConfetti(25);
+      }
+    } else {
+      if (window.soundEngine) window.soundEngine.playTap();
+    }
+    this.renderEconScenario();
+  }
+
   // --- Civics 3 Branches Sorter ---
   renderCivicsBranchesSorter() {
     const mount = document.getElementById('interactive-widget-mount');
@@ -710,7 +1241,8 @@ class ClassroomEngine {
       if (this.isTimssMode) {
         stepInd.textContent = `🌍 TIMSS GRADE 4 • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
       } else if (this.isPracticeMode) {
-        stepInd.textContent = `🏛️ CIVICS PRACTICE TEST • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
+        const testName = this.activeTopic?.category === 'economics' ? '💰 ECONOMICS' : '🏛️ CIVICS';
+        stepInd.textContent = `${testName} PRACTICE TEST • Question ${this.currentQuizIdx + 1} of ${this.quizQuestions.length} • 🛡️ Untimed Practice`;
       } else {
         stepInd.textContent = `STEP 4 / 5 • ⚡ POP QUIZ (Question ${this.currentQuizIdx + 1} of 5)`;
       }
